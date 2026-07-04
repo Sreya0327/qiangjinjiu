@@ -1,97 +1,528 @@
-<!doctype html>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>OpenClaw Canvas</title>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>将进酒 · 暗阁</title>
 <style>
-  html, body { height: 100%; margin: 0; background: #000; color: #fff; font: 16px/1.4 -apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-  .wrap { min-height: 100%; display: grid; place-items: center; padding: 24px; }
-  .card { width: min(720px, 100%); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); border-radius: 16px; padding: 18px 18px 14px; }
-  .title { display: flex; align-items: baseline; gap: 10px; }
-  h1 { margin: 0; font-size: 22px; letter-spacing: 0.2px; }
-  .sub { opacity: 0.75; font-size: 13px; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-  button { appearance: none; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.10); color: #fff; padding: 10px 12px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-  button:active { transform: translateY(1px); }
-  .ok { color: #24e08a; }
-  .bad { color: #ff5c5c; }
-  .log { margin-top: 14px; opacity: 0.85; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; white-space: pre-wrap; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); padding: 10px; border-radius: 12px; }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=Ma+Shan+Zheng&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#100c0a;--paper:#f0e6d3;--red:#8b2500;--red-bright:#c0392b;--gold:#b8963c;--gold-light:#d4b96a;--ink:#2c1810;--text-mid:#5c4330;--border:#8b7355;--card-bg:#fff8ee}
+body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:radial-gradient(ellipse at 50% 10%,rgba(180,140,60,0.06) 0%,transparent 50%);color:var(--paper);min-height:100vh;overflow-x:hidden}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#app{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 20px;min-height:100vh;display:flex;flex-direction:column}
+
+/* ==== COVER ==== */
+#cover{position:fixed;top:0;left:0;width:100%;height:100%;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(30,20,12,0.96) 0%,#0a0705 100%);transition:opacity 0.8s}
+#cover.out{opacity:0;pointer-events:none}
+#cover .seal-r{width:110px;height:110px;border:3px solid var(--red);display:flex;align-items:center;justify-content:center;transform:rotate(-5deg);margin-bottom:24px;animation:sa 1.2s ease-out;box-shadow:0 0 30px rgba(139,37,0,0.3)}
+#cover .seal-r span{color:var(--red);font-size:13px;letter-spacing:3px;text-align:center;line-height:2;font-family:'Ma Shan Zheng',cursive}
+@keyframes sa{0%{opacity:0;transform:rotate(-5deg) scale(0.5)}60%{transform:rotate(-5deg) scale(1.1)}100%{opacity:1;transform:rotate(-5deg) scale(1)}}
+#cover .title-l{display:block;font-size:54px;font-weight:900;letter-spacing:12px;background:linear-gradient(180deg,#f0d890,#c9a96e,#8a6d3b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:tr 1.6s ease-out 0.4s both;text-shadow:0 0 40px rgba(201,169,110,0.3)}
+@keyframes tr{0%{opacity:0;letter-spacing:50px;filter:blur(10px)}100%{opacity:1;letter-spacing:12px;filter:blur(0)}}
+#cover .sub{font-size:13px;letter-spacing:6px;background:var(--paper);color:var(--ink);display:inline-block;padding:4px 16px;margin-top:12px;animation:fu 1s ease-out 0.8s both;border:1px solid rgba(139,55,0,0.2)}
+#cover .dline{width:1px;height:50px;background:linear-gradient(180deg,transparent,var(--gold),transparent);margin:12px 0;animation:fu 1s ease-out 1s both}
+#cover .btns{display:flex;flex-direction:column;align-items:center;gap:8px;animation:fu 1s ease-out 1.2s both}
+#cover .cbtn{padding:12px 56px;font-size:17px;letter-spacing:6px;cursor:pointer;font-family:inherit;background:transparent;border:1px solid var(--gold);color:var(--gold);transition:all 0.4s}
+#cover .cbtn:hover{background:rgba(201,169,110,0.12);box-shadow:0 0 30px rgba(201,169,110,0.2)}
+#cover .cbtn.rst{padding:9px 40px;font-size:12px;letter-spacing:3px;border-color:rgba(201,169,110,0.2);color:rgba(201,169,110,0.35)}
+#cover .cbtn.rst:hover{border-color:var(--red);color:var(--red-bright)}
+#cover .inkd{position:absolute;pointer-events:none;opacity:0.02;font-size:300px;color:#fff;font-family:'Ma Shan Zheng',cursive}
+#cover .inkd.t{top:-70px;left:50%;transform:translateX(-50%)}
+#cover .inkd.b{bottom:-50px;right:3%}
+@keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* ==== HEADER ==== */
+#hdr{text-align:center;padding:22px 0 8px;border-bottom:1px solid rgba(184,147,85,0.15);position:relative}
+#hdr::after{content:'';position:absolute;bottom:-1px;left:30%;right:30%;height:1px;background:linear-gradient(90deg,transparent,rgba(184,147,85,0.4),transparent)}
+#hdr .seal{display:inline-block;border:2px solid var(--red);color:var(--red);padding:5px 14px;font-size:12px;letter-spacing:3px;transform:rotate(-2deg);margin-bottom:5px;font-family:'Ma Shan Zheng',cursive;box-shadow:0 0 8px rgba(139,37,0,0.2)}
+#hdr h1{font-size:28px;font-weight:900;letter-spacing:8px;background:linear-gradient(180deg,#e8d5a0,#b8963c,#7a5c20);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#hdr .sub{font-size:11px;letter-spacing:4px;background:var(--paper);color:var(--ink);display:inline-block;padding:2px 10px;margin-top:2px;border:1px solid rgba(139,55,0,0.12)}
+
+/* ==== NAV ==== */
+#toprow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:11px;color:rgba(255,255,255,0.4);flex-wrap:wrap;gap:6px}
+#toprow span{color:var(--gold);font-weight:600;font-size:12px}
+#casebar{display:flex;align-items:center;gap:5px;padding:4px 0;flex-wrap:wrap}
+#casebar .csb{padding:4px 9px;font-size:10px;letter-spacing:1px;background:rgba(255,255,255,0.03);border:1px solid rgba(184,147,85,0.12);color:rgba(255,255,255,0.4);cursor:pointer;font-family:inherit;transition:all 0.3s;border-radius:2px}
+#casebar .csb:hover{border-color:var(--gold);color:var(--gold-light)}
+#casebar .csb.on{border-color:var(--red);color:var(--gold);background:rgba(139,37,0,0.08)}
+#casebar .csb.done{border-color:var(--gold);color:var(--gold)}
+#casebar .csb.done::after{content:' ✓';font-size:8px;color:#5cb85c}
+#sfwrap{padding:2px 0 8px}
+#sfwrap select{padding:4px 8px;font-size:11px;background:rgba(0,0,0,0.3);border:1px solid rgba(184,147,85,0.15);color:var(--paper);font-family:inherit;min-width:160px;border-radius:2px;outline:none}
+
+/* ==== TABS ==== */
+#tabs{display:flex;border-bottom:1px solid rgba(184,147,85,0.1);align-items:center}
+.tab{padding:8px 16px;cursor:pointer;font-size:12px;letter-spacing:1px;color:rgba(255,255,255,0.3);border-bottom:2px solid transparent;transition:all 0.3s;background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab:hover{color:var(--gold-light)}
+.tab.on{color:var(--gold);border-bottom-color:var(--red)}
+.tab.mtab{margin-left:auto;color:rgba(216,180,120,0.5);font-weight:600}
+.tab.mtab.on{color:var(--gold-light);border-bottom-color:var(--gold)}
+
+/* ==== CONTENT ==== */
+#ctn{flex:1;padding:10px 0}
+.pnl{display:none;animation:fi 0.35s ease}.pnl.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Dossier */
+.dcard{background:linear-gradient(135deg,var(--card-bg),#f5ead5);border:1px solid var(--border);border-radius:4px;padding:24px 26px;margin-bottom:14px;color:var(--ink);box-shadow:0 3px 18px rgba(0,0,0,0.3);position:relative}
+.dcard::before{content:'';position:absolute;top:6px;left:6px;right:6px;bottom:6px;border:1px solid rgba(139,37,0,0.05);pointer-events:none}
+.dcard .stamp{position:absolute;top:14px;right:14px;border:2px solid var(--red);color:var(--red);padding:3px 8px;font-size:10px;letter-spacing:2px;transform:rotate(8deg);opacity:0.5;font-family:'Ma Shan Zheng',cursive}
+.dcard .cid{font-size:10px;color:var(--text-mid);letter-spacing:2px;border-bottom:1px dashed var(--border);padding-bottom:5px;margin-bottom:10px}
+.dcard h2{font-size:18px;font-weight:700;letter-spacing:2px;margin-bottom:2px}
+.dcard .cs{font-size:11px;color:var(--red);margin-bottom:10px}
+.dcard .nt{line-height:2.1;font-size:13px;text-align:justify}
+.dcard .nt p{margin-bottom:12px;text-indent:2em}
+.dcard .nt .hi{color:var(--red-bright);font-weight:600}
+.dcard .nt .gld{color:#8b6914;font-weight:600}
+.dcard .nt .cf{display:inline-block;background:rgba(139,37,0,0.05);border:1px dashed var(--red);padding:2px 6px;margin:2px 3px;font-size:11px;color:var(--red);letter-spacing:1px}
+.cblock{margin-top:14px;padding-top:10px;border-top:1px dashed var(--border)}
+.cblock .clbl{font-size:10px;color:var(--text-mid);letter-spacing:2px;margin-bottom:6px}
+.dbtn{display:block;width:100%;padding:9px 14px;margin-bottom:4px;background:rgba(184,147,85,0.04);border:1px solid var(--border);color:var(--ink);text-align:left;font-family:inherit;font-size:12px;cursor:pointer;letter-spacing:1px;transition:all 0.3s;border-radius:2px}
+.dbtn:hover{background:rgba(184,147,85,0.12);border-color:var(--gold);padding-left:18px}
+.dbtn::before{content:'▸ ';color:var(--red);font-size:9px}
+
+/* Map */
+#mc{position:relative;width:100%;border:1px solid rgba(139,100,60,0.25);border-radius:4px;overflow:hidden;background:#e8dcc8}
+#mapc{display:block;width:100%}
+#mtt{position:absolute;pointer-events:none;background:rgba(20,15,10,0.96);border:1px solid var(--gold);padding:6px 10px;font-size:10px;color:var(--gold);letter-spacing:1px;border-radius:2px;display:none;z-index:10;white-space:nowrap}
+#minfo{background:rgba(0,0,0,0.15);border:1px solid rgba(184,147,85,0.15);border-radius:4px;padding:16px;margin-top:8px;display:none}
+#minfo.show{display:block;animation:fi 0.4s ease}
+#minfo .mt{font-size:14px;color:var(--gold);letter-spacing:2px;margin-bottom:2px}
+#minfo .ms{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:8px}
+#minfo .ml{font-size:9px;color:rgba(255,255,255,0.2);margin-bottom:3px}
+#minfo .mtag{display:inline-block;padding:2px 8px;margin:2px;background:rgba(184,147,85,0.08);border:1px solid rgba(184,147,85,0.18);color:var(--paper);font-size:10px;letter-spacing:1px;border-radius:2px;cursor:pointer;transition:all 0.3s}
+#minfo .mtag:hover{background:rgba(184,147,85,0.16);border-color:var(--gold);color:var(--gold)}
+#minfo .mtag.ch{background:rgba(139,37,0,0.06);border-color:rgba(139,37,0,0.2)}
+#minfo .mtag.ev{background:rgba(46,139,87,0.04);border-color:rgba(46,139,87,0.18)}
+
+/* Deduction */
+.ded-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:6px;margin-bottom:16px}
+.clue-c{background:rgba(255,255,255,0.02);border:1px solid rgba(184,147,85,0.1);padding:9px 6px;cursor:pointer;transition:all 0.3s;border-radius:2px;text-align:center;font-size:11px;letter-spacing:1px;min-height:36px;display:flex;align-items:center;justify-content:center}
+.clue-c:hover{border-color:var(--gold);background:rgba(184,147,85,0.04)}
+.clue-c.sel{border-color:var(--red)!important;background:rgba(139,37,0,0.08)!important;box-shadow:0 0 10px rgba(139,37,0,0.15)}
+.clue-c.found{color:var(--paper)}.clue-c.lock{opacity:0.25;cursor:not-allowed;color:rgba(255,255,255,0.1)}
+.ded-res{background:rgba(184,147,85,0.04);border:1px solid var(--gold);padding:14px;margin-top:10px;border-radius:2px;display:none;color:var(--paper);line-height:1.9;font-size:13px}
+.ded-res.show{display:block}
+
+/* Characters */
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px}
+.ch-card{background:rgba(255,255,255,0.02);border:1px solid rgba(184,147,85,0.1);padding:14px;border-radius:2px;transition:all 0.3s;cursor:pointer}
+.ch-card:hover{border-color:var(--gold);background:rgba(184,147,85,0.04)}
+.ch-card h4{font-size:14px;color:var(--gold-light);letter-spacing:1px;margin-bottom:2px}
+.ch-card .role{font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:6px}
+.ch-card .info{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.7}
+
+/* Decisions */
+.dec-card{background:linear-gradient(135deg,rgba(139,37,0,0.04),rgba(0,0,0,0.1));border:1px solid rgba(139,37,0,0.2);padding:16px;margin-bottom:10px;border-radius:2px}
+.dec-card .dc{font-size:10px;color:var(--red);margin-bottom:3px}
+.dec-card .dq{font-size:13px;color:var(--paper);line-height:1.7}
+
+/* Reports */
+.rpt-card{background:rgba(255,255,255,0.01);border:1px solid rgba(184,147,85,0.08);padding:14px;margin-bottom:8px;border-radius:2px;transition:all 0.3s;cursor:pointer}
+.rpt-card:hover{border-color:rgba(184,147,85,0.25)}
+.rpt-card.lk{opacity:0.3;cursor:not-allowed}
+.rpt-card .rf{font-size:9px;color:var(--text-mid);margin-bottom:2px}
+.rpt-card .rt{font-size:12px;color:var(--gold-light)}
+.rpt-card .rp{font-size:10px;color:rgba(255,255,255,0.25);margin-top:3px}
+
+/* Bottom bar */
+#bbar{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(184,147,85,0.08);font-size:10px;color:rgba(255,255,255,0.28);margin-top:12px;flex-wrap:wrap;gap:4px}
+#bbar .bv{color:var(--gold);font-weight:600}
+
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--gold);padding:8px 16px;border:1px solid var(--gold);font-size:11px;letter-spacing:2px;z-index:200;animation:ti 0.4s ease,to 0.4s ease 2.2s forwards;border-radius:2px;pointer-events:none}
+@keyframes ti{from{opacity:0;transform:translateX(-50%) translateY(-20px)}}@keyframes to{to{opacity:0;transform:translateX(-50%) translateY(-20px)}}
+
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:300;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-box{background:linear-gradient(135deg,#1a1512,#231d14);border:1px solid var(--gold);padding:28px;max-width:500px;width:90%;border-radius:4px;position:relative;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+.modal-box .mclose{position:absolute;top:10px;right:14px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;font-family:inherit}
+.modal-box .mclose:hover{color:var(--gold)}
+.modal-box h3{font-size:18px;color:var(--gold-light);letter-spacing:3px;margin-bottom:4px}
+.modal-box .mrole{font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:12px}
+.modal-box .minfo{font-size:13px;color:rgba(255,255,255,0.65);line-height:2.2;letter-spacing:1px}
+
+/* Exit & Panel toggles */
+#exitb{position:fixed;top:12px;left:16px;z-index:50;padding:4px 10px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(0,0,0,0.4);border:1px solid rgba(184,147,85,0.15);color:rgba(255,255,255,0.3);border-radius:2px;transition:all 0.3s;display:none}
+#exitb:hover{background:rgba(139,37,0,0.2);border-color:var(--red);color:var(--red-bright)}
+#rptg{position:fixed;top:12px;right:16px;z-index:50;display:none;gap:4px}
+#rptg button{padding:4px 10px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(0,0,0,0.4);border:1px solid rgba(184,147,85,0.15);color:rgba(255,255,255,0.3);border-radius:2px;transition:all 0.3s}
+#rptg button:hover{background:rgba(184,147,85,0.1);border-color:var(--gold);color:var(--gold)}
+
+/* Right Panel */
+#rpanel{position:fixed;top:0;right:-400px;width:380px;height:100%;z-index:60;background:rgba(16,12,10,0.98);border-left:1px solid rgba(184,147,85,0.18);transition:right 0.4s ease;overflow-y:auto;padding:20px;box-shadow:-5px 0 30px rgba(0,0,0,0.5)}
+#rpanel.open{right:0}
+#rpanel .rpc{position:absolute;top:10px;right:14px;background:none;border:none;color:rgba(255,255,255,0.35);font-size:18px;cursor:pointer}
+#rpanel .rpc:hover{color:var(--gold)}
+#rpanel .rpt{font-size:14px;color:var(--gold);letter-spacing:2px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(184,147,85,0.1)}
+#rpanel .rptabs{display:flex;margin-bottom:10px}
+#rpanel .rtab{padding:5px 12px;font-size:10px;cursor:pointer;font-family:inherit;background:none;border:none;color:rgba(255,255,255,0.3);border-bottom:1px solid transparent;transition:all 0.3s}
+#rpanel .rtab:hover{color:var(--gold)}
+#rpanel .rtab.on{color:var(--gold);border-bottom-color:var(--red)}
+#rpanel .rpcnt{display:none}#rpanel .rpcnt.on{display:block}
+
+.rp-chi{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s}
+.rp-chi:hover{background:rgba(184,147,85,0.04)}
+.rp-chi .nm{color:var(--gold-light);font-size:13px}
+.rp-chi .rl{font-size:9px;color:rgba(255,255,255,0.28)}
+
+.rp-tl{position:relative;padding-left:16px}
+.rp-tl::before{content:'';position:absolute;left:3px;top:0;bottom:0;width:1px;background:rgba(184,147,85,0.15)}
+.rp-tli{padding:4px 0 12px 12px;position:relative;font-size:11px;color:rgba(255,255,255,0.4)}
+.rp-tli::before{content:'';position:absolute;left:-15px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.rp-tli.done::before{background:#5cb85c}
+.rp-tli .tl{color:var(--gold);font-weight:600;font-size:12px}
+.rp-tli .ts{font-size:9px;color:rgba(255,255,255,0.2)}
+
+.rp-rel{padding:6px 0;font-size:11px;color:rgba(255,255,255,0.5)}
+.rp-rel .rleft{color:var(--gold-light)}
+.rp-rel .redge{color:rgba(255,255,255,0.2);margin:0 6px}
+.rp-rel .rtype{font-size:9px;color:var(--red);border:1px solid rgba(139,37,0,0.3);padding:1px 5px;border-radius:2px;margin-left:6px}
+
+@media(max-width:700px){
+  .tab{padding:6px 9px;font-size:10px}
+  .dcard{padding:16px}
+  .ded-grid{grid-template-columns:repeat(2,1fr)}
+  #rpanel{width:100%;right:-100%}
+  #cover .title-l{font-size:36px;letter-spacing:6px}
+  @keyframes tr{0%{opacity:0;letter-spacing:25px;filter:blur(4px)}100%{opacity:1;letter-spacing:6px;filter:blur(0)}}
+}
 </style>
-<div class="wrap">
-  <div class="card">
-    <div class="title">
-      <h1>OpenClaw Canvas</h1>
-      <div class="sub">Interactive test page (auto-reload enabled)</div>
-    </div>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="toast-ctn"></div>
 
-    <div class="row">
-      <button id="btn-hello">Hello</button>
-      <button id="btn-time">Time</button>
-      <button id="btn-photo">Photo</button>
-      <button id="btn-dalek">Dalek</button>
-    </div>
-
-    <div id="status" class="sub" style="margin-top: 10px;"></div>
-    <div id="log" class="log">Ready.</div>
+<!-- COVER -->
+<div id="cover">
+  <div class="inkd t">墨</div><div class="inkd b">墨</div>
+  <div class="seal-r"><span>暗阁<br>枢机处</span></div>
+  <div class="title-l">将 进 酒</div>
+  <div class="sub">秘卷 · 甲字第柒号</div>
+  <div class="dline"></div>
+  <div class="btns">
+    <button class="cbtn" onclick="startGame(false)">开 卷</button>
+    <button class="cbtn" id="cont-btn" style="display:none" onclick="startGame(true)">继 续 游 戏</button>
+    <button class="cbtn rst" onclick="resetConfirm()">重 新 开 始</button>
   </div>
 </div>
+
+<!-- EXIT + TOGGLES -->
+<button id="exitb" onclick="backToCover()">✕ 退出</button>
+<div id="rptg">
+  <button onclick="openRP('chars')">👥 人物</button>
+  <button onclick="openRP('tl')">⏳ 时间线</button>
+  <button onclick="openRP('rel')">🔗 关系</button>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="rpanel">
+  <button class="rpc" onclick="closeRP()">✕</button>
+  <div class="rpt" id="rp-title">人物档案</div>
+  <div class="rptabs">
+    <button class="rtab on" data-rp="chars" onclick="switchRP('chars')">👥 人物</button>
+    <button class="rtab" data-rp="tl" onclick="switchRP('tl')">⏳ 时间线</button>
+    <button class="rtab" data-rp="rel" onclick="switchRP('rel')">🔗 关系</button>
+  </div>
+  <div class="rpcnt on" id="rpc-chars"></div>
+  <div class="rpcnt" id="rpc-tl"></div>
+  <div class="rpcnt" id="rpc-rel"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal"><div class="modal-box"><button class="mclose" onclick="closeModal()">✕</button><div id="modal-ctn"></div></div></div>
+
+<!-- GAME -->
+<div id="app">
+  <div id="hdr">
+    <div class="seal">暗 阁 · 枢 机 处</div>
+    <h1>将 进 酒</h1>
+    <div class="sub">秘 卷 · 甲 字 第 柒 号</div>
+  </div>
+  <div id="toprow">
+    <span>📜 <b id="tp-case">茶石关疑案</b></span>
+    <span>🏅 <b id="tp-score">0</b></span>
+    <span>🔑 <b id="tp-clues">0/19</b></span>
+  </div>
+  <div id="casebar"></div>
+  <div id="sfwrap">📖 <select id="sfilter" onchange="jumpScene(this.value)"><option value="">选择章节…</option></select></div>
+  <div id="tabs">
+    <button class="tab on" data-tab="dossier">📜 案牍</button>
+    <button class="tab" data-tab="deduction">🔍 推敲</button>
+    <button class="tab" data-tab="characters">👥 人物</button>
+    <button class="tab" data-tab="decisions">⚔️ 抉择</button>
+    <button class="tab" data-tab="reports">💬 密函</button>
+    <button class="tab mtab" data-tab="map">🗺️ 舆图</button>
+  </div>
+  <div id="ctn">
+    <div class="pnl on" id="pnl-dossier"><div id="dossier-ctn"></div></div>
+    <div class="pnl" id="pnl-map">
+      <div id="mc"><canvas id="mapc"></canvas><div id="mtt"></div></div>
+      <div id="minfo"></div>
+    </div>
+    <div class="pnl" id="pnl-deduction"><div style="color:var(--gold);font-size:12px;letter-spacing:2px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid rgba(184,147,85,0.1)">🔍 线索推敲 · 选择两条已获取的线索进行关联</div><div class="ded-grid" id="ded-grid"></div><div style="text-align:center;padding:8px;font-size:10px;color:rgba(255,255,255,0.2)" id="ded-hint">点击两条线索进行关联推敲</div><div class="ded-res" id="ded-res"></div></div>
+    <div class="pnl" id="pnl-characters"><div class="ch-grid" id="ch-grid"></div></div>
+    <div class="pnl" id="pnl-decisions"><div id="dec-ctn"></div></div>
+    <div class="pnl" id="pnl-reports"><div id="rpt-ctn"></div></div>
+  </div>
+  <div id="bbar">
+    <span>⚖️ 朝局 <span class="bv" id="bb-sit">暗流涌动</span></span>
+    <span>沈泽川↔萧驰野 <span class="bv" id="bb-aff">敌意</span></span>
+    <span>📖 进度 <span class="bv" id="bb-prog">0%</span></span>
+  </div>
+</div>
+
 <script>
-(() => {
-  const logEl = document.getElementById("log");
-  const statusEl = document.getElementById("status");
-  const log = (msg) => { logEl.textContent = String(msg); };
+// ============ STATE ============
+const S={ac:'case_chashi',cs:'case_chashi_intro',aff:20,scr:0,cf:[],dm:[],dm2:{},ru:[],vs:[],cc:[]};
+const KEY='jjj_v5';
 
-  const hasIOS = () =>
-    !!(
-      window.webkit &&
-      window.webkit.messageHandlers &&
-      window.webkit.messageHandlers.openclawCanvasA2UIAction
-    );
-  const hasAndroid = () =>
-    !!(
-      (window.openclawCanvasA2UIAction &&
-        typeof window.openclawCanvasA2UIAction.postMessage === "function")
-    );
-  const hasHelper = () => typeof window.openclawSendUserAction === "function";
-  const helperReady = hasHelper();
-  statusEl.textContent = "";
-  statusEl.appendChild(document.createTextNode("Bridge: "));
-  const bridgeStatus = document.createElement("span");
-  bridgeStatus.className = helperReady ? "ok" : "bad";
-  bridgeStatus.textContent = helperReady ? "ready" : "missing";
-  statusEl.appendChild(bridgeStatus);
-  statusEl.appendChild(
-    document.createTextNode(
-      " · iOS=" + (hasIOS() ? "yes" : "no") + " · Android=" + (hasAndroid() ? "yes" : "no"),
-    ),
-  );
+// ============ DATA ============
+const CASES=[{id:'case_chashi',n:'茶石关疑案',e:'🏔️'},{id:'case_temple',n:'昭罪寺秘闻',e:'🏯'},{id:'case_encounter',n:'离北来使',e:'⚔️'},{id:'case_banquet',n:'宫宴风云',e:'👑'},{id:'case_snow',n:'雪夜密会',e:'❄️'}];
 
-  const onStatus = (ev) => {
-    const d = ev && ev.detail || {};
-    log("Action status: id=" + (d.id || "?") + " ok=" + String(!!d.ok) + (d.error ? (" error=" + d.error) : ""));
-  };
-  window.addEventListener("openclaw:a2ui-action-status", onStatus);
+const SSEQ={case_chashi:['case_chashi_intro','case_chashi_detail','case_chashi_testimony'],case_temple:['case_temple_intro','case_temple_jigang','case_temple_qitaifu'],case_encounter:['case_encounter_intro','case_encounter_detail','case_encounter_xiao','case_encounter_tavern'],case_banquet:['case_banquet_intro','case_banquet_lu','case_banquet_xiao','case_banquet_assign'],case_snow:['case_snow_intro','case_snow_shen','case_snow_xiao','case_snow_fight','case_snow_question','case_snow_words']};
 
-  function send(name, sourceComponentId) {
-    if (!hasHelper()) {
-      log("No action bridge found. Ensure you're viewing this on an iOS/Android OpenClaw node canvas.");
-      return;
-    }
-    const sendUserAction =
-      typeof window.openclawSendUserAction === "function"
-        ? window.openclawSendUserAction
-        : undefined;
-    const ok = sendUserAction({
-      name,
-      surfaceId: "main",
-      sourceComponentId,
-      context: { t: Date.now() },
-    });
-    log(ok ? ("Sent action: " + name) : ("Failed to send action: " + name));
+const SLAB={case_chashi_intro:'开篇·茶石之谜',case_chashi_detail:'战报·边关守备录',case_chashi_testimony:'供词·沈泽川受审',case_temple_intro:'开篇·昭罪寺',case_temple_jigang:'人物·纪纲',case_temple_qitaifu:'人物·齐太傅',case_encounter_intro:'开篇·初遇',case_encounter_detail:'守卫录·擅闯',case_encounter_xiao:'档案·萧驰野',case_encounter_tavern:'酒楼·银子之困',case_banquet_intro:'开篇·宫宴',case_banquet_lu:'实录·陆广白',case_banquet_xiao:'实录·萧驰野',case_banquet_assign:'密议·巡防营',case_snow_intro:'开篇·雪夜',case_snow_shen:'视角·沈泽川',case_snow_xiao:'视角·萧驰野',case_snow_fight:'交锋·咬痕',case_snow_question:'一问·仇敌',case_snow_words:'言辞·刺痛'};
+
+// Scene definitions as plain objects
+const SC={};
+SC['case_chashi_intro']={c:'case_chashi',cn:'茶石关疑案',t:'案牍一：茶石之谜',s:'建兴五年冬 · 中博六州',tx:'<p>建兴五年冬，中博六州。</p><p>茶石关——大周抵御边沙十二部的天险，一夜之间被攻破。守军八千，<span class="hi">全军覆没</span>。</p><p><span class="gld">建兴王沈卫</span>坐镇中博，手握六州兵权，却在茶石关陷落后被指控<span class="hi">私通边沙</span>，致使天险失守。</p><p>唯一的活口，是沈卫的第八子——<span class="gld">沈泽川</span>。他在师兄<span class="gld">纪暮</span>的背负下逃出茶石关，但纪暮因失血过多，死在了风雪之中。</p><p>沈泽川随后被离北军俘虏，押赴阒都受审。</p><p><span class="cf">📌 茶石关陷落</span> <span class="cf">📌 纪暮战死</span> <span class="cf">📌 沈卫通敌指控</span></p>',cl:['c_chashi_fall','c_jimu_death','c_shenwei_treason'],ch:[{t:'翻阅边关战报，核查茶石关布防记录',nx:'case_chashi_detail',n:'深入调查'},{t:'直接查看沈泽川的供词',nx:'case_chashi_testimony',n:'直接取证'}]};
+SC['case_chashi_detail']={c:'case_chashi',cn:'茶石关疑案',t:'边关战报 · 茶石关守备录',s:'附：离北军接防记录',tx:'<p>战报显示：茶石关守军八千人，建兴五年十一月初七夜间遭遇突袭。边沙骑兵趁大雪封山之际，从<span class="hi">侧翼小道</span>绕过关隘正门。</p><p>这条小道只有中博高层将领知晓。沈卫作为主帅不可能不知。</p><p>另一份离北军接防记录显示：边沙骑兵撤退后，<span class="gld">离北铁骑</span>迅速接管了防线。离北王次子萧驰野亲率三千精骑，连夜奔袭百里，稳定了中博局势。</p><p><span class="cf">📌 离北军接防</span> <span class="cf">📌 唯一活口</span></p>',cl:['c_libei_arrive','c_shen_survivor'],ch:[{t:'继续查阅沈泽川的审讯记录',nx:'case_chashi_testimony',n:''}]};
+SC['case_chashi_testimony']={c:'case_chashi',cn:'茶石关疑案',t:'供词摘录 · 沈泽川',s:'建兴五年十一月十五 · 阒都大理寺',tx:'<p>"罪臣之子沈泽川，叩见陛下。"</p><p>供词中沈泽川陈述前后矛盾。他先说"不知父亲是否通敌"，后又说"茶石关之事另有隐情"。</p><p>审问官批注：<span class="hi">此人言语闪烁，似有所隐瞒。受刑后依然未改口，骨气非凡。</span></p><p><span class="gld">太后花氏</span>力主斩草除根。朝中有力量在保沈泽川。</p><p>沈泽川被免死罪，处廷杖三十，押入<span class="gld">昭罪寺</span>。</p><p><span class="cf">📌 廷杖三十</span> <span class="cf">📌 太后干政</span> <span class="cf">📌 花党权势</span></p>',cl:['c_court_beat','c_empress_dowager','c_hua_faction'],ch:[{t:'【案牍完结】前往昭罪寺秘闻',nx:'case_temple_intro',n:'茶石关案完',cc:'case_chashi'}]};
+SC['case_temple_intro']={c:'case_temple',cn:'昭罪寺秘闻',t:'案牍二：昭罪寺',s:'建兴五年腊月 · 阒都',tx:'<p><span class="gld">昭罪寺</span>——阒都最阴冷之处。关押着朝堂斗争的失败者与失势官员。</p><p>沈泽川被押入时浑身是伤，奄奄一息。但在这里，他遇到了两个改变他命运的人。</p><p>一个是<span class="gld">纪纲</span>——授业恩师，师兄纪暮的父亲。一个是<span class="gld">齐太傅</span>——被废的太子太傅，囚禁近二十年。</p><p>纪纲教他武功，齐太傅教他权谋。一文一武，开始了对沈泽川的精心打磨。</p><p><span class="cf">📌 昭罪寺</span></p>',cl:['c_zhaozui_temple'],ch:[{t:'查阅纪纲的资料',nx:'case_temple_jigang',n:''},{t:'查阅齐太傅的资料',nx:'case_temple_qitaifu',n:''}]};
+SC['case_temple_jigang']={c:'case_temple',cn:'昭罪寺秘闻',t:'人物档案 · 纪纲',s:'前建兴王府武师 | 纪家拳传人',tx:'<p><span class="gld">纪纲</span>，原建兴王府武师。相貌被火烧毁，面目狰狞，沉默寡言，忠义无双。</p><p>祖传<span class="gld">纪家拳法</span>本是沈卫亲授。如今他用这套拳法教沈泽川——一种轮回，一场宿命。</p><p>独子纪暮为救沈泽川而死。但纪纲从未流泪。他只是更沉默地教拳、煎药、守夜。</p><p><span class="cf">📌 师父纪纲</span> <span class="cf">📌 纪家拳法</span></p>',cl:['c_jigang_master','c_ji_quan'],ch:[{t:'查阅齐太傅的资料',nx:'case_temple_qitaifu',n:''}]};
+SC['case_temple_qitaifu']={c:'case_temple',cn:'昭罪寺秘闻',t:'人物档案 · 齐太傅',s:'前太子太傅 | 帝王之术传人',tx:'<p><span class="gld">齐惠连</span>，大周太子之师，因太子被废受牵连。</p><p>在昭罪寺中度过了漫长岁月——从壮年到白发，直到沈泽川出现。</p><p>"水满则溢，月盈则亏。帝王之术，便是控制水与月的平衡。"</p><p>他教沈泽川<span class="hi">《帝策》</span>和<span class="hi">《权经》</span>。</p><p><span class="cf">📌 齐太傅</span></p>',cl:['c_qi_taifu'],ch:[{t:'【案牍完结】前往离北来使',nx:'case_encounter_intro',n:'昭罪寺案完',cc:'case_temple'}]};
+SC['case_encounter_intro']={c:'case_encounter',cn:'离北来使',t:'案牍三：初遇',s:'建兴六年春 · 昭罪寺',tx:'<p>建兴六年春，离北军入都。</p><p><span class="gld">萧驰野</span>——离北王次子，率三千铁骑奔袭千里，声名鹊起。但离北王已战死，如今支撑离北的是萧驰野和兄长萧既明。</p><p>萧驰野第一次来到昭罪寺时，沈泽川正在院中练拳。</p><p>四目相对的那一刻，<span class="hi">命运的齿轮开始转动</span>。</p><p><span class="cf">📌 萧驰野入都</span></p>',cl:['c_xiao_arrives'],ch:[{t:'调阅昭罪寺当日的守卫记录',nx:'case_encounter_detail',n:''},{t:'查看萧驰野的军中档案',nx:'case_encounter_xiao',n:''}]};
+SC['case_encounter_detail']={c:'case_encounter',cn:'离北来使',t:'昭罪寺守卫录',s:'当值：王虎 | 异常记录：有',tx:'<p>守卫记录：当日午后一名"离北军官"以"巡查防务"为名进入昭罪寺。</p><p>离北军并无此权限。萧驰野是<span class="hi">擅自闯入</span>。</p><p>守卫王虎记录：<span class="hi">"那人体格魁梧，腰佩长刀。在沈泽川院内停留约一炷香，有打斗声传出。离开时嘴角带笑。"</span></p><p><span class="cf">📌 昭罪寺初遇</span></p>',cl:['c_first_meeting'],ch:[{t:'查看萧驰野的军中档案',nx:'case_encounter_xiao',n:''},{t:'探访萧驰野常去的酒楼打听消息',nx:'case_encounter_tavern',n:'追查行踪'}]};
+SC['case_encounter_tavern']={c:'case_encounter',cn:'离北来使',t:'东来酒楼 · 银子之困',s:'萧驰野与陆广白、晨阳等人的私下议论',tx:'<p>暗阁探子混入东来酒楼，听到了离北将领的私下谈话。</p><p><span class="gld">陆广白</span>拍着桌子叹气："<span class="hi">离北今年的俸禄还没发齐，弟兄们已经三个月没见饷银了。</span>边关那边，连草料都快买不起！"</p><p><span class="gld">晨阳</span>接着说："阒都户部扣着银子不给，说是中博兵败后税收不足。可我看太后的花党，哪个不是锦衣玉食？"</p><p>萧驰野靠在椅子上，放下酒杯："离北被逼到墙角了。打赢了没赏钱，打输了要问罪。<span class="hi">我爹战死的那天，户部的催粮文书比丧报还先到。</span>"</p><p>沉默许久，陆广白低声说："这阒都，是个吃人不吐骨头的地方。二公子，咱们不能在这里耗着。得找个在朝堂上能说话的人。"</p><p>萧驰野摩挲着刀柄，眼中闪过一丝暗芒。</p><p><span class="cf">📌 离北困境</span></p>',cl:['c_libei_pressure'],ch:[{t:'【案牍完结】前往宫宴风云',nx:'case_banquet_intro',n:'离北来使案完结',cc:'case_encounter'}]};
+SC['case_encounter_xiao']={c:'case_encounter',cn:'离北来使',t:'军中档案 · 萧驰野',s:'离北王次子 | 正四品骁骑将军',tx:'<p><span class="gld">萧驰野</span>。离北王萧方旬次子。</p><p>战功：率三千精骑一夜奔袭茶石关。封骁骑将军。</p><p>萧既明评语：<span class="hi">"野性难驯，但心思缜密。善饮酒，更善看人。"</span></p><p>密档附注：萧驰野在阒都频繁出入寺观酒楼，疑似<span class="hi">结交各方势力</span>。昭罪寺之行并非偶然。</p><p><span class="cf">📌 离北困境</span></p>',cl:['c_libei_pressure'],ch:[{t:'调阅昭罪寺当日的守卫记录',nx:'case_encounter_detail',n:''}]};
+SC['case_banquet_intro']={c:'case_banquet',cn:'宫宴风云',t:'案牍四：宫宴',s:'建兴六年二月初二 · 太和殿',tx:'<p>咸德帝设宴太和殿，实为各方势力角力。</p><p>沈泽川被押出昭罪寺，立于殿前接受满朝审视。</p><p><span class="gld">太后</span>欲杀他，<span class="gld">花思谦</span>附和。但<span class="gld">陆广白</span>——离北边关大将——站出来为他说了话。</p><p><span class="gld">萧驰野</span>的一句话彻底扭转局势。</p><p><span class="cf">📌 咸德帝宫宴</span></p>',cl:['c_banquet'],ch:[{t:'查看陆广白的发言记录',nx:'case_banquet_lu',n:''},{t:'查看萧驰野的发言记录',nx:'case_banquet_xiao',n:''}]};
+SC['case_banquet_lu']={c:'case_banquet',cn:'宫宴风云',t:'宫宴实录 · 陆广白',s:'太和殿起居注',tx:'<p><span class="gld">陆广白</span>奏道：</p><p>"沈泽川没有通敌，杀他名不正言不顺。若只因疑心便杀降臣之子，天下人如何看朝廷？"</p><p>此言代表<span class="hi">整个离北边军</span>的态度。</p><p><span class="cf">📌 陆广白求情</span></p>',cl:['c_lu_guangbai'],ch:[{t:'查看萧驰野的发言记录',nx:'case_banquet_xiao',n:''}]};
+SC['case_banquet_xiao']={c:'case_banquet',cn:'宫宴风云',t:'宫宴实录 · 萧驰野',s:'太和殿起居注',tx:'<p>太后与花党步步紧逼时，<span class="gld">萧驰野</span>开口：</p><p>"关起来，不如放出来。关在笼子里的老虎，咬人更疼。"</p><p>表面说"放人"，实则是<span class="hi">对太后的含蓄警告</span>。</p><p>起居注官记录：<span class="hi">"萧二公子言毕，太后面色微变。殿中落针可闻。"</span></p><p>沈泽川保住性命，被严令不得踏出昭罪寺。</p>',ch:[{t:'查看萧驰野被分配巡防营的调令',nx:'case_banquet_assign',n:''},{t:'【案牍完结】前往雪夜密会',nx:'case_snow_intro',n:'宫宴案完',cc:'case_banquet'}]};
+SC['case_banquet_assign']={c:'case_banquet',cn:'宫宴风云',t:'密议 · 巡防营调令',s:'宫宴后 · 咸德帝偏殿',tx:'<p>宫宴散后，咸德帝单独召见了萧驰野。</p><p>咸德帝坐在龙椅上，神色疲惫："<span class="hi">离北的困境朕知道。但朝中诸事，朕一人说了不算。</span>太后那边……"他没有说下去。</p><p>萧驰野单膝跪地："陛下，离北不要封赏，只求一条活路。"</p><p>咸德帝沉默许久，提笔写了一道调令：<span class="gld">命萧驰野暂领阒都巡防营，巡查都城治安，协管各寺观衙署。</span></p><p>"这巡防营的差事，"咸德帝低声说，"可以让你在阒都各处走动。包括——昭罪寺。"</p><p>萧驰野接过调令，嘴角微微上扬。皇帝在借他的手，试探太后的底线。</p><p>而他也需要这个机会——<span class="hi">可以名正言顺地再去见那个人。</span></p>',ch:[{t:'【案牍完结】前往雪夜密会',nx:'case_snow_intro',n:'宫宴案完结',cc:'case_banquet'}]};
+SC['case_snow_intro']={c:'case_snow',cn:'雪夜密会',t:'案牍五：雪夜',s:'建兴六年二月十五 · 昭罪寺',tx:'<p>宫宴后十余日，阒都大雪。</p><p>深夜，昭罪寺院墙上翻进来一个人——<span class="gld">萧驰野</span>。他喝了酒，浑身酒气，眼神亮得惊人。</p><p>不走正门，不通报姓名，直接翻墙而入。<span class="hi">一场私人的拜访。</span></p><p>沈泽川正在院中练拳。两人雪中对峙，月光拉长了影子。</p><p><span class="cf">📌 雪夜私访</span></p>',cl:['c_snow_night'],ch:[{t:'以沈泽川的视角体验这个夜晚',nx:'case_snow_shen',n:'',ad:0},{t:'以萧驰野的视角体验这个夜晚',nx:'case_snow_xiao',n:'',ad:0}]};
+SC['case_snow_shen']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 沈泽川视角',s:'昭罪寺 · 子时',tx:'<p>"萧二公子深夜来访，有何贵干？"你的声音比雪还冷。</p><p>他靠在墙上看了你很久。然后他动了——快得像离弦的箭。你拼尽全力招架，他一脚踢在你胸口。</p><p>月光下他眼里是<span class="hi">认真而危险的审视</span>。</p>',ch:[{t:'挣扎爬起来再次摆出拳架',nx:'case_snow_fight',n:'不屈不挠',ad:10},{t:'冷冷说："杀了我就能在太后面前邀功？"',nx:'case_snow_words',n:'言语反击',ad:5}]};
+SC['case_snow_xiao']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 萧驰野视角',s:'昭罪寺 · 子时',tx:'<p>你翻过那道墙时想：<span class="gld">沈泽川，你到底是个什么样的人？</span></p><p>宫宴上他低头那一瞬，你看清了他眼里的东西——不是恐惧，是克制的、等待时机的冷静。</p><p>这不像阶下囚。这像一柄还没出鞘的刀。</p><p>他倒下后看你的眼神——<span class="hi">让你心里某个地方被触动了。</span></p>',ch:[{t:'故意激怒他看能做到什么程度',nx:'case_snow_fight',n:'试探',ad:10},{t:'收手认真地问他："你恨谁？"',nx:'case_snow_question',n:'真诚',ad:12}]};
+SC['case_snow_fight']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 交锋',s:'昭罪寺 · 子时',tx:'<p>你再次扑上去。萧驰野一把扣住你的手，五指像铁钳。</p><p>"够狠。"他低声说，"我喜欢。"</p><p>你猛地低头一口咬在他虎口上。他没有抽手。</p><p>血顺着唇角流下。然后他笑了。</p><p>"老子记住你了，沈泽川。"</p><p><span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'【全部案牍完结】查看终章',nx:'case_ending',n:'全案完结',cc:'case_snow'}]};
+SC['case_snow_question']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 一问',s:'昭罪寺 · 子时',tx:'<p>"你恨谁？"萧驰野收手认真看着你。</p><p>你沉默很久："我恨的人很多。你想听哪个？"</p><p>他笑了，伸手把你拽起来。"一个一个说。我有的是时间。"</p><p>他虎口上有血。但他似乎不在意。</p><p><span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'【全部案牍完结】查看终章',nx:'case_ending',n:'全案完结',cc:'case_snow'}]};
+SC['case_snow_words']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 言辞',s:'昭罪寺 · 子时',tx:'<p>"杀了我就能在太后面前邀功了？"</p><p>萧驰野掐你喉咙的手顿了顿。他低声笑了。</p><p>"邀功？我要是想拿你邀功，宫宴上就不会开那个口。"</p><p>你咬了上去。他没有躲。</p><p>"够狠。老子记住你了，沈泽川。"</p><p><span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'【全部案牍完结】查看终章',nx:'case_ending',n:'全案完结',cc:'case_snow'}]};
+SC['case_ending']={c:'case_ending',cn:'终章',t:'暗阁 · 结案呈词',s:'甲字第七号 · 沈萧秘卷',tx:'<p>五卷案牍，至此封存。</p><p>从茶石关的血雪到昭罪寺的寒夜，从太和殿暗流到雪地咬痕——<span class="gld">沈泽川</span>与<span class="gld">萧驰野</span>的命运已被暗阁记录在案。</p><p>这不是结束。这甚至不是结束的开始。这只是——<span class="hi">序章的终结</span>。</p><p style="text-align:center;font-size:14px;letter-spacing:4px;color:var(--red);margin:12px 0;">—— 甲字第七号 · 封 ——</p><p style="text-align:center;color:var(--gold);">暗阁谨识 · 建兴六年二月</p>',ch:[{t:'重览秘卷（重新开始）',nx:'case_chashi_intro',n:'',rst:true}]};
+
+// Clues
+const CL={c_chashi_fall:{n:'茶石关陷落',d:'茶石天险一夜被边沙骑兵攻破'},c_jimu_death:{n:'纪暮战死',d:'纪纲之子为救沈泽川而死'},c_shenwei_treason:{n:'沈卫通敌指控',d:'建兴王被控私通边沙十二部'},c_shen_survivor:{n:'唯一活口',d:'沈泽川是唯一存活的人'},c_libei_arrive:{n:'离北军接防',d:'离北铁骑接管茶石关'},c_court_beat:{n:'廷杖三十',d:'沈泽川被处廷杖之刑'},c_empress_dowager:{n:'太后干政',d:'太后花氏欲杀沈泽川'},c_hua_faction:{n:'花党权势',d:'花思谦为太后心腹'},c_zhaozui_temple:{n:'昭罪寺',d:'沈泽川被关入昭罪寺'},c_jigang_master:{n:'师父纪纲',d:'纪纲是沈泽川授业恩师'},c_qi_taifu:{n:'齐太傅',d:'前太子太傅传授帝王之术'},c_ji_quan:{n:'纪家拳法',d:'纪纲传授源自沈卫的武功'},c_xiao_arrives:{n:'萧驰野入都',d:'离北王次子率军入都'},c_first_meeting:{n:'昭罪寺初遇',d:'萧驰野翻墙见沈泽川'},c_banquet:{n:'咸德帝宫宴',d:'沈泽川被押赴殿前'},c_lu_guangbai:{n:'陆广白求情',d:'离北大将为沈泽川求情'},c_snow_night:{n:'雪夜私访',d:'萧驰野酒后翻墙入寺'},c_bite_scar:{n:'咬痕',d:'沈泽川咬下虎口齿痕'},c_libei_pressure:{n:'离北困境',d:'离北王战死萧氏支撑'}};
+
+const DE=[{a:'c_chashi_fall',b:'c_shenwei_treason',t:'推敲：茶石之败',r:'<b>结论：</b>天险一夜被破疑点重重。是谁泄露了布防？'},{a:'c_jimu_death',b:'c_jigang_master',t:'推敲：纪家牺牲',r:'<b>结论：</b>纪家父子为沈家付出生命。纪纲的教导是纪暮遗志的延续。'},{a:'c_empress_dowager',b:'c_hua_faction',t:'推敲：朝堂格局',r:'<b>结论：</b>太后与花思谦同盟把控朝政。沈泽川是角力棋子。'},{a:'c_first_meeting',b:'c_xiao_arrives',t:'推敲：宿命相遇',r:'<b>结论：</b>离北需要盟友，沈泽川需要靠山。初遇已埋下纠缠的种子。'},{a:'c_snow_night',b:'c_bite_scar',t:'推敲：咬痕深意',r:'<b>结论：</b>一口咬下是标记，萧驰野不抽手是接纳。从此再难分开。'},{a:'c_lu_guangbai',b:'c_banquet',t:'推敲：宫宴博弈',r:'<b>结论：</b>陆广白发言是离北向太后示威。'},{a:'c_jigang_master',b:'c_qi_taifu',t:'推敲：昭罪双师',r:'<b>结论：</b>一文一武为沈泽川量身打造了炼狱中崛起之路。'},{a:'c_libei_pressure',b:'c_libei_arrive',t:'推敲：离北困局',r:'<b>结论：</b>萧氏兄弟临危受命。沈泽川也许是离北破局的关键。'}];
+
+const CHARS=[{id:'shen',n:'沈泽川',ro:'建兴王第八子·待罪之人',info:'茶石关唯一活口。被押入昭罪寺后外表看似文弱，实则心性坚韧异常。白天随纪纲练拳习武，夜晚听齐太傅传授帝王之术与权谋之道。短短数月，从一个奄奄一息的阶下囚变为暗中积蓄力量的复仇者。他的心中藏着对父亲沈卫的复杂情感、对师兄纪暮的愧疚，以及一个尚未明确的野心。',fa:'待罪之人'},{id:'xiao',n:'萧驰野',ro:'离北王次子·骁骑将军',info:'离北铁骑的少年将军。不拘小节，善饮好斗，在沙场上所向披靡。但父王萧方旬的突然离世让他一夜之间扛起了离北的半壁江山。他南下阒都表面是为朝廷效力，实则在暗中寻找能够帮助离北突围的盟友。昭罪寺里那个瘦弱却倔强的少年，让他看到了某种可能性——也看到了某个让他无法移开视线的人。',fa:'离北军'},{id:'jigang',n:'纪纲',ro:'沈泽川之师·纪家拳传人',info:'原建兴王府武师，相貌被火烧毁，面目狰狞，但为人沉默寡言，忠义无双。独子纪暮在茶石关为救沈泽川而死。他将丧子之痛深埋心底，把全部的精力投入到培养沈泽川之中——这不仅是对沈卫旧恩的报答，更是对儿子遗志的延续。',fa:'昭罪寺'},{id:'qi',n:'齐惠连',ro:'前太子太傅·帝王之术传人',info:'曾是大周太子的老师，因太子被废受牵连，囚禁昭罪寺近二十年。漫长岁月中他将毕生所学锤炼为一套完整的帝王之术——包括《帝策》和《权经》。在沈泽川身上他看到了复仇的希望。他教沈泽川朝堂上每一个人的弱点，以及如何在这场权力游戏中生存并取胜。',fa:'昭罪寺'},{id:'huasiqian',n:'花思谦',ro:'太后心腹·内阁辅臣',info:'太后花氏最信任的朝臣，朝中党羽众多。表面儒雅恭谨，实则城府极深。多次在朝堂上欲置沈泽川于死地，但并非单纯为了讨好太后——他深知沈家案背后牵涉的秘密可能动摇花党根基。',fa:'花党'},{id:'empress',n:'太后花氏',ro:'咸德帝生母·后宫之主',info:'实际掌控大周朝政的女人。对沈家充满不可调和的敌意，表面是为国除害，实则是为了掩盖一桩陈年旧事——沈卫手中曾握有她不可告人的秘密。沈泽川的存在是她最大的威胁。',fa:'花党'},{id:'lugb',n:'陆广白',ro:'离北边关大将',info:'离北军中重臣，性格沉稳刚毅。宫宴上挺身而出为沈泽川求情，代表的不是个人立场而是整个离北军方的态度。他的发言让花思谦一时语塞，也让朝堂看到了离北铁骑的分量。',fa:'离北军'},{id:'emperor',n:'咸德帝',ro:'大周天子',info:'名义上的天下之主，实则处处受太后掣肘。在沈泽川一案上态度暧昧——既不欲杀一个少年背负骂名，又不敢公然违逆太后。他真正的心思藏得很深。',fa:'皇室'},{id:'xiaoji',n:'萧既明',ro:'离北王长子',info:'萧驰野的兄长，离北实际的主事者。相比弟弟的张扬不羁，他更加稳重内敛，是离北真正的大脑。父王逝后一手支撑离北军政大局，默默为萧驰野的每一次行动创造条件。',fa:'离北军'}];
+
+const RPTS=[{id:'r1',ti:'离北秘报：萧方旬之死',fr:'离北暗桩',uc:'case_chashi',tx:'离北王萧方旬并非战死沙场，而是在与阒都特使密会后"意外身亡"。暗阁已另立案调查。'},{id:'r2',ti:'太后的真正目标',fr:'宫中线人',uc:'case_chashi',tx:'太后欲杀沈泽川实为掩盖陈年旧事。沈卫曾握有太后不可告人的秘密。'},{id:'r3',ti:'齐太傅的秘密',fr:'昭罪寺暗线',uc:'case_temple',tx:'齐惠连传授的"帝王之术"包含完整针对太后与花党的布局方略。'},{id:'r4',ti:'萧驰野的真实目的',fr:'离北密探',uc:'case_encounter',tx:'萧驰野在寻找能对抗花党的盟友。沈泽川是他看中的人选。'},{id:'r5',ti:'雪夜之后',fr:'昭罪寺暗线',uc:'case_snow',tx:'雪夜后萧驰野左手齿痕深可见骨，拒绝包扎："留着。这是标记。"'}];
+
+const MAPR=[{id:'qudu',n:'阒都',x:0.32,y:0.52,w:130,h:32,ca:['case_chashi','case_temple','case_banquet'],ch:['emperor','empress','huasiqian','lugb'],ev:'大周帝都·太和殿·昭罪寺',desc:'大周帝都，皇权中枢。咸德帝坐朝太和殿，太后花氏垂帘干政。'},{id:'zhongbo',n:'中博',x:0.56,y:0.44,w:110,h:32,ca:['case_chashi'],ch:['shen'],ev:'六州腹地·沈卫旧辖',desc:'建兴王沈卫故地，茶州茨州敦州端州灯州樊州六州所在。茶石关失守后尽陷。'},{id:'chashi',n:'茶石关',x:0.78,y:0.58,w:80,h:30,ca:['case_chashi'],ch:['shen','jigang'],ev:'天险陷落·全军覆没',desc:'大周东南天险，锁天关南侧。被边沙骑兵趁雪夜袭攻破，守军八千尽没。'},{id:'libei',n:'离北',x:0.42,y:0.18,w:100,h:32,ca:['case_encounter','case_snow'],ch:['xiao','xiaoji'],ev:'离北铁骑·萧氏双子',desc:'大周北疆骑兵重镇。柳阳三大营所在，萧方旬战死后萧氏兄弟支撑大局。'},{id:'biansha',n:'边沙十二部',x:0.88,y:0.32,w:100,h:30,ca:['case_chashi'],ch:[],ev:'东部沙漠·十二部落',desc:'格达勒沙漠中的十二游牧部落。悍蛇部胡鹿部蒙驼部等趁大雪突破茶石关。'},{id:'hongjiang',n:'鸿江',x:0.62,y:0.3,w:60,h:22,ca:['case_encounter'],ch:['xiao'],ev:'天堑·一夜渡江',desc:'大周东部大江。萧驰野率三千精骑一夜渡过，奔袭千里名震天下。'},{id:'suotian',n:'锁天关',x:0.75,y:0.48,w:70,h:28,ca:['case_chashi'],ch:[],ev:'锁天险隘',desc:'茶石关北侧的险峻关隘，与茶石关互为犄角之势。'},{id:'chashiriver',n:'茶石河',x:0.82,y:0.62,w:70,h:22,ca:['case_chashi'],ch:[],ev:'东南水系',desc:'流经茶石关东侧的河流。'},{id:'binghe',n:'冰河',x:0.35,y:0.08,w:60,h:22,ca:[],ch:[],ev:'北疆冰河',desc:'横贯北疆的冰封河流，离北铁骑冬季可踏冰渡河。'}];
+
+// ============ CORE FUNCTIONS ============
+function startGame(cont){
+  if(cont){if(!loadState())resetState();}else resetState();
+  document.getElementById('cover').classList.add('out');
+  setTimeout(()=>{
+    document.getElementById('cover').style.display='none';
+    g('exitb').style.display='block';g('rptg').style.display='flex';
+    renderAll();switchTab('dossier');
+  },600);
+}
+function backToCover(){saveState();g('cover').style.display='flex';g('cover').classList.remove('out');g('exitb').style.display='none';g('rptg').style.display='none';closeRP();g('cont-btn').style.display=localStorage.getItem(KEY)?'block':'none';}
+function resetConfirm(){if(confirm('确定要清除所有存档重新开始吗？')){resetState();startGame(false);}}
+function resetState(){Object.assign(S,{ac:'case_chashi',cs:'case_chashi_intro',aff:20,scr:0,cf:[],dm:[],dm2:{},ru:[],vs:[],cc:[]});saveState();}
+function g(id){return document.getElementById(id);}
+
+// ============ RENDER ALL ============
+function renderAll(){renderCaseBar();renderSceneFilter();renderDossier();updateTopBar();updateBottomBar();}
+function renderCaseBar(){
+  g('casebar').innerHTML=CASES.map(c=>{
+    const a=S.ac===c.id,d=S.cc.includes(c.id);
+    return `<button class="csb${a?' on':''}${d&&!a?' done':''}" onclick="selCase('${c.id}')">${c.e} ${c.n}</button>`;
+  }).join('');
+}
+function renderSceneFilter(){
+  const sel=g('sfilter'),sc=SSEQ[S.ac]||[];
+  sel.innerHTML='<option value="">— 选择章节 —</option>'+sc.map(s=>{
+    const v=S.vs.includes(s)||s===S.cs;
+    return `<option value="${s}"${S.cs===s?' selected':''}${v?'':' disabled'}>${v?'📖':'🔒'} ${SLAB[s]||s}</option>`;
+  }).join('');
+}
+function selCase(cid){S.ac=cid;const sc=SSEQ[cid]||[];if(sc.length>0){S.cs=sc[0];S.vs=[...new Set([...S.vs,S.cs])];}saveState();renderAll();switchTab('dossier');}
+function jumpScene(sid){if(!sid)return;S.cs=sid;S.ac=SC[sid]?.c||S.ac;S.vs=[...new Set([...S.vs,sid])];saveState();renderAll();switchTab('dossier');}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const tb=document.querySelector(`[data-tab="${name}"]`);if(tb)tb.classList.add('on');
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  const pnl=g('pnl-'+name);if(pnl)pnl.classList.add('on');
+  if(name==='map')setTimeout(()=>renderMap(),80);
+  if(name==='deduction')renderDeduction();
+  if(name==='characters')renderChars();
+  if(name==='decisions')renderDecs();
+  if(name==='reports')renderRpts();
+}
+
+// ============ DOSSIER ============
+function renderDossier(){
+  const sc=SC[S.cs];if(!sc)return;const el=g('dossier-ctn');
+  let h=`<div class="dcard">`;
+  if(sc.cn)h+=`<div class="stamp">${sc.c==='case_ending'?'已封':'在查'}</div><div class="cid">暗阁 · ${sc.cn}</div>`;
+  h+=`<h2>${sc.t}</h2>${sc.s?`<div class="cs">${sc.s}</div>`:''}<div class="nt">${sc.tx}</div>`;
+  if(sc.ch&&sc.ch.length>0){h+=`<div class="cblock"><div class="clbl">▸ 办案操作</div>`;sc.ch.forEach((ch,i)=>{h+=`<button class="dbtn" onclick="doChoice(${i})">${ch.t}</button>`;});h+=`</div>`;}h+=`</div>`;
+  // Show next case hint
+  const nextCase=getNextCase(sc.c);
+  if(nextCase&&!S.cc.includes(nextCase.id)){
+    h+=`<div style="text-align:center;padding:12px;margin-top:8px;border:1px dashed rgba(184,147,85,0.2);border-radius:2px;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;cursor:pointer" onclick="selCase('${nextCase.id}');switchTab('dossier')">📂 发现新案卷：<span style="color:var(--gold)">${nextCase.n}</span> — 点击查阅</div>`;
   }
+  el.innerHTML=h;
+  if(sc.cl)sc.cl.forEach(cid=>unlockC(cid));renderSceneFilter();
+}
+function getNextCase(cur){const idx=CASES.findIndex(c=>c.id===cur);if(idx>=0&&idx<CASES.length-1)return CASES[idx+1];return null;}
+function doChoice(i){
+  const sc=SC[S.cs];if(!sc||!sc.ch[i])return;const ch=sc.ch[i];
+  if(ch.ad)S.aff=Math.max(0,Math.min(100,S.aff+ch.ad));S.scr+=10;
+  if(ch.cc&&!S.cc.includes(ch.cc)){S.cc.push(ch.cc);RPTS.forEach(r=>{if(r.uc===ch.cc&&!S.ru.includes(r.id)){S.ru.push(r.id);toast('📨 新密函：'+r.ti);}});toast('✅ 案牍完结：'+sc.cn);}
+  if(ch.rst){resetState();renderAll();switchTab('dossier');return;}
+  if(ch.n)S.dm2[sc.c]=ch.n;
+  S.vs=[...new Set([...S.vs,S.cs])];S.cs=ch.nx;
+  if(SC[ch.nx])S.ac=SC[ch.nx].c;saveState();renderAll();switchTab('dossier');
+}
+function unlockC(cid){if(!S.cf.includes(cid)){S.cf.push(cid);S.scr+=5;saveState();}}
 
-  document.getElementById("btn-hello").onclick = () => send("hello", "demo.hello");
-  document.getElementById("btn-time").onclick = () => send("time", "demo.time");
-  document.getElementById("btn-photo").onclick = () => send("photo", "demo.photo");
-  document.getElementById("btn-dalek").onclick = () => send("dalek", "demo.dalek");
-})();
+// ============ MAP ============
+function renderMap(){
+  const cv=g('mapc'),ct=g('mc');if(!cv||!ct)return;
+  const W=ct.clientWidth,H=560;cv.width=W;cv.height=H;cv.style.height=H+'px';
+  const c=cv.getContext('2d');
+  const bg=c.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#e8dcc8');bg.addColorStop(0.5,'#f0e6d3');bg.addColorStop(1,'#e0d4b8');c.fillStyle=bg;c.fillRect(0,0,W,H);
+  for(let i=0;i<160;i++){c.fillStyle=`rgba(139,100,60,${Math.random()*0.03+0.01})`;c.fillRect(Math.random()*W,Math.random()*H,Math.random()*3+1,Math.random()*3+1);}
+  c.strokeStyle='#8b6914';c.lineWidth=2;c.strokeRect(10,10,W-20,H-20);c.strokeStyle='rgba(139,105,20,0.4)';c.lineWidth=1;c.strokeRect(16,16,W-32,H-32);
+  const mtn=[{x:0.05,y:0.12,w:0.18,h:0.16},{x:0.15,y:0.08,w:0.2,h:0.18},{x:0.28,y:0.06,w:0.22,h:0.18},{x:0.42,y:0.07,w:0.18,h:0.16},{x:0.55,y:0.09,w:0.15,h:0.14},{x:0.65,y:0.1,w:0.16,h:0.15},{x:0.78,y:0.08,w:0.12,h:0.13},{x:0.88,y:0.1,w:0.14,h:0.12}];
+  function inkMt(cx,cy,w,h,op){for(let i=0;i<3;i++){const a=op*(0.35-i*0.1);if(a<=0)continue;const o=i*7;c.fillStyle=`rgba(80,60,40,${a})`;c.beginPath();c.moveTo(cx-w/2-o,cy+h/2);c.quadraticCurveTo(cx-w/4,cy-h*0.8-o*0.5,cx,cy-h*0.7-o*0.3);c.quadraticCurveTo(cx+w/4,cy-h*0.8-o*0.5,cx+w/2+o,cy+h/2);c.closePath();c.fill();}}
+  mtn.forEach(m=>inkMt(m.x*W,m.y*H,m.w*W,m.h*H,0.55));
+  [{x:0.1,y:0.25,w:0.12,h:0.1},{x:0.25,y:0.22,w:0.1,h:0.08},{x:0.6,y:0.26,w:0.09,h:0.08},{x:0.72,y:0.22,w:0.08,h:0.07}].forEach(m=>inkMt(m.x*W,m.y*H,m.w*W,m.h*H,0.3));
+  function inkRiv(pts,lw,clr){c.strokeStyle=clr;c.lineWidth=lw;c.lineCap='round';c.lineJoin='round';c.beginPath();pts.forEach(([rx,ry],i)=>{const px=rx*W,py=ry*H;i===0?c.moveTo(px,py):c.lineTo(px,py);});c.stroke();}
+  inkRiv([[0.5,0.05],[0.52,0.15],[0.56,0.28],[0.58,0.38],[0.6,0.5],[0.62,0.62],[0.64,0.78],[0.62,0.94]],2,'rgba(80,120,150,0.5)');
+  inkRiv([[0.2,0.3],[0.25,0.42],[0.3,0.55],[0.32,0.68],[0.34,0.85]],1.6,'rgba(80,120,150,0.35)');
+  inkRiv([[0.05,0.1],[0.15,0.09],[0.3,0.08],[0.45,0.09],[0.6,0.1],[0.75,0.1],[0.9,0.11]],1.6,'rgba(60,100,140,0.4)');
+  inkRiv([[0.78,0.45],[0.8,0.55],[0.82,0.62],[0.84,0.78]],1.3,'rgba(80,120,150,0.35)');
+  c.fillStyle='rgba(100,150,180,0.3)';c.beginPath();c.ellipse(0.58*W,0.74*H,0.06*W,0.04*H,0,0,Math.PI*2);c.fill();c.strokeStyle='rgba(80,120,150,0.25)';c.lineWidth=1;c.stroke();c.fillStyle='#6b4c2a';c.font='10px "Noto Serif SC"';c.textAlign='center';c.fillText('天妃湖',0.58*W,0.735*H);
+  MAPR.forEach(r=>{const mx=r.x*W,my=r.y*H,rw=r.w||80,rh=r.h||28;c.fillStyle='#c0392b';c.beginPath();c.arc(mx,my,4,0,Math.PI*2);c.fill();c.strokeStyle='#8b2500';c.lineWidth=1;c.beginPath();c.arc(mx,my,6,0,Math.PI*2);c.stroke();const bx=mx-rw/2,by=my-34;c.fillStyle='rgba(240,230,210,0.93)';c.fillRect(bx,by,rw,rh);c.strokeStyle='#8b6914';c.lineWidth=1.2;c.strokeRect(bx,by,rw,rh);[{x:bx,y:by},{x:bx+rw-3,y:by},{x:bx,y:by+rh-3},{x:bx+rw-3,y:by+rh-3}].forEach(p=>{c.fillStyle='#8b6914';c.fillRect(p.x,p.y,3,3);});c.fillStyle='#2c1810';c.font='bold 12px "Noto Serif SC","SimSun",serif';c.textAlign='center';c.fillText(r.n,mx,by+rh/2+4);if(S.cc.some(cc=>r.ca&&r.ca.includes(cc))){c.fillStyle='#c0392b';c.font='bold 9px "Noto Serif SC"';c.fillText('✓',bx+rw-10,by+8);}});
+  c.fillStyle='#2c1810';c.font='20px "Ma Shan Zheng",cursive';c.textAlign='center';c.fillText('大 周 山 河 舆 图',W/2,34);c.strokeStyle='rgba(139,105,20,0.3)';c.lineWidth=0.5;c.beginPath();c.moveTo(W/2-70,38);c.lineTo(W/2+70,38);c.stroke();
+  const cx=W-42,cy=42;c.strokeStyle='#8b6914';c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,20,0,Math.PI*2);c.stroke();c.beginPath();c.arc(cx,cy,16,0,Math.PI*2);c.strokeStyle='rgba(139,105,20,0.3)';c.stroke();c.fillStyle='#2c1810';c.font='9px "Noto Serif SC"';c.textAlign='center';c.fillText('北',cx,cy-13);c.fillText('南',cx,cy+26);c.fillText('东',cx+26,cy+3);c.fillText('西',cx-30,cy+3);c.fillStyle='#c0392b';c.beginPath();c.moveTo(cx,cy-11);c.lineTo(cx-3,cy+2);c.lineTo(cx+3,cy+2);c.closePath();c.fill();
+  c.fillStyle='rgba(200,180,140,0.08)';c.beginPath();c.ellipse(0.32*W,0.52*H,0.09*W,0.07*H,0,0,Math.PI*2);c.fill();
+  c.fillStyle='rgba(190,150,130,0.06)';c.beginPath();c.ellipse(0.56*W,0.44*H,0.07*W,0.05*H,0,0,Math.PI*2);c.fill();
+  c.fillStyle='rgba(160,180,160,0.06)';c.beginPath();c.ellipse(0.42*W,0.18*H,0.08*W,0.05*H,0,0,Math.PI*2);c.fill();
+  for(let i=0;i<30;i++){const dx=0.82+Math.random()*0.16,dy=0.18+Math.random()*0.26;c.fillStyle=`rgba(180,160,130,${Math.random()*0.12+0.04})`;c.beginPath();c.arc(dx*W,dy*H,Math.random()*3+1,0,Math.PI*2);c.fill();}
+  setupMapEvents();
+}
+function setupMapEvents(){
+  const cv=g('mapc'),tt=g('mtt');if(!cv)return;
+  cv.onmousemove=function(e){const r=getMapR(e);if(r){cv.style.cursor='pointer';tt.style.display='block';tt.style.left=(e.offsetX+12)+'px';tt.style.top=(e.offsetY-26)+'px';tt.textContent='📍 '+r.n}else{cv.style.cursor='default';tt.style.display='none'}};
+  cv.onclick=function(e){const r=getMapR(e);if(r)showMapInfo(r);};
+  cv.onmouseleave=function(){tt.style.display='none';};
+}
+function getMapR(e){const cv=g('mapc'),r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;if(mx<0||my<0||mx>cv.width||my>cv.height)return null;for(const reg of MAPR){const rx=reg.x*cv.width,ry=reg.y*cv.height,rw=(reg.w||80)/2,rh=(reg.h||28)/2;if(mx>rx-rw-20&&mx<rx+rw+20&&my>ry-rh-30&&my<ry+rh+10)return reg;}return null;}
+function showMapInfo(r){
+  const cn={case_chashi:'茶石关疑案',case_temple:'昭罪寺秘闻',case_encounter:'离北来使',case_banquet:'宫宴风云',case_snow:'雪夜密会'},chn={emperor:'咸德帝',empress:'太后花氏',huasiqian:'花思谦',lugb:'陆广白',shen:'沈泽川',jigang:'纪纲',xiao:'萧驰野',xiaoji:'萧既明'};
+  let h=`<div class="mt">📍 ${r.n}</div><div class="ms">${r.ev||''}</div><div style="line-height:1.9;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px">${r.desc||''}</div>`;
+  if(r.ca&&r.ca.length>0){h+=`<div class="ml">📜 关联案牍</div>`;r.ca.forEach(cc=>{h+=`<span class="mtag" onclick="selCase('${cc}');switchTab('dossier')">📜 ${cn[cc]||cc}</span>`;});}
+  if(r.ch&&r.ch.length>0){h+=`<div class="ml">👤 关键人物</div>`;r.ch.forEach(ch=>{h+=`<span class="mtag ch" onclick="showCharModal('${ch}')">${chn[ch]||ch}</span>`;});}
+  if(r.id==='chashi')h+=`<div class="ml">⚡ 事件</div><span class="mtag ev">纪暮战死</span><span class="mtag ev">边沙突破</span><span class="mtag ev">离北接防</span>`;
+  if(r.id==='qudu')h+=`<div class="ml">⚡ 事件</div><span class="mtag ev">廷杖审问</span><span class="mtag ev">宫宴对峙</span>`;
+  if(r.id==='libei')h+=`<div class="ml">⚡ 事件</div><span class="mtag ev">萧方旬之死</span><span class="mtag ev">萧驰野封将</span><span class="mtag ev">一夜渡鸿江</span>`;
+  g('minfo').innerHTML=h;g('minfo').classList.add('show');
+}
+
+// ============ DEDUCTION ============
+let selC=[];
+function renderDeduction(){
+  const gd=g('ded-grid'),h=g('ded-hint'),r=g('ded-res');selC=[];r.classList.remove('show');r.innerHTML='';h.style.display='block';
+  gd.innerHTML=Object.keys(CL).map(cid=>{const c=CL[cid],f=S.cf.includes(cid);return`<div class="clue-c ${f?'found':'lock'}"${f?` onclick="pickC('${cid}',this)"`:''} title="${f?c.d:'未获取'}"><span>${f?c.n:'???'}</span></div>`;}).join('');
+}
+function pickC(cid,el){if(selC.includes(cid)){selC=selC.filter(c=>c!==cid);el.classList.remove('sel');}else if(selC.length<2){selC.push(cid);el.classList.add('sel');}if(selC.length===2)checkD();}
+function checkD(){const[a,b]=selC.sort(),m=DE.find(d=>(d.a===a&&d.b===b)||(d.a===b&&d.b===a)),r=g('ded-res'),h=g('ded-hint');if(m){if(!S.dm.includes(`${a}+${b}`)){S.dm.push(`${a}+${b}`);S.scr+=15;saveState();updateTopBar();}h.style.display='none';r.innerHTML=`<div style="color:var(--gold);font-weight:600;margin-bottom:4px">${m.t}</div>${m.r}`;r.classList.add('show');}else{h.textContent='暂未发现关联，请尝试其他组合。';h.style.display='block';}setTimeout(()=>{selC=[];document.querySelectorAll('.clue-c.sel').forEach(c=>c.classList.remove('sel'));},1500);}
+
+// ============ CHARACTERS ============
+function renderChars(){
+  const gd=g('ch-grid'),rv=new Set(['shen','xiao']);
+  if(S.cc.includes('case_temple')||S.cc.includes('case_chashi')){rv.add('jigang');rv.add('qi');}
+  if(S.cc.includes('case_chashi')){rv.add('huasiqian');rv.add('empress');rv.add('emperor');}
+  if(S.cc.includes('case_banquet'))rv.add('lugb');
+  if(S.cf.includes('c_xiao_arrives'))rv.add('xiaoji');
+  gd.innerHTML=CHARS.filter(c=>rv.has(c.id)).map(c=>{
+    return `<div class="ch-card" onclick="showCharModal('${c.id}')"><h4>${c.n}</h4><div class="role">${c.ro}</div><div class="info">${c.info.substring(0,40)}…<br><span style="color:var(--gold);font-size:9px">点击查看完整档案 →</span></div></div>`;
+  }).join('');
+}
+function showCharModal(cid){
+  const c=CHARS.find(ch=>ch.id===cid);if(!c)return;
+  g('modal-ctn').innerHTML=`<h3>${c.n}</h3><div class="mrole">${c.ro} · ${c.fa}</div><div class="minfo">${c.info}</div>`;
+  g('modal').classList.add('show');
+}
+function closeModal(){g('modal').classList.remove('show');}
+g('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ============ DECISIONS & REPORTS ============
+function renderDecs(){
+  const cn={case_chashi:'茶石关疑案',case_temple:'昭罪寺秘闻',case_encounter:'离北来使',case_banquet:'宫宴风云',case_snow:'雪夜密会'};
+  const d=Object.entries(S.dm2);
+  g('dec-ctn').innerHTML=d.length===0?'<div style="text-align:center;color:rgba(255,255,255,0.2);padding:40px">尚未做出关键抉择。<br>在「案牍」中推进剧情时将面临重要决策。</div>':d.map(([cid,dec])=>`<div class="dec-card"><div class="dc">⚔️ ${cn[cid]||cid}</div><div class="dq">${dec}</div></div>`).join('');
+}
+function renderRpts(){
+  const el=g('rpt-ctn'),u=S.ru.length;
+  el.innerHTML=RPTS.map(r=>{const is=S.ru.includes(r.id);return`<div class="rpt-card ${is?'':'lk'}"${is?` onclick="showRpt('${r.id}')"`:''}><div class="rf">${is?r.fr:'密级不足'}</div><div class="rt">${r.ti}</div><div class="rp">${is?r.tx.substring(0,35)+'...':'完成案牍后查阅'}</div></div>`;}).join('');
+}
+function showRpt(rid){const r=RPTS.find(rp=>rp.id===rid);if(!r)return;g('rpt-ctn').innerHTML=`<div class="rpt-card" style="cursor:default"><div class="rf">${r.fr}</div><div class="rt">${r.ti}</div><div style="line-height:2;font-size:12px;color:rgba(255,255,255,0.6);margin-top:8px">${r.tx}</div><button onclick="renderRpts()" style="margin-top:12px;padding:4px 12px;background:transparent;border:1px solid rgba(184,147,85,0.2);color:var(--gold);font-family:inherit;cursor:pointer;font-size:10px">← 返回</button></div>`;}
+
+// ============ RIGHT PANEL ============
+function openRP(tab){g('rpanel').classList.add('open');switchRP(tab);}
+function closeRP(){g('rpanel').classList.remove('open');}
+function switchRP(tab){
+  document.querySelectorAll('#rpanel .rtab').forEach(t=>t.classList.remove('on'));
+  const tb=document.querySelector(`#rpanel .rtab[data-rp="${tab}"]`);if(tb)tb.classList.add('on');
+  document.querySelectorAll('#rpanel .rpcnt').forEach(p=>p.classList.remove('on'));
+  const pn=g('rpc-'+tab);if(pn)pn.classList.add('on');
+  g('rp-title').textContent={chars:'人物档案',tl:'时间线',rel:'人物关系图'}[tab]||'';
+  if(tab==='chars')renderRPChars();if(tab==='tl')renderRPTL();if(tab==='rel')renderRPRel();
+}
+function renderRPChars(){
+  const rv=new Set(['shen','xiao']);if(S.cc.length>0){rv.add('jigang');rv.add('qi');rv.add('huasiqian');rv.add('empress');rv.add('emperor');}if(S.cc.includes('case_banquet'))rv.add('lugb');if(S.cf.includes('c_xiao_arrives'))rv.add('xiaoji');
+  g('rpc-chars').innerHTML=CHARS.filter(c=>rv.has(c.id)).map(c=>`<div class="rp-chi" onclick="showCharModal('${c.id}')"><div><div class="nm">${c.n}</div><div class="rl">${c.ro}</div></div><span style="font-size:9px;color:rgba(255,255,255,0.3)">${c.info.substring(0,15)}…</span></div>`).join('');
+}
+function renderRPTL(){
+  const ev=[{l:'茶石关陷落',s:'建兴五年冬·全军覆没',d:S.cc.includes('case_chashi')},{l:'沈泽川受审',s:'阒都大理寺·廷杖三十',d:S.cc.includes('case_chashi')},{l:'入昭罪寺',s:'遇纪纲与齐太傅',d:S.cc.includes('case_temple')},{l:'萧驰野入都',s:'离北军南下·封骁骑将军',d:S.cf.includes('c_xiao_arrives')},{l:'宫宴风云',s:'太和殿·离北将领力保',d:S.cc.includes('case_banquet')},{l:'雪夜密会',s:'昭罪寺·咬痕为记',d:S.cc.includes('case_snow')}];
+  g('rpc-tl').innerHTML='<div class="rp-tl">'+ev.map(e=>`<div class="rp-tli${e.d?' done':''}"><div class="tl">${e.d?'✓ ':''}${e.l}</div><div class="ts">${e.s}</div></div>`).join('')+'</div>';
+}
+function renderRPRel(){
+  g('rpc-rel').innerHTML=`<div class="rp-rel"><span class="rleft">沈泽川</span><span class="redge">↔</span><span class="rleft">萧驰野</span><span class="rtype">${S.aff<=30?'敌对':S.aff<=55?'注意':S.aff<=75?'好奇':'羁绊'}</span></div><div class="rp-rel"><span>沈泽川</span><span class="redge">→</span><span>纪纲</span><span class="rtype">师徒</span></div><div class="rp-rel"><span>沈泽川</span><span class="redge">→</span><span>齐太傅</span><span class="rtype">师生</span></div><div class="rp-rel"><span>纪纲</span><span class="redge">→</span><span>纪暮</span><span class="rtype">父子·已故</span></div><div class="rp-rel"><span>纪暮</span><span class="redge">→</span><span>沈泽川</span><span class="rtype">救命恩人</span></div><div class="rp-rel"><span>萧驰野</span><span class="redge">→</span><span>萧既明</span><span class="rtype">兄弟</span></div><div class="rp-rel"><span>萧驰野</span><span class="redge">→</span><span>陆广白</span><span class="rtype">同袍</span></div><div class="rp-rel"><span>太后花氏</span><span class="redge">→</span><span>花思谦</span><span class="rtype">党羽</span></div><div class="rp-rel"><span>太后</span><span class="redge">→</span><span>咸德帝</span><span class="rtype">母子·掣肘</span></div><div class="rp-rel"><span>沈卫</span><span class="redge">→</span><span>沈泽川</span><span class="rtype">父子·已故</span></div>`;
+}
+
+// ============ UI ============
+function updateTopBar(){
+  const cn={case_chashi:'茶石关疑案',case_temple:'昭罪寺秘闻',case_encounter:'离北来使',case_banquet:'宫宴风云',case_snow:'雪夜密会',case_ending:'全案完结'};
+  g('tp-case').textContent=cn[S.ac]||'无';g('tp-score').textContent=S.scr;g('tp-clues').textContent=S.cf.length+'/'+Object.keys(CL).length;
+}
+function updateBottomBar(){
+  const c=S.cc.length;g('bb-sit').textContent=c===0?'风平浪静':c<=2?'暗流涌动':c<=4?'山雨欲来':'风云际会';
+  g('bb-aff').textContent=S.aff<=25?'敌意':S.aff<=45?'注意':S.aff<=65?'好奇':S.aff<=85?'羁绊':'纠缠';
+  g('bb-prog').textContent=Math.round(c/5*100)+'%';
+}
+function toast(msg){const ct=document.getElementById('toast-ctn'),t=document.createElement('div');t.className='toast';t.textContent=msg;ct.appendChild(t);setTimeout(()=>t.remove(),2500);}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function loadState(){try{const r=localStorage.getItem(KEY);if(r){Object.assign(S,JSON.parse(r));return true;}}catch(e){}return false;}
+
+// ============ BG PARTICLES ============
+(function(){const cv=g('bg-canvas'),cx=cv.getContext('2d');let W,H;function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}rs();addEventListener('resize',rs);const pts=[];for(let i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*30+10,s:Math.random()*0.06+0.03,o:Math.random()*0.012+0.003,ph:Math.random()*Math.PI*2});(function a(){cx.clearRect(0,0,W,H);const t=Date.now()*0.0003;pts.forEach(p=>{p.y+=p.s;if(p.y>H+40){p.y=-40;p.x=Math.random()*W;}const oo=p.o+Math.sin(t+p.ph)*0.005,g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,`rgba(180,147,85,${oo*1.5})`);g.addColorStop(1,'rgba(180,147,85,0)');cx.fillStyle=g;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill();});requestAnimationFrame(a);})();})();
+
+// ============ INIT ============
+g('cont-btn').style.display=localStorage.getItem(KEY)?'block':'none';
+g('exitb').style.display='none';g('rptg').style.display='none';
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+console.log('🏛️ 将进酒 · 暗阁 — 就绪');
 </script>
+</body>
+</html>
