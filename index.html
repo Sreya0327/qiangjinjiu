@@ -375,10 +375,10 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 @keyframes ceGlow{0%,100%{box-shadow:0 0 16px rgba(184,147,85,0.14),inset 0 0 12px rgba(184,147,85,0.05)}50%{box-shadow:0 0 26px rgba(184,147,85,0.26),inset 0 0 12px rgba(184,147,85,0.08)}}
 #cmask{position:fixed;inset:0;background:rgba(0,0,0,0.62);z-index:59;opacity:0;pointer-events:none;transition:opacity .3s}
 #cmask.show{opacity:1;pointer-events:auto}
-#rpanel.as-modal{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:min(440px,92vw);height:auto;max-height:82vh;border:1px solid var(--gold);border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,0.6),0 0 42px rgba(184,147,85,0.14)}
+#rpanel.as-modal{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:min(430px,94vw);height:96vh;max-height:96vh;overflow-y:auto;border:1px solid var(--gold);border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,0.6),0 0 42px rgba(184,147,85,0.14)}
 #rpanel.as-modal .rptabs{display:none}
-@media(max-width:700px){#rpanel.as-modal{width:94vw;max-height:86vh}}
-</style>
+@media(max-width:700px){#rpanel.as-modal{width:100vw;height:100vh;max-height:100vh;border-radius:0}}
+.ct-item{position:relative}.ct-item.locked{opacity:0.5;cursor:default;filter:grayscale(0.55)}.ct-locked-hd{font-size:10px;color:rgba(255,255,255,0.32);letter-spacing:2px;margin:12px 4px 4px;padding-top:8px;border-top:1px dashed rgba(184,147,85,0.15)}.ct-item .ct-lock{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.55}.dbtn.locked{opacity:0.42;cursor:not-allowed;filter:grayscale(0.5)}.gate-hint{font-size:11px;color:var(--gold-light);background:rgba(139,37,0,0.06);border:1px dashed rgba(184,147,85,0.3);border-radius:4px;padding:8px 10px;margin-bottom:8px;letter-spacing:1px;line-height:1.6}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -736,9 +736,9 @@ function renderDossier(){
     sc.cl.forEach(cid=>{const fnd=S.cf.includes(cid),c=CL[cid];h+=`<button class="insp${fnd?' got':''}" onclick="inspectClue('${cid}')">${fnd?'🔎 '+c.n:'❓ 待勘查'}</button>`;});
     h+=`</div><div id="insp-detail"></div></div>`;
   }
-  if(sc.ch&&sc.ch.length>0){h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;sc.ch.forEach((ch,i)=>{
+  if(sc.ch&&sc.ch.length>0){var _inv=!(sc.cl&&sc.cl.length>0)||sc.cl.every(function(_c){return S.cf.includes(_c)});var _got=(sc.cl||[]).filter(function(_c){return S.cf.includes(_c)}).length,_tot=(sc.cl||[]).length;h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;if(!_inv)h+=`<div class="gate-hint">🔒 请先完成现场勘查（已勘 ${_got}/${_tot} 处），方可作出办案抉择</div>`;sc.ch.forEach((ch,i)=>{
     const rw=ch.at?`<span class="rw">${fmtAt(ch.at)}</span>`:(ch.ad?`<span class="rw">好感+${ch.ad}</span>`:'');
-    h+=`<button class="dbtn" onclick="doChoice(${i})">${ch.t}${rw}</button>`;
+    h+=_inv?`<button class="dbtn" onclick="doChoice(${i})">${ch.t}${rw}</button>`:`<button class="dbtn locked" disabled>${ch.t}${rw}</button>`;
   });h+=`</div>`;}h+=`</div>`;
   const nextCase=getNextCase(sc.c);
   if(nextCase&&!S.cc.includes(nextCase.id)){
@@ -792,23 +792,7 @@ const INTERACT={
   shen:[{icon:'🥂',t:'饮酒',at:{xin:1},reply:'（对方与你举杯，一饮而尽，气氛稍缓）'},{icon:'🥋',t:'切磋',at:{wu:1},reply:'（一番拆招，你于攻守间又有所悟）'},{icon:'📜',t:'请教',at:{quan:1},reply:'（对方为你剖解了一局朝堂的暗棋）'}],
   xiao:[{icon:'🍶',t:'豪饮',at:{yi:1},reply:'（酒到杯干，几分生死之交的情谊）'},{icon:'⚔️',t:'较量',at:{li:1},reply:'（拳脚相交，酣畅淋漓，你更进一步）'},{icon:'🗺️',t:'议事',at:{mou:1},reply:'（你与对方推演一番局势，思路愈发清明）'}]
 };
-function renderRPContacts(){
-  const el=g('rpc-contacts');if(!el)return;
-  const list=CONTACTS[S.pov]||[];
-  const avail=list.filter(c=>(c.need||[]).every(n=>S.cf.includes(n)));
-  let h='';
-  if(avail.length===0){
-    h=`<div class="ct-empty">📇 ${S.pov==='shen'?'沈泽川':'萧驰野'} 暂无可联络之人<br><span style="font-size:10px">推进「案牍」剧情，结识关键人物后<br>即可在此对话</span></div>`;
-  }else{
-    h='<div class="ct-list">'+avail.map((c,i)=>{
-      const key=contactKey(c.id),done=S.dlg[key]&&(S.dlg[key].log||[]).length>1;
-      return `<div class="ct-item" onclick="openChat('${c.id}')"><div class="ct-av">${c.av}</div><div class="cc"><div class="cn">${c.n}</div><div class="cr">${c.ro}</div><div class="cl">${c.last}</div></div><span class="ct-time">${CT_TIME[i]||''}</span>${done?'<span class="cbadge" style="position:absolute;bottom:9px;right:6px">已聊</span>':''}</div>`;
-    }).join('')+'</div>';
-    const locked=list.filter(c=>!(c.need||[]).every(n=>S.cf.includes(n)));
-    if(locked.length)h+=`<div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;padding:12px 0">还有 ${locked.length} 位联系人待剧情解锁…</div>`;
-  }
-  el.innerHTML=h;
-}
+function renderRPContacts(){const el=g('rpc-contacts');if(!el)return;const list=CONTACTS[S.pov]||[];const ok=c=>(c.need||[]).every(n=>S.cf.includes(n));const avail=list.filter(ok),locked=list.filter(c=>!ok(c));const needLabel=c=>(c.need||[]).map(n=>(CL[n]&&CL[n].n)||n).join('、');let h='';if(avail.length===0){h+=`<div class="ct-empty">📇 ${S.pov==='shen'?'沈泽川':'萧驰野'} 暂无可联络之人<br><span style="font-size:10px">推进「案牍」剧情，结识下列人物后即可在此对话</span></div>`;}else{h+='<div class="ct-list">'+avail.map((c,i)=>{const key=contactKey(c.id),done=S.dlg[key]&&(S.dlg[key].log||[]).length>1;return `<div class="ct-item" onclick="openChat('${c.id}')"><div class="ct-av">${c.av}</div><div class="cc"><div class="cn">${c.n}</div><div class="cr">${c.ro}</div><div class="cl">${c.last}</div></div><span class="ct-time">${CT_TIME[i]||''}</span>${done?'<span class="cbadge" style="position:absolute;bottom:9px;right:6px">已聊</span>':''}</div>`;}).join('')+'</div>';}if(locked.length){h+='<div class="ct-locked-hd">🔒 待解锁 · '+locked.length+' 人</div><div class="ct-list">'+locked.map(c=>{return `<div class="ct-item locked"><div class="ct-av">${c.av}</div><div class="cc"><div class="cn">${c.n}</div><div class="cr">${c.ro}</div><div class="cl">需完成「${needLabel(c)}」后解锁</div></div><span class="ct-lock">🔒</span></div>`;}).join('')+'</div>';}el.innerHTML=h;}
 function openChat(cid){
   const key=contactKey(cid);if(!S.dlg[key])S.dlg[key]={log:[],used:[]};
   const st=S.dlg[key];
