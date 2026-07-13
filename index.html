@@ -378,7 +378,7 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 #rpanel.as-modal{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:min(430px,94vw);height:96vh;max-height:96vh;overflow-y:auto;border:1px solid var(--gold);border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,0.6),0 0 42px rgba(184,147,85,0.14)}
 #rpanel.as-modal .rptabs{display:none}
 @media(max-width:700px){#rpanel.as-modal{width:100vw;height:100vh;max-height:100vh;border-radius:0}}
-.ct-item{position:relative}.ct-item.locked{opacity:0.5;cursor:default;filter:grayscale(0.55)}.ct-locked-hd{font-size:10px;color:rgba(255,255,255,0.32);letter-spacing:2px;margin:12px 4px 4px;padding-top:8px;border-top:1px dashed rgba(184,147,85,0.15)}.ct-item .ct-lock{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.55}.dbtn.locked{opacity:0.42;cursor:not-allowed;filter:grayscale(0.5)}.gate-hint{font-size:11px;color:var(--gold-light);background:rgba(139,37,0,0.06);border:1px dashed rgba(184,147,85,0.3);border-radius:4px;padding:8px 10px;margin-bottom:8px;letter-spacing:1px;line-height:1.6}.tab.core{color:var(--gold-light);font-weight:600}.tab.core.on{color:var(--gold);border-bottom-color:var(--red)}.tab.aux{color:rgba(255,255,255,0.26);font-size:11px}.tab.aux:hover{color:var(--gold-light)}.tab.aux.on{color:var(--gold-light);border-bottom-color:var(--gold)}.tab-sep{width:1px;align-self:center;height:15px;background:rgba(184,147,85,0.3);margin:0 6px;flex:0 0 auto}</style>
+.ct-item{position:relative}.ct-item.locked{opacity:0.5;cursor:default;filter:grayscale(0.55)}.ct-locked-hd{font-size:10px;color:rgba(255,255,255,0.32);letter-spacing:2px;margin:12px 4px 4px;padding-top:8px;border-top:1px dashed rgba(184,147,85,0.15)}.ct-item .ct-lock{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.55}.dbtn.locked{opacity:0.42;cursor:not-allowed;filter:grayscale(0.5)}.gate-hint{font-size:11px;color:var(--gold-light);background:rgba(139,37,0,0.06);border:1px dashed rgba(184,147,85,0.3);border-radius:4px;padding:8px 10px;margin-bottom:8px;letter-spacing:1px;line-height:1.6}.tab.core{color:var(--gold-light);font-weight:600}.tab.core.on{color:var(--gold);border-bottom-color:var(--red)}.tab.aux{color:rgba(255,255,255,0.26);font-size:11px}.tab.aux:hover{color:var(--gold-light)}.tab.aux.on{color:var(--gold-light);border-bottom-color:var(--gold)}.tab-sep{width:1px;align-self:center;height:15px;background:rgba(184,147,85,0.3);margin:0 6px;flex:0 0 auto}.inv-story{margin-bottom:10px}#pnl-invest .cblock{margin-top:10px}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -447,8 +447,8 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
   <div id="casebar"></div>
   <div id="sfwrap">📖 <select id="sfilter" onchange="jumpScene(this.value)"><option value="">选择章节…</option></select></div>
   <div id="tabs">
-    <button class="tab core on" data-tab="dossier">① 📜 案情</button>
-    <button class="tab core" data-tab="invest">② 🔍 勘验</button>
+    <button class="tab core" data-tab="invest">① 🔍 勘验</button>
+    <button class="tab core on" data-tab="dossier">② 📜 案情</button>
     <button class="tab core" data-tab="deduction">③ 🧩 参详</button>
     <button class="tab core" data-tab="decisions">④ ⚖️ 决断</button>
     <span class="tab-sep"></span>
@@ -460,7 +460,7 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
   </div>
   <div id="ctn">
     <div class="pnl on" id="pnl-dossier"><div id="dossier-ctn"></div></div>
-    <div class="pnl" id="pnl-invest"><div id="invest-ctn"></div></div>
+    <div class="pnl" id="pnl-invest"><div id="invest-top"></div><div id="invest-ctn"></div></div>
     <div class="pnl" id="pnl-map">
       <div class="map-embed-bar"><span>🗺️ 古风大地图 · 点击区域跳转对应案卷</span><a class="map-newtab" href="地图.html" target="_blank">↗ 新窗口打开</a></div>
       <iframe id="map-frame" src="地图.html" title="国风世界地图"></iframe>
@@ -719,7 +719,7 @@ function switchTab(name){
   if(name==='map')setTimeout(()=>renderMap(),80);
   if(name==='deduction')renderDeduction();
   if(name==='cultivation')renderCult();
-  if(name==='invest')renderInvest();
+  if(name==='invest'){renderInvestTop();renderInvest();}
   if(name==='daily')renderDaily();
   if(name==='characters')renderChars();
   if(name==='decisions')renderDecs();
@@ -732,12 +732,8 @@ function renderDossier(){
   let h='';var _rel=caseRel(sc.c);if(_rel)h+=`<div class="rel-banner">💗 沈泽川 × 萧驰野 · <b>${_rel}</b></div>`;h+=`<div class="dcard">`;
   if(sc.cn)h+=`<div class="stamp">${sc.c==='case_ending'?'已封':'在查'}</div><div class="cid">暗阁 · ${sc.cn}</div>`;
   h+=`<h2>${sc.t}</h2>${sc.s?`<div class="cs">${sc.s}</div>`:''}<div class="nt">${sc.tx}</div>`;
-  if(sc.cl&&sc.cl.length>0){
-    h+=`<div class="cblock"><div class="clbl">🔍 现场勘查 · 点击逐一勘验线索</div><div class="inspect-grid">`;
-    sc.cl.forEach(cid=>{const fnd=S.cf.includes(cid),c=CL[cid];h+=`<button class="insp${fnd?' got':''}" onclick="inspectClue('${cid}')">${fnd?'🔎 '+c.n:'❓ 待勘查'}</button>`;});
-    h+=`</div><div id="insp-detail"></div></div>`;
-  }
-  if(sc.ch&&sc.ch.length>0){var _inv=!(sc.cl&&sc.cl.length>0)||sc.cl.every(function(_c){return S.cf.includes(_c)});var _got=(sc.cl||[]).filter(function(_c){return S.cf.includes(_c)}).length,_tot=(sc.cl||[]).length;h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;if(!_inv)h+=`<div class="gate-hint">🔒 请先完成现场勘查（已勘 ${_got}/${_tot} 处），方可作出办案抉择</div>`;sc.ch.forEach((ch,i)=>{
+  
+  if(sc.ch&&sc.ch.length>0){var _inv=!(sc.cl&&sc.cl.length>0)||sc.cl.every(function(_c){return S.cf.includes(_c)});var _got=(sc.cl||[]).filter(function(_c){return S.cf.includes(_c)}).length,_tot=(sc.cl||[]).length;h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;if(!_inv)h+=`<div class="gate-hint">🔒 请先在「①勘验」中完成现场勘查（已勘 ${_got}/${_tot} 处），再作决断</div>`;sc.ch.forEach((ch,i)=>{
     const rw=ch.at?`<span class="rw">${fmtAt(ch.at)}</span>`:(ch.ad?`<span class="rw">好感+${ch.ad}</span>`:'');
     h+=_inv?`<button class="dbtn" onclick="doChoice(${i})">${ch.t}${rw}</button>`:`<button class="dbtn locked" disabled>${ch.t}${rw}</button>`;
   });h+=`</div>`;}h+=`</div>`;
@@ -750,7 +746,7 @@ function renderDossier(){
 function inspectClue(cid){
   const c=CL[cid];if(!c)return;
   if(!S.cf.includes(cid)){unlockC(cid);toast('🔎 勘得线索：'+c.n);}
-  renderDossier();updateTopBar();
+  renderInvestTop();renderDossier();updateTopBar();
   const d=g('insp-detail');if(d)d.innerHTML=`<div class="insp-card"><b>🔎 ${c.n}</b><br>${c.d}</div>`;
 }
 function getNextCase(cur){const idx=CASES.findIndex(c=>c.id===cur);if(idx>=0&&idx<CASES.length-1)return CASES[idx+1];return null;}
@@ -1010,6 +1006,7 @@ const CASE_ITEM={case_chashi:{n:'半枚咬痕',d:'虎口齿痕的执念，结仇
 const EVI_ICON={'人证':'👤 人证','物证':'📦 物证','动机':'💡 动机','线索':'🔗 线索'};
 const CASENAME=new Proxy({},{get:function(t,k){return caseName(k);}});
 function foundKey(ci,i){return ci+'#'+i;}
+function renderInvestTop(){var el=g('invest-top');if(!el)return;var sc=SC[S.cs];if(!sc){el.innerHTML='';return;}var h='<div class="dcard inv-story">'+(sc.cn?'<div class="cid">暗阁 · '+sc.cn+'</div>':'')+'<h2>'+sc.t+'</h2>'+(sc.s?'<div class="cs">'+sc.s+'</div>':'')+'<div class="nt">'+sc.tx+'</div></div>';if(sc.cl&&sc.cl.length){var got=sc.cl.filter(function(x){return S.cf.includes(x);}).length;h+='<div class="cblock"><div class="clbl">🔍 现场勘查 · 点击逐一勘验线索（'+got+'/'+sc.cl.length+'）</div><div class="inspect-grid">';sc.cl.forEach(function(cid){var fnd=S.cf.includes(cid),c=CL[cid];h+='<button class="insp'+(fnd?' got':'')+'" onclick="inspectClue(&#39;'+cid+'&#39;)">'+(fnd?'🔎 '+c.n:'❓ 待勘查')+'</button>';});h+='</div><div id="insp-detail"></div></div>';}el.innerHTML=h;}
 function renderInvest(){
   const ci=S.ac,items=SEARCH[ci]||[];S.found=S.found||[];
   if(!items.length){g('invest-ctn').innerHTML='<div class="dl-empty" style="padding:40px;text-align:center;color:rgba(255,255,255,0.3)">本卷无需搜查。<br>请在「案牍」中推进剧情。</div>';return;}
