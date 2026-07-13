@@ -367,6 +367,17 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 @media(max-width:700px){#map-frame{height:70vh}}
 .rel-banner{display:block;text-align:center;font-size:12px;letter-spacing:1px;color:#f0c0a8;padding:8px 12px;margin-bottom:10px;border:1px solid rgba(176,90,58,0.35);border-radius:20px;background:linear-gradient(135deg,rgba(176,90,58,0.14),rgba(139,37,0,0.06))}
 .rel-banner b{color:#ffd9c4}
+#contactsEntry{display:flex;align-items:center;justify-content:center;gap:10px;margin:4px auto 8px;padding:9px 30px;width:fit-content;cursor:pointer;border:1px solid var(--gold);border-radius:30px;background:linear-gradient(135deg,rgba(184,147,85,0.14),rgba(139,37,0,0.09));box-shadow:0 0 18px rgba(184,147,85,0.15),inset 0 0 12px rgba(184,147,85,0.06);transition:all .3s;animation:ceGlow 3.2s ease-in-out infinite}
+#contactsEntry:hover{background:linear-gradient(135deg,rgba(184,147,85,0.24),rgba(139,37,0,0.16));box-shadow:0 0 30px rgba(184,147,85,0.32);transform:translateY(-1px)}
+#contactsEntry:active{transform:translateY(0) scale(0.98)}
+#contactsEntry .ce-ic{font-size:27px;line-height:1;filter:drop-shadow(0 0 6px rgba(184,147,85,0.55))}
+#contactsEntry .ce-tx{font-size:15px;letter-spacing:4px;color:var(--gold-light);font-weight:600}
+@keyframes ceGlow{0%,100%{box-shadow:0 0 16px rgba(184,147,85,0.14),inset 0 0 12px rgba(184,147,85,0.05)}50%{box-shadow:0 0 26px rgba(184,147,85,0.26),inset 0 0 12px rgba(184,147,85,0.08)}}
+#cmask{position:fixed;inset:0;background:rgba(0,0,0,0.62);z-index:59;opacity:0;pointer-events:none;transition:opacity .3s}
+#cmask.show{opacity:1;pointer-events:auto}
+#rpanel.as-modal{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:min(440px,92vw);height:auto;max-height:82vh;border:1px solid var(--gold);border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,0.6),0 0 42px rgba(184,147,85,0.14)}
+#rpanel.as-modal .rptabs{display:none}
+@media(max-width:700px){#rpanel.as-modal{width:94vw;max-height:86vh}}
 </style>
 </head>
 <body>
@@ -389,13 +400,13 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 <button id="exitb" onclick="backToCover()">✕ 退出</button>
 <div id="rptg">
   <button onclick="openRP('menu')">📖 目录</button>
-  <button onclick="openRP('contacts')">📇 通讯录</button>
   <button onclick="openRP('chars')">👥 人物</button>
   <button onclick="openRP('tl')">⏳ 时间线</button>
   <button onclick="openRP('rel')">🔗 关系</button>
 </div>
 
 <!-- RIGHT PANEL -->
+<div id="cmask" onclick="closeContacts()"></div>
 <div id="rpanel">
   <button class="rpc" onclick="closeRP()">✕</button>
   <div class="rpt" id="rp-title">目录</div>
@@ -427,6 +438,7 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
     <h1>将 进 酒</h1>
     <div class="sub">秘 卷 · 甲 字 第 柒 号</div>
   </div>
+  <div id="contactsEntry" onclick="openContacts()" title="通讯录"><span class="ce-ic">📇</span><span class="ce-tx">通讯录</span></div>
   <div id="toprow">
     <span>📜 <b id="tp-case">茶石关疑案</b></span>
     <span>🏅 <b id="tp-score">0</b></span>
@@ -451,7 +463,7 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
     <div class="pnl on" id="pnl-dossier"><div id="dossier-ctn"></div></div>
     <div class="pnl" id="pnl-invest"><div id="invest-ctn"></div></div>
     <div class="pnl" id="pnl-map">
-      <div class="map-embed-bar"><span>🗺️ 国风大地图 · 点击区域跳转对应案卷</span><a class="map-newtab" href="地图.html" target="_blank">↗ 新窗口打开</a></div>
+      <div class="map-embed-bar"><span>🗺️ 古风大地图 · 点击区域跳转对应案卷</span><a class="map-newtab" href="地图.html" target="_blank">↗ 新窗口打开</a></div>
       <iframe id="map-frame" src="地图.html" title="国风世界地图"></iframe>
     </div>
     <div class="pnl" id="pnl-deduction"><div style="color:var(--gold);font-size:12px;letter-spacing:2px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid rgba(184,147,85,0.1)">🔍 线索推敲 · 选择两条已获取的线索进行关联</div><div class="ded-grid" id="ded-grid"></div><div style="text-align:center;padding:8px;font-size:10px;color:rgba(255,255,255,0.2)" id="ded-hint">点击两条线索进行关联推敲</div><div class="ded-res" id="ded-res"></div></div>
@@ -1052,7 +1064,9 @@ function showEvi(ci,i){const it=(SEARCH[ci]||[])[i];if(!it)return;const el=g('in
 
 // ============ RIGHT PANEL ============
 function openRP(tab){g('rpanel').classList.add('open');switchRP(tab);}
-function closeRP(){g('rpanel').classList.remove('open');}
+function closeRP(){g('rpanel').classList.remove('open');g('rpanel').classList.remove('as-modal');var m=g('cmask');if(m)m.classList.remove('show');}
+function openContacts(){g('rpanel').classList.add('as-modal');var m=g('cmask');if(m)m.classList.add('show');switchRP('contacts');}
+function closeContacts(){g('rpanel').classList.remove('as-modal');var m=g('cmask');if(m)m.classList.remove('show');}
 function switchRP(tab){
   document.querySelectorAll('#rpanel .rtab').forEach(t=>t.classList.remove('on'));
   const tb=document.querySelector(`#rpanel .rtab[data-rp="${tab}"]`);if(tb)tb.classList.add('on');
