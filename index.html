@@ -378,7 +378,7 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 #rpanel.as-modal{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:min(430px,94vw);height:96vh;max-height:96vh;overflow-y:auto;border:1px solid var(--gold);border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,0.6),0 0 42px rgba(184,147,85,0.14)}
 #rpanel.as-modal .rptabs{display:none}
 @media(max-width:700px){#rpanel.as-modal{width:100vw;height:100vh;max-height:100vh;border-radius:0}}
-.ct-item{position:relative}.ct-item.locked{opacity:0.5;cursor:default;filter:grayscale(0.55)}.ct-locked-hd{font-size:10px;color:rgba(255,255,255,0.32);letter-spacing:2px;margin:12px 4px 4px;padding-top:8px;border-top:1px dashed rgba(184,147,85,0.15)}.ct-item .ct-lock{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.55}.dbtn.locked{opacity:0.42;cursor:not-allowed;filter:grayscale(0.5)}.gate-hint{font-size:11px;color:var(--gold-light);background:rgba(139,37,0,0.06);border:1px dashed rgba(184,147,85,0.3);border-radius:4px;padding:8px 10px;margin-bottom:8px;letter-spacing:1px;line-height:1.6}</style>
+.ct-item{position:relative}.ct-item.locked{opacity:0.5;cursor:default;filter:grayscale(0.55)}.ct-locked-hd{font-size:10px;color:rgba(255,255,255,0.32);letter-spacing:2px;margin:12px 4px 4px;padding-top:8px;border-top:1px dashed rgba(184,147,85,0.15)}.ct-item .ct-lock{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.55}.dbtn.locked{opacity:0.42;cursor:not-allowed;filter:grayscale(0.5)}.gate-hint{font-size:11px;color:var(--gold-light);background:rgba(139,37,0,0.06);border:1px dashed rgba(184,147,85,0.3);border-radius:4px;padding:8px 10px;margin-bottom:8px;letter-spacing:1px;line-height:1.6}.tab.core{color:var(--gold-light);font-weight:600}.tab.core.on{color:var(--gold);border-bottom-color:var(--red)}.tab.aux{color:rgba(255,255,255,0.26);font-size:11px}.tab.aux:hover{color:var(--gold-light)}.tab.aux.on{color:var(--gold-light);border-bottom-color:var(--gold)}.tab-sep{width:1px;align-self:center;height:15px;background:rgba(184,147,85,0.3);margin:0 6px;flex:0 0 auto}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -447,14 +447,15 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
   <div id="casebar"></div>
   <div id="sfwrap">📖 <select id="sfilter" onchange="jumpScene(this.value)"><option value="">选择章节…</option></select></div>
   <div id="tabs">
-    <button class="tab on" data-tab="dossier">📜 案牍</button>
-    <button class="tab" data-tab="invest">🔍 查案</button>
-    <button class="tab" data-tab="deduction">🔍 推敲</button>
-    <button class="tab" data-tab="cultivation">📿 修为</button>
-    <button class="tab" data-tab="daily">📅 日常</button>
-    <button class="tab" data-tab="characters">👥 人物</button>
-    <button class="tab" data-tab="decisions">⚔️ 抉择</button>
-    <button class="tab" data-tab="reports">💬 密函</button>
+    <button class="tab core on" data-tab="dossier">① 📜 案情</button>
+    <button class="tab core" data-tab="invest">② 🔍 勘验</button>
+    <button class="tab core" data-tab="deduction">③ 🧩 参详</button>
+    <button class="tab core" data-tab="decisions">④ ⚖️ 决断</button>
+    <span class="tab-sep"></span>
+    <button class="tab aux" data-tab="cultivation">📿 修习</button>
+    <button class="tab aux" data-tab="daily">🍵 起居</button>
+    <button class="tab aux" data-tab="characters">👥 群僚</button>
+    <button class="tab aux" data-tab="reports">📨 谍报</button>
     <button class="tab mtab" data-tab="map">🗺️ 舆图</button>
   </div>
   <div id="ctn">
