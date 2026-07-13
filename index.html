@@ -7,7 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=Ma+Shan+Zheng&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#100c0a;--paper:#f0e6d3;--red:#8b2500;--red-bright:#c0392b;--gold:#b8963c;--gold-light:#d4b96a;--ink:#2c1810;--text-mid:#5c4330;--border:#8b7355;--card-bg:#fff8ee}
+:root{--bg:#100c0a;--paper:#f0e6d3;--red:#8b2500;--red-bright:#c0392b;--gold:#b8963c;--gold-light:#d4b96a;--ink:#2c1810;--text-mid:#5c4330;--border:#8b7355;--card-bg:#fff8ee;--shen:#6a8caf;--xiao:#b05a3a}
 body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:radial-gradient(ellipse at 50% 10%,rgba(180,140,60,0.06) 0%,transparent 50%);color:var(--paper);min-height:100vh;overflow-x:hidden}
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 #app{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 20px;min-height:100vh;display:flex;flex-direction:column}
@@ -39,6 +39,16 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 #hdr h1{font-size:28px;font-weight:900;letter-spacing:8px;background:linear-gradient(180deg,#e8d5a0,#b8963c,#7a5c20);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 #hdr .sub{font-size:11px;letter-spacing:4px;background:var(--paper);color:var(--ink);display:inline-block;padding:2px 10px;margin-top:2px;border:1px solid rgba(139,55,0,0.12)}
 
+/* ==== POV SWITCH ==== */
+#povbar{display:flex;justify-content:center;align-items:center;gap:0;margin:10px 0 4px}
+#povsw{display:inline-flex;border:1px solid rgba(184,147,85,0.3);border-radius:20px;overflow:hidden;background:rgba(0,0,0,0.25)}
+#povsw button{padding:6px 20px;font-size:12px;letter-spacing:2px;cursor:pointer;font-family:inherit;background:transparent;border:none;color:rgba(255,255,255,0.4);transition:all 0.35s;position:relative}
+#povsw button .pv-ttl{font-weight:700}
+#povsw button .pv-sub{font-size:8px;letter-spacing:1px;display:block;opacity:0.7}
+#povsw button[data-pov="shen"].on{background:linear-gradient(135deg,rgba(106,140,175,0.35),rgba(106,140,175,0.15));color:#bcd4ea;box-shadow:inset 0 0 12px rgba(106,140,175,0.2)}
+#povsw button[data-pov="xiao"].on{background:linear-gradient(135deg,rgba(176,90,58,0.35),rgba(176,90,58,0.15));color:#f0c0a8;box-shadow:inset 0 0 12px rgba(176,90,58,0.2)}
+#povsw .pvdiv{width:1px;background:rgba(184,147,85,0.2)}
+
 /* ==== NAV ==== */
 #toprow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:11px;color:rgba(255,255,255,0.4);flex-wrap:wrap;gap:6px}
 #toprow span{color:var(--gold);font-weight:600;font-size:12px}
@@ -52,8 +62,8 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 #sfwrap select{padding:4px 8px;font-size:11px;background:rgba(0,0,0,0.3);border:1px solid rgba(184,147,85,0.15);color:var(--paper);font-family:inherit;min-width:160px;border-radius:2px;outline:none}
 
 /* ==== TABS ==== */
-#tabs{display:flex;border-bottom:1px solid rgba(184,147,85,0.1);align-items:center}
-.tab{padding:8px 16px;cursor:pointer;font-size:12px;letter-spacing:1px;color:rgba(255,255,255,0.3);border-bottom:2px solid transparent;transition:all 0.3s;background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit}
+#tabs{display:flex;border-bottom:1px solid rgba(184,147,85,0.1);align-items:center;flex-wrap:wrap}
+.tab{padding:8px 14px;cursor:pointer;font-size:12px;letter-spacing:1px;color:rgba(255,255,255,0.3);border-bottom:2px solid transparent;transition:all 0.3s;background:transparent;border-top:none;border-left:none;border-right:none;font-family:inherit}
 .tab:hover{color:var(--gold-light)}
 .tab.on{color:var(--gold);border-bottom-color:var(--red)}
 .tab.mtab{margin-left:auto;color:rgba(216,180,120,0.5);font-weight:600}
@@ -65,6 +75,9 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* Dossier */
+#pov-note{font-size:11px;letter-spacing:1px;padding:8px 12px;margin-bottom:10px;border-radius:3px;border-left:3px solid;line-height:1.7}
+#pov-note.shen{background:rgba(106,140,175,0.08);border-color:var(--shen);color:#bcd4ea}
+#pov-note.xiao{background:rgba(176,90,58,0.08);border-color:var(--xiao);color:#f0c0a8}
 .dcard{background:linear-gradient(135deg,var(--card-bg),#f5ead5);border:1px solid var(--border);border-radius:4px;padding:24px 26px;margin-bottom:14px;color:var(--ink);box-shadow:0 3px 18px rgba(0,0,0,0.3);position:relative}
 .dcard::before{content:'';position:absolute;top:6px;left:6px;right:6px;bottom:6px;border:1px solid rgba(139,37,0,0.05);pointer-events:none}
 .dcard .stamp{position:absolute;top:14px;right:14px;border:2px solid var(--red);color:var(--red);padding:3px 8px;font-size:10px;letter-spacing:2px;transform:rotate(8deg);opacity:0.5;font-family:'Ma Shan Zheng',cursive}
@@ -81,6 +94,10 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 .dbtn{display:block;width:100%;padding:9px 14px;margin-bottom:4px;background:rgba(184,147,85,0.04);border:1px solid var(--border);color:var(--ink);text-align:left;font-family:inherit;font-size:12px;cursor:pointer;letter-spacing:1px;transition:all 0.3s;border-radius:2px}
 .dbtn:hover{background:rgba(184,147,85,0.12);border-color:var(--gold);padding-left:18px}
 .dbtn::before{content:'▸ ';color:var(--red);font-size:9px}
+.dbtn .rw{float:right;font-size:9px;color:#8b6914;letter-spacing:0}
+.dbtn.locked{opacity:0.4;cursor:not-allowed}
+.dbtn.locked:hover{padding-left:14px;background:rgba(184,147,85,0.04);border-color:var(--border)}
+.dbtn.locked .rw{color:var(--red)}
 
 /* Map */
 #mc{position:relative;width:100%;border:1px solid rgba(139,100,60,0.25);border-radius:4px;overflow:hidden;background:#e8dcc8}
@@ -126,6 +143,98 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 .rpt-card .rt{font-size:12px;color:var(--gold-light)}
 .rpt-card .rp{font-size:10px;color:rgba(255,255,255,0.25);margin-top:3px}
 
+/* ==== CULTIVATION (attributes) ==== */
+#pnl-cultivation .cult-head{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid rgba(184,147,85,0.15);border-radius:4px;margin-bottom:14px;background:linear-gradient(135deg,rgba(0,0,0,0.2),rgba(184,147,85,0.03))}
+.cult-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-family:'Ma Shan Zheng',cursive;flex-shrink:0;border:2px solid}
+.cult-avatar.shen{background:rgba(106,140,175,0.15);border-color:var(--shen);color:#bcd4ea}
+.cult-avatar.xiao{background:rgba(176,90,58,0.15);border-color:var(--xiao);color:#f0c0a8}
+.cult-head .ci h3{font-size:17px;color:var(--gold-light);letter-spacing:2px}
+.cult-head .ci .cr{font-size:11px;color:rgba(255,255,255,0.4);margin:2px 0}
+.cult-head .ci .cl{font-size:11px;color:var(--gold)}
+.cult-head .ci .cl b{font-size:14px}
+.attr-row{margin-bottom:12px}
+.attr-row .al{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;color:var(--paper)}
+.attr-row .al .an{letter-spacing:2px}
+.attr-row .al .av{color:var(--gold);font-weight:600}
+.attr-bar{height:9px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;border:1px solid rgba(184,147,85,0.1)}
+.attr-bar .af{height:100%;border-radius:5px;transition:width 0.7s cubic-bezier(0.22,0.61,0.36,1)}
+.attr-bar.shen .af{background:linear-gradient(90deg,#4a6a8f,#8fb4d8)}
+.attr-bar.xiao .af{background:linear-gradient(90deg,#8f3a1a,#d88a6a)}
+.attr-desc{font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px;line-height:1.6}
+.cult-tip{font-size:11px;color:rgba(255,255,255,0.35);line-height:1.9;padding:12px;border:1px dashed rgba(184,147,85,0.2);border-radius:3px;margin-top:8px}
+
+/* ==== CONTACTS ==== */
+.ct-list{display:flex;flex-direction:column;gap:2px}
+.ct-item{display:flex;align-items:center;gap:12px;padding:12px 10px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:all 0.25s;border-radius:4px}
+.ct-item:hover{background:rgba(184,147,85,0.05)}
+.ct-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-family:'Ma Shan Zheng',cursive;flex-shrink:0;border:1.5px solid rgba(184,147,85,0.3);background:rgba(184,147,85,0.08);color:var(--gold-light)}
+.ct-item .cc{flex:1;min-width:0}
+.ct-item .cn{font-size:14px;color:var(--gold-light);letter-spacing:1px}
+.ct-item .cr{font-size:10px;color:rgba(255,255,255,0.3)}
+.ct-item .cl{font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px}
+.ct-item .cbadge{font-size:9px;color:#5cb85c;border:1px solid rgba(92,184,92,0.3);padding:1px 6px;border-radius:8px}
+.ct-empty{text-align:center;color:rgba(255,255,255,0.2);padding:30px;font-size:12px;line-height:2}
+.ct-item{position:relative}
+.ct-item .ct-time{position:absolute;top:12px;right:6px;font-size:10px;color:rgba(255,255,255,0.25)}
+.ct-item .cl{margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+
+/* ==== RIGHT PANEL POV SWITCH ==== */
+#rp-povsw{display:none;gap:0;margin-bottom:12px;border:1px solid rgba(184,147,85,0.25);border-radius:22px;overflow:hidden;background:rgba(0,0,0,0.25)}
+#rp-povsw button{flex:1;padding:8px 6px;font-family:inherit;background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;transition:all 0.3s;text-align:center;line-height:1.3}
+#rp-povsw button b{font-size:13px;letter-spacing:1px;display:block}
+#rp-povsw button i{font-size:9px;font-style:normal;opacity:0.7}
+#rp-povsw button[data-pov="shen"].on{background:linear-gradient(135deg,rgba(106,140,175,0.4),rgba(106,140,175,0.15));color:#bcd4ea}
+#rp-povsw button[data-pov="xiao"].on{background:linear-gradient(135deg,rgba(176,90,58,0.4),rgba(176,90,58,0.15));color:#f0c0a8}
+
+/* ==== RIGHT PANEL MENU (总目录) ==== */
+.menu-case{padding:9px 10px;margin-top:8px;font-size:13px;color:var(--gold-light);letter-spacing:1px;border:1px solid rgba(184,147,85,0.15);border-radius:4px;cursor:pointer;transition:all 0.25s;background:rgba(184,147,85,0.03)}
+.menu-case:hover{border-color:var(--gold);background:rgba(184,147,85,0.08)}
+.menu-case.on{border-color:var(--red);color:var(--gold);background:rgba(139,37,0,0.1)}
+.menu-chs{padding:2px 0 4px 8px}
+.menu-ch{padding:6px 10px;font-size:11px;color:rgba(255,255,255,0.4);cursor:pointer;border-left:1px solid rgba(184,147,85,0.12);transition:all 0.2s}
+.menu-ch:hover{color:var(--gold);border-color:var(--gold)}
+.menu-ch.lk{opacity:0.35;cursor:not-allowed}
+.menu-ch.lk:hover{color:rgba(255,255,255,0.4)}
+
+/* ==== ATTRIBUTE POINTS ==== */
+.cult-points{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--paper);padding:10px 12px;margin-bottom:12px;border:1px solid rgba(184,147,85,0.2);border-radius:4px;background:linear-gradient(135deg,rgba(184,147,85,0.08),transparent)}
+.cult-points b{font-size:16px;color:var(--gold);font-weight:700}
+.cult-points span{font-size:10px;color:rgba(255,255,255,0.35)}
+.ptbtn{width:22px;height:22px;border-radius:50%;border:1px solid var(--gold);background:rgba(184,147,85,0.1);color:var(--gold);font-family:inherit;font-size:13px;cursor:pointer;line-height:1;margin-left:6px;transition:all 0.2s;vertical-align:middle}
+.ptbtn:hover:not(:disabled){background:var(--gold);color:#1a1208}
+.ptbtn:disabled{opacity:0.25;cursor:not-allowed}
+.chat-inter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;padding-bottom:8px}
+.chat-inter .iract{padding:6px 12px;font-size:11px;font-family:inherit;background:rgba(176,90,58,0.08);border:1px solid rgba(184,147,85,0.2);color:var(--gold-light);border-radius:14px;cursor:pointer;transition:all 0.25s}
+.chat-inter .iract:hover{background:rgba(184,147,85,0.15);border-color:var(--gold)}
+
+/* chat */
+#chatview{display:none}
+#chatview.on{display:block}
+.chat-head{display:flex;align-items:center;gap:10px;padding:8px 4px 12px;border-bottom:1px solid rgba(184,147,85,0.12);margin-bottom:10px}
+.chat-head .cbk{background:none;border:none;color:var(--gold);font-family:inherit;font-size:12px;cursor:pointer;padding:4px 8px}
+.chat-head .cbk:hover{color:var(--gold-light)}
+.chat-head .ct-av{width:36px;height:36px;font-size:16px}
+.chat-head .chn{font-size:14px;color:var(--gold-light);letter-spacing:1px}
+.chat-head .chr{font-size:10px;color:rgba(255,255,255,0.3)}
+.chat-log{min-height:120px;max-height:52vh;overflow-y:auto;padding:6px 4px;margin-bottom:10px}
+.msg{display:flex;margin-bottom:12px;animation:fi 0.3s ease}
+.msg.npc{justify-content:flex-start}
+.msg.me{justify-content:flex-end}
+.bubble{max-width:78%;padding:9px 13px;font-size:12.5px;line-height:1.8;border-radius:12px;letter-spacing:0.5px;position:relative}
+.msg.npc .bubble{background:rgba(255,248,238,0.92);color:var(--ink);border-bottom-left-radius:3px}
+.msg.me .bubble{background:linear-gradient(135deg,#2a4056,#1c2c3c);color:#dfeaf2;border-bottom-right-radius:3px;border:1px solid rgba(106,140,175,0.3)}
+.pov-xiao .msg.me .bubble{background:linear-gradient(135deg,#4a2418,#3a1c12);color:#f0d8c8;border-color:rgba(176,90,58,0.3)}
+.msg .who{font-size:9px;color:rgba(255,255,255,0.3);margin:0 6px;align-self:flex-end}
+.chat-opts{display:flex;flex-direction:column;gap:6px;border-top:1px dashed rgba(184,147,85,0.15);padding-top:10px}
+.chat-opts .copt{text-align:left;padding:10px 14px;font-size:12px;font-family:inherit;background:rgba(184,147,85,0.05);border:1px solid rgba(184,147,85,0.2);color:var(--paper);cursor:pointer;border-radius:8px;letter-spacing:0.5px;transition:all 0.25s;line-height:1.6}
+.chat-opts .copt:hover{background:rgba(184,147,85,0.12);border-color:var(--gold)}
+.chat-opts .copt .orw{float:right;font-size:9px;color:#8b6914;margin-left:8px}
+.chat-opts .copt.locked{opacity:0.45;cursor:not-allowed}
+.chat-opts .copt.locked:hover{background:rgba(184,147,85,0.05);border-color:rgba(184,147,85,0.2)}
+.chat-opts .copt.locked .orw{color:var(--red)}
+.chat-end{text-align:center;font-size:11px;color:rgba(255,255,255,0.3);padding:14px;letter-spacing:2px}
+.chat-typing{font-size:11px;color:rgba(255,255,255,0.3);padding:4px 10px;letter-spacing:2px}
+
 /* Bottom bar */
 #bbar{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(184,147,85,0.08);font-size:10px;color:rgba(255,255,255,0.28);margin-top:12px;flex-wrap:wrap;gap:4px}
 #bbar .bv{color:var(--gold);font-weight:600}
@@ -147,8 +256,8 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 /* Exit & Panel toggles */
 #exitb{position:fixed;top:12px;left:16px;z-index:50;padding:4px 10px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(0,0,0,0.4);border:1px solid rgba(184,147,85,0.15);color:rgba(255,255,255,0.3);border-radius:2px;transition:all 0.3s;display:none}
 #exitb:hover{background:rgba(139,37,0,0.2);border-color:var(--red);color:var(--red-bright)}
-#rptg{position:fixed;top:12px;right:16px;z-index:50;display:none;gap:4px}
-#rptg button{padding:4px 10px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(0,0,0,0.4);border:1px solid rgba(184,147,85,0.15);color:rgba(255,255,255,0.3);border-radius:2px;transition:all 0.3s}
+#rptg{position:fixed;top:12px;right:12px;z-index:50;display:none;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:62vw}
+#rptg button{padding:4px 9px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(0,0,0,0.55);border:1px solid rgba(184,147,85,0.15);color:rgba(255,255,255,0.35);border-radius:2px;transition:all 0.3s}
 #rptg button:hover{background:rgba(184,147,85,0.1);border-color:var(--gold);color:var(--gold)}
 
 /* Right Panel */
@@ -182,13 +291,82 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 .rp-rel .rtype{font-size:9px;color:var(--red);border:1px solid rgba(139,37,0,0.3);padding:1px 5px;border-radius:2px;margin-left:6px}
 
 @media(max-width:700px){
-  .tab{padding:6px 9px;font-size:10px}
+  .tab{padding:6px 8px;font-size:10px}
   .dcard{padding:16px}
   .ded-grid{grid-template-columns:repeat(2,1fr)}
   #rpanel{width:100%;right:-100%}
   #cover .title-l{font-size:36px;letter-spacing:6px}
+  #povsw button{padding:5px 14px}
+  .bubble{max-width:84%}
   @keyframes tr{0%{opacity:0;letter-spacing:25px;filter:blur(4px)}100%{opacity:1;letter-spacing:6px;filter:blur(0)}}
 }
+.bigmap-link{display:block;text-align:center;padding:11px;margin-bottom:10px;font-size:12px;letter-spacing:2px;color:var(--gold-light);text-decoration:none;border:1px solid rgba(184,147,85,0.3);border-radius:4px;background:linear-gradient(135deg,rgba(184,147,85,0.1),rgba(139,37,0,0.05));transition:all 0.3s}
+.bigmap-link:hover{border-color:var(--gold);background:rgba(184,147,85,0.16);box-shadow:0 0 18px rgba(184,147,85,0.2)}
+.daily-head{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(184,147,85,0.15);border-radius:4px;margin-bottom:10px;background:linear-gradient(135deg,rgba(0,0,0,0.2),rgba(184,147,85,0.03))}
+.daily-head .ci{flex:1}
+.daily-head .ci h3{font-size:16px;color:var(--gold-light);letter-spacing:2px}
+.daily-head .dmeta{font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px}
+.daily-head .dmeta b{color:var(--gold);font-size:14px}
+.edot{display:inline-block;width:9px;height:9px;border-radius:50%;border:1px solid var(--gold);margin-left:2px;background:transparent;vertical-align:middle}
+.edot.on{background:var(--gold);box-shadow:0 0 6px rgba(184,147,85,0.6)}
+.nextday{padding:8px 12px;font-size:12px;font-family:inherit;background:rgba(139,37,0,0.15);border:1px solid rgba(184,147,85,0.3);color:var(--gold-light);border-radius:6px;cursor:pointer;transition:all .25s;white-space:nowrap}
+.nextday:hover{background:rgba(139,37,0,0.3);border-color:var(--gold)}
+.daily-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:12px;letter-spacing:1px}
+.act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.act-card{padding:14px 6px;background:rgba(184,147,85,0.05);border:1px solid rgba(184,147,85,0.2);border-radius:8px;cursor:pointer;text-align:center;transition:all .25s;font-family:inherit;color:var(--paper)}
+.act-card:hover{background:rgba(184,147,85,0.14);border-color:var(--gold);transform:translateY(-2px)}
+.act-card.dim{opacity:0.35;cursor:not-allowed}
+.act-card.dim:hover{transform:none;background:rgba(184,147,85,0.05);border-color:rgba(184,147,85,0.2)}
+.act-card .ai{font-size:22px;margin-bottom:5px}
+.act-card .an{font-size:13px;letter-spacing:1px;color:var(--gold-light)}
+.act-card .aa{font-size:10px;color:#8b6914;margin-top:3px}
+.daily-log-t{font-size:12px;color:var(--gold);letter-spacing:2px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(184,147,85,0.1)}
+.daily-log{font-size:11.5px;line-height:2;color:rgba(255,255,255,0.55)}
+.dl-line{padding:2px 0}
+.dl-empty{color:rgba(255,255,255,0.25);text-align:center;padding:16px}
+@media(max-width:700px){.act-grid{grid-template-columns:repeat(2,1fr)}.daily-head{flex-wrap:wrap}}
+
+#pnl-invest .inv-case{font-size:13px;color:var(--gold-light);letter-spacing:1px;margin-bottom:8px}
+.inv-prog{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:10px}
+.inv-prog b{color:var(--gold)}
+.inv-pbar{height:6px;background:rgba(255,255,255,0.06);border-radius:4px;margin-top:5px;overflow:hidden}
+.inv-pbar div{height:100%;background:linear-gradient(90deg,#8b6914,#d4b96a);border-radius:4px;transition:width .5s}
+.inv-hint{font-size:12px;line-height:1.9;color:rgba(255,255,255,0.55);padding:10px 12px;border:1px dashed rgba(184,147,85,0.25);border-radius:4px;margin-bottom:12px;background:rgba(184,147,85,0.03)}
+.inv-hint .hk{color:var(--gold);font-weight:700}
+.inv-searchbar{display:flex;gap:8px;margin-bottom:12px}
+.inv-searchbar input{flex:1;padding:10px 12px;font-size:13px;font-family:inherit;background:rgba(0,0,0,0.3);border:1px solid rgba(184,147,85,0.25);color:var(--paper);border-radius:6px;outline:none}
+.inv-searchbar input:focus{border-color:var(--gold)}
+.inv-searchbar button{padding:10px 18px;font-size:13px;font-family:inherit;background:linear-gradient(135deg,#8b2500,#6a1c00);border:1px solid rgba(184,147,85,0.3);color:var(--gold-light);border-radius:6px;cursor:pointer;transition:all .25s;white-space:nowrap}
+.inv-searchbar button:hover{background:linear-gradient(135deg,#a83000,#8b2500)}
+.inv-card{background:linear-gradient(135deg,var(--card-bg),#f5ead5);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:14px;color:var(--ink);animation:fi .3s ease}
+.inv-card .ic-h{display:flex;align-items:center;gap:8px;margin-bottom:6px;border-bottom:1px dashed var(--border);padding-bottom:6px}
+.inv-card .ic-t{font-size:10px;color:#fff;background:var(--red);padding:2px 8px;border-radius:10px}
+.inv-card .ic-n{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:1px}
+.inv-card .ic-i{font-size:12.5px;line-height:1.9;color:var(--text-mid)}
+.evi-title{font-size:12px;color:var(--gold);letter-spacing:2px;margin:6px 0 8px;padding-bottom:5px;border-bottom:1px solid rgba(184,147,85,0.1);display:flex;justify-content:space-between}
+.evi-title span{color:rgba(255,255,255,0.35);font-size:11px}
+.evi-board{margin-bottom:14px}
+.evi-cat{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.evi-ct{font-size:11px;color:rgba(255,255,255,0.4);min-width:56px;letter-spacing:1px}
+.evi-tag{font-size:11px;padding:3px 10px;background:rgba(184,147,85,0.1);border:1px solid rgba(184,147,85,0.25);color:var(--gold-light);border-radius:12px;cursor:pointer;transition:all .2s}
+.evi-tag:hover{background:rgba(184,147,85,0.2);border-color:var(--gold)}
+.evi-none{font-size:11px;color:rgba(255,255,255,0.2)}
+.inv-log{font-size:11px;line-height:1.9;color:rgba(255,255,255,0.5)}
+.inv-log>div{padding:1px 0}
+
+.inspect-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.insp{padding:7px 12px;font-size:11px;font-family:inherit;background:rgba(139,37,0,0.04);border:1px dashed var(--border);color:var(--ink);border-radius:4px;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.insp:hover{background:rgba(184,147,85,0.14);border-color:var(--gold)}
+.insp.got{border-style:solid;border-color:var(--gold);color:#8b6914;background:rgba(184,147,85,0.08)}
+.insp-card{margin-top:8px;padding:10px 12px;background:rgba(139,37,0,0.05);border-left:3px solid var(--red);border-radius:3px;font-size:12px;line-height:1.8;color:var(--ink);animation:fi .3s ease}
+.insp-card b{color:var(--red)}
+.map-embed-bar{font-size:11px;letter-spacing:1px;color:var(--gold-light);padding:8px 10px;margin-bottom:8px;border:1px solid rgba(184,147,85,0.2);border-radius:4px;background:rgba(184,147,85,0.05);display:flex;justify-content:space-between;align-items:center}
+.map-newtab{color:var(--gold);text-decoration:none;font-size:10px}
+.map-newtab:hover{color:var(--gold-light)}
+#map-frame{width:100%;height:78vh;min-height:420px;border:1px solid rgba(139,100,60,0.25);border-radius:4px;background:#1a1208;display:block}
+@media(max-width:700px){#map-frame{height:70vh}}
+.rel-banner{display:block;text-align:center;font-size:12px;letter-spacing:1px;color:#f0c0a8;padding:8px 12px;margin-bottom:10px;border:1px solid rgba(176,90,58,0.35);border-radius:20px;background:linear-gradient(135deg,rgba(176,90,58,0.14),rgba(139,37,0,0.06))}
+.rel-banner b{color:#ffd9c4}
 </style>
 </head>
 <body>
@@ -198,9 +376,7 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 <!-- COVER -->
 <div id="cover">
   <div class="inkd t">墨</div><div class="inkd b">墨</div>
-  <div class="seal-r"><span>暗阁<br>枢机处</span></div>
   <div class="title-l">将 进 酒</div>
-  <div class="sub">秘卷 · 甲字第柒号</div>
   <div class="dline"></div>
   <div class="btns">
     <button class="cbtn" onclick="startGame(false)">开 卷</button>
@@ -212,6 +388,8 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 <!-- EXIT + TOGGLES -->
 <button id="exitb" onclick="backToCover()">✕ 退出</button>
 <div id="rptg">
+  <button onclick="openRP('menu')">📖 目录</button>
+  <button onclick="openRP('contacts')">📇 通讯录</button>
   <button onclick="openRP('chars')">👥 人物</button>
   <button onclick="openRP('tl')">⏳ 时间线</button>
   <button onclick="openRP('rel')">🔗 关系</button>
@@ -220,13 +398,21 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 <!-- RIGHT PANEL -->
 <div id="rpanel">
   <button class="rpc" onclick="closeRP()">✕</button>
-  <div class="rpt" id="rp-title">人物档案</div>
+  <div class="rpt" id="rp-title">目录</div>
+  <div id="rp-povsw">
+    <button data-pov="shen" class="on" onclick="switchPOV('shen')"><b>沈泽川</b><i>待罪之人</i></button>
+    <button data-pov="xiao" onclick="switchPOV('xiao')"><b>萧驰野</b><i>离北骁将</i></button>
+  </div>
   <div class="rptabs">
-    <button class="rtab on" data-rp="chars" onclick="switchRP('chars')">👥 人物</button>
+    <button class="rtab" data-rp="menu" onclick="switchRP('menu')">📖 目录</button>
+    <button class="rtab" data-rp="contacts" onclick="switchRP('contacts')">📇 通讯录</button>
+    <button class="rtab" data-rp="chars" onclick="switchRP('chars')">👥 人物</button>
     <button class="rtab" data-rp="tl" onclick="switchRP('tl')">⏳ 时间线</button>
     <button class="rtab" data-rp="rel" onclick="switchRP('rel')">🔗 关系</button>
   </div>
-  <div class="rpcnt on" id="rpc-chars"></div>
+  <div class="rpcnt" id="rpc-menu"></div>
+  <div class="rpcnt" id="rpc-contacts"></div>
+  <div class="rpcnt" id="rpc-chars"></div>
   <div class="rpcnt" id="rpc-tl"></div>
   <div class="rpcnt" id="rpc-rel"></div>
 </div>
@@ -245,12 +431,17 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
     <span>📜 <b id="tp-case">茶石关疑案</b></span>
     <span>🏅 <b id="tp-score">0</b></span>
     <span>🔑 <b id="tp-clues">0/19</b></span>
+    <span>❤ <b id="tp-hp">5</b></span>
+    <span style="cursor:pointer" onclick="showItems()">🎒 <b id="tp-items">0</b></span>
   </div>
   <div id="casebar"></div>
   <div id="sfwrap">📖 <select id="sfilter" onchange="jumpScene(this.value)"><option value="">选择章节…</option></select></div>
   <div id="tabs">
     <button class="tab on" data-tab="dossier">📜 案牍</button>
+    <button class="tab" data-tab="invest">🔍 查案</button>
     <button class="tab" data-tab="deduction">🔍 推敲</button>
+    <button class="tab" data-tab="cultivation">📿 修为</button>
+    <button class="tab" data-tab="daily">📅 日常</button>
     <button class="tab" data-tab="characters">👥 人物</button>
     <button class="tab" data-tab="decisions">⚔️ 抉择</button>
     <button class="tab" data-tab="reports">💬 密函</button>
@@ -258,11 +449,14 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
   </div>
   <div id="ctn">
     <div class="pnl on" id="pnl-dossier"><div id="dossier-ctn"></div></div>
+    <div class="pnl" id="pnl-invest"><div id="invest-ctn"></div></div>
     <div class="pnl" id="pnl-map">
-      <div id="mc"><canvas id="mapc"></canvas><div id="mtt"></div></div>
-      <div id="minfo"></div>
+      <div class="map-embed-bar"><span>🗺️ 国风大地图 · 点击区域跳转对应案卷</span><a class="map-newtab" href="地图.html" target="_blank">↗ 新窗口打开</a></div>
+      <iframe id="map-frame" src="地图.html" title="国风世界地图"></iframe>
     </div>
     <div class="pnl" id="pnl-deduction"><div style="color:var(--gold);font-size:12px;letter-spacing:2px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid rgba(184,147,85,0.1)">🔍 线索推敲 · 选择两条已获取的线索进行关联</div><div class="ded-grid" id="ded-grid"></div><div style="text-align:center;padding:8px;font-size:10px;color:rgba(255,255,255,0.2)" id="ded-hint">点击两条线索进行关联推敲</div><div class="ded-res" id="ded-res"></div></div>
+    <div class="pnl" id="pnl-cultivation"><div id="cult-ctn"></div></div>
+    <div class="pnl" id="pnl-daily"><div id="daily-ctn"></div></div>
     <div class="pnl" id="pnl-characters"><div class="ch-grid" id="ch-grid"></div></div>
     <div class="pnl" id="pnl-decisions"><div id="dec-ctn"></div></div>
     <div class="pnl" id="pnl-reports"><div id="rpt-ctn"></div></div>
@@ -276,50 +470,170 @@ body{font-family:'Noto Serif SC',serif;background:var(--bg);background-image:rad
 
 <script>
 // ============ STATE ============
-const S={ac:'case_chashi',cs:'case_chashi_intro',aff:20,scr:0,cf:[],dm:[],dm2:{},ru:[],vs:[],cc:[]};
-const KEY='jjj_v5';
+const S={ac:'case_chashi',cs:'case_chashi_intro',aff:20,scr:0,cf:[],dm:[],dm2:{},ru:[],vs:[],cc:[],
+  pov:'shen',
+  attr:{shen:{quan:2,ren:3,wu:2,xin:2},xiao:{li:4,jue:3,mou:2,yi:3}},
+  pts:0,hp:5,hpMax:5,items:[],found:[],investLog:[],day:1,energy:4,energyMax:4,dailyLog:[],dlg:{}};
+const KEY='jjj_v6';
 
 // ============ DATA ============
-const CASES=[{id:'case_chashi',n:'茶石关疑案',e:'🏔️'},{id:'case_temple',n:'昭罪寺秘闻',e:'🏯'},{id:'case_encounter',n:'离北来使',e:'⚔️'},{id:'case_banquet',n:'宫宴风云',e:'👑'},{id:'case_snow',n:'雪夜密会',e:'❄️'}];
+const CASES=[{id:'case_chashi',n:'卷一·落魄入京',e:'🏔️',rel:'初见·结仇（咬痕）'},{id:'case_temple',n:'卷二·昭罪寺蛰伏',e:'🏯',rel:'撕咬中的试探'},{id:'case_encounter',n:'卷三·秋猎政变',e:'🏹',rel:'并肩历险·默契初生'},{id:'case_banquet',n:'卷四·情动结盟',e:'🤝',rel:'情愫暗生·结为同盟'},{id:'case_snow',n:'卷五·生死定情',e:'❤️',rel:'生死之间·定情'},{id:'case_censor',n:'卷六·封赏倒魏',e:'⚖️',rel:'并肩权斗·如臂使指'},{id:'case_zhongbo',n:'卷七·决裂出走',e:'🐎',rel:'生死与共·认定彼此'},{id:'case_plague',n:'卷八·经营中博',e:'🏙️',rel:'聚少离多的牵挂'},{id:'case_oldcase',n:'卷九·敦州旧案',e:'📜',rel:'并肩翻案·情比金坚'},{id:'case_final',n:'卷十·醉倒狂歌',e:'🍶',rel:'翻过那座山·白首HE'}];
 
-const SSEQ={case_chashi:['case_chashi_intro','case_chashi_detail','case_chashi_testimony'],case_temple:['case_temple_intro','case_temple_jigang','case_temple_qitaifu'],case_encounter:['case_encounter_intro','case_encounter_detail','case_encounter_xiao','case_encounter_tavern'],case_banquet:['case_banquet_intro','case_banquet_lu','case_banquet_xiao','case_banquet_assign'],case_snow:['case_snow_intro','case_snow_shen','case_snow_xiao','case_snow_fight','case_snow_question','case_snow_words']};
+const SSEQ={case_chashi:['case_chashi_intro','case_chashi_detail','case_chashi_meet','case_chashi_testimony'],case_temple:['case_temple_intro','case_temple_jigang','case_temple_jinyiwei','case_temple_qitaifu'],case_encounter:['case_encounter_intro','case_encounter_detail','case_encounter_xiao','case_encounter_tavern'],case_banquet:['case_banquet_intro','case_banquet_lu','case_banquet_xiao','case_banquet_assign'],case_snow:['case_snow_intro','case_snow_shen','case_snow_xiao','case_snow_fight','case_snow_question','case_snow_words'],case_censor:['case_censor_intro','case_censor_ye','case_censor_probe','case_censor_clash','case_censor_victory'],case_zhongbo:['case_zhongbo_intro','case_zhongbo_flee','case_zhongbo_clue','case_zhongbo_night','case_zhongbo_reveal'],case_plague:['case_plague_intro','case_plague_relief','case_plague_miss','case_plague_siege','case_plague_purge'],case_oldcase:['case_oldcase_intro','case_oldcase_dig','case_oldcase_care','case_oldcase_truth'],case_final:['case_final_intro','case_final_war','case_final_vow','case_final_throne','case_final_wedding']};
 
-const SLAB={case_chashi_intro:'开篇·茶石之谜',case_chashi_detail:'战报·边关守备录',case_chashi_testimony:'供词·沈泽川受审',case_temple_intro:'开篇·昭罪寺',case_temple_jigang:'人物·纪纲',case_temple_qitaifu:'人物·齐太傅',case_encounter_intro:'开篇·初遇',case_encounter_detail:'守卫录·擅闯',case_encounter_xiao:'档案·萧驰野',case_encounter_tavern:'酒楼·银子之困',case_banquet_intro:'开篇·宫宴',case_banquet_lu:'实录·陆广白',case_banquet_xiao:'实录·萧驰野',case_banquet_assign:'密议·巡防营',case_snow_intro:'开篇·雪夜',case_snow_shen:'视角·沈泽川',case_snow_xiao:'视角·萧驰野',case_snow_fight:'交锋·咬痕',case_snow_question:'一问·仇敌',case_snow_words:'言辞·刺痛'};
+const SLAB={case_chashi_intro:'开篇·茶石天坑',case_chashi_detail:'诏狱·杖毙之刑',case_chashi_meet:'雪地·初遇咬痕',case_chashi_testimony:'结仇·押入昭罪寺',case_temple_intro:'昭罪寺·齐太傅',case_temple_jigang:'师父·纪纲',case_temple_jinyiwei:'差职·锦衣卫',case_temple_qitaifu:'群僚·撕咬同门',case_encounter_intro:'秋猎·南林猎场',case_encounter_detail:'雨夜·行刺政变',case_encounter_xiao:'新帝·天琛登基',case_encounter_tavern:'政变后·默契',case_banquet_intro:'校场·山宿情动',case_banquet_lu:'火铳·兰舟红潮',case_banquet_xiao:'救驾·封镇抚',case_banquet_assign:'同舟·结盟',case_snow_intro:'查院·禁军查账',case_snow_shen:'疫病·昭罪寺',case_snow_xiao:'病榻·君臣言和',case_snow_fight:'生死·共枕定情',case_snow_question:'一问·此心',case_snow_words:'开寺·出樊笼',case_censor_intro:'进爵·封赏',case_censor_probe:'抄府·查旧案',case_censor_clash:'军粮案·真凶浮出',case_zhongbo_intro:'决裂·与阒都翻脸',case_zhongbo_clue:'南下·茨州立基',case_zhongbo_reveal:'认定·乱世同行',case_plague_intro:'招抚·茨州守备军',case_plague_relief:'施粥·白衣公子',case_plague_purge:'中毒·九年线头',case_oldcase_intro:'敦州·格达勒',case_oldcase_dig:'旧案·白茶之秘',case_oldcase_truth:'昭雪·鸿雁雪战',case_final_intro:'端州·女帝遇毒',case_final_war:'决战·薛修卓迎储',case_final_throne:'终盘·沈泽川登基',case_censor_ye:'夜话·帝京双璧',case_censor_victory:'权柄·昭雪之诺',case_zhongbo_flee:'亡命·雨夜出逃',case_zhongbo_night:'风雨·认定一夜',case_plague_miss:'重逢·奔袭归来',case_plague_siege:'边博营·敌袭',case_oldcase_care:'旧伤·生死守护',case_final_vow:'战前·生死之约',case_final_wedding:'大婚·离北拜天地',case_banquet_teaseA:'山宿·招惹',case_banquet_teaseB:'山宿·冷处理',case_oldcase_careA:'守护·示弱',case_oldcase_careB:'守护·逞强'};
 
-// Scene definitions as plain objects
+// Scene definitions
 const SC={};
-SC['case_chashi_intro']={c:'case_chashi',cn:'茶石关疑案',t:'案牍一：茶石之谜',s:'建兴五年冬 · 中博六州',tx:'<p>建兴五年冬，中博六州。</p><p>茶石关——大周抵御边沙十二部的天险，一夜之间被攻破。守军八千，<span class="hi">全军覆没</span>。</p><p><span class="gld">建兴王沈卫</span>坐镇中博，手握六州兵权，却在茶石关陷落后被指控<span class="hi">私通边沙</span>，致使天险失守。</p><p>唯一的活口，是沈卫的第八子——<span class="gld">沈泽川</span>。他在师兄<span class="gld">纪暮</span>的背负下逃出茶石关，但纪暮因失血过多，死在了风雪之中。</p><p>沈泽川随后被离北军俘虏，押赴阒都受审。</p><p><span class="cf">📌 茶石关陷落</span> <span class="cf">📌 纪暮战死</span> <span class="cf">📌 沈卫通敌指控</span></p>',cl:['c_chashi_fall','c_jimu_death','c_shenwei_treason'],ch:[{t:'翻阅边关战报，核查茶石关布防记录',nx:'case_chashi_detail',n:'深入调查'},{t:'直接查看沈泽川的供词',nx:'case_chashi_testimony',n:'直接取证'}]};
-SC['case_chashi_detail']={c:'case_chashi',cn:'茶石关疑案',t:'边关战报 · 茶石关守备录',s:'附：离北军接防记录',tx:'<p>战报显示：茶石关守军八千人，建兴五年十一月初七夜间遭遇突袭。边沙骑兵趁大雪封山之际，从<span class="hi">侧翼小道</span>绕过关隘正门。</p><p>这条小道只有中博高层将领知晓。沈卫作为主帅不可能不知。</p><p>另一份离北军接防记录显示：边沙骑兵撤退后，<span class="gld">离北铁骑</span>迅速接管了防线。离北王次子萧驰野亲率三千精骑，连夜奔袭百里，稳定了中博局势。</p><p><span class="cf">📌 离北军接防</span> <span class="cf">📌 唯一活口</span></p>',cl:['c_libei_arrive','c_shen_survivor'],ch:[{t:'继续查阅沈泽川的审讯记录',nx:'case_chashi_testimony',n:''}]};
-SC['case_chashi_testimony']={c:'case_chashi',cn:'茶石关疑案',t:'供词摘录 · 沈泽川',s:'建兴五年十一月十五 · 阒都大理寺',tx:'<p>"罪臣之子沈泽川，叩见陛下。"</p><p>供词中沈泽川陈述前后矛盾。他先说"不知父亲是否通敌"，后又说"茶石关之事另有隐情"。</p><p>审问官批注：<span class="hi">此人言语闪烁，似有所隐瞒。受刑后依然未改口，骨气非凡。</span></p><p><span class="gld">太后花氏</span>力主斩草除根。朝中有力量在保沈泽川。</p><p>沈泽川被免死罪，处廷杖三十，押入<span class="gld">昭罪寺</span>。</p><p><span class="cf">📌 廷杖三十</span> <span class="cf">📌 太后干政</span> <span class="cf">📌 花党权势</span></p>',cl:['c_court_beat','c_empress_dowager','c_hua_faction'],ch:[{t:'【案牍完结】前往昭罪寺秘闻',nx:'case_temple_intro',n:'茶石关案完',cc:'case_chashi'}]};
-SC['case_temple_intro']={c:'case_temple',cn:'昭罪寺秘闻',t:'案牍二：昭罪寺',s:'建兴五年腊月 · 阒都',tx:'<p><span class="gld">昭罪寺</span>——阒都最阴冷之处。关押着朝堂斗争的失败者与失势官员。</p><p>沈泽川被押入时浑身是伤，奄奄一息。但在这里，他遇到了两个改变他命运的人。</p><p>一个是<span class="gld">纪纲</span>——授业恩师，师兄纪暮的父亲。一个是<span class="gld">齐太傅</span>——被废的太子太傅，囚禁近二十年。</p><p>纪纲教他武功，齐太傅教他权谋。一文一武，开始了对沈泽川的精心打磨。</p><p><span class="cf">📌 昭罪寺</span></p>',cl:['c_zhaozui_temple'],ch:[{t:'查阅纪纲的资料',nx:'case_temple_jigang',n:''},{t:'查阅齐太傅的资料',nx:'case_temple_qitaifu',n:''}]};
-SC['case_temple_jigang']={c:'case_temple',cn:'昭罪寺秘闻',t:'人物档案 · 纪纲',s:'前建兴王府武师 | 纪家拳传人',tx:'<p><span class="gld">纪纲</span>，原建兴王府武师。相貌被火烧毁，面目狰狞，沉默寡言，忠义无双。</p><p>祖传<span class="gld">纪家拳法</span>本是沈卫亲授。如今他用这套拳法教沈泽川——一种轮回，一场宿命。</p><p>独子纪暮为救沈泽川而死。但纪纲从未流泪。他只是更沉默地教拳、煎药、守夜。</p><p><span class="cf">📌 师父纪纲</span> <span class="cf">📌 纪家拳法</span></p>',cl:['c_jigang_master','c_ji_quan'],ch:[{t:'查阅齐太傅的资料',nx:'case_temple_qitaifu',n:''}]};
-SC['case_temple_qitaifu']={c:'case_temple',cn:'昭罪寺秘闻',t:'人物档案 · 齐太傅',s:'前太子太傅 | 帝王之术传人',tx:'<p><span class="gld">齐惠连</span>，大周太子之师，因太子被废受牵连。</p><p>在昭罪寺中度过了漫长岁月——从壮年到白发，直到沈泽川出现。</p><p>"水满则溢，月盈则亏。帝王之术，便是控制水与月的平衡。"</p><p>他教沈泽川<span class="hi">《帝策》</span>和<span class="hi">《权经》</span>。</p><p><span class="cf">📌 齐太傅</span></p>',cl:['c_qi_taifu'],ch:[{t:'【案牍完结】前往离北来使',nx:'case_encounter_intro',n:'昭罪寺案完',cc:'case_temple'}]};
-SC['case_encounter_intro']={c:'case_encounter',cn:'离北来使',t:'案牍三：初遇',s:'建兴六年春 · 昭罪寺',tx:'<p>建兴六年春，离北军入都。</p><p><span class="gld">萧驰野</span>——离北王次子，率三千铁骑奔袭千里，声名鹊起。但离北王已战死，如今支撑离北的是萧驰野和兄长萧既明。</p><p>萧驰野第一次来到昭罪寺时，沈泽川正在院中练拳。</p><p>四目相对的那一刻，<span class="hi">命运的齿轮开始转动</span>。</p><p><span class="cf">📌 萧驰野入都</span></p>',cl:['c_xiao_arrives'],ch:[{t:'调阅昭罪寺当日的守卫记录',nx:'case_encounter_detail',n:''},{t:'查看萧驰野的军中档案',nx:'case_encounter_xiao',n:''}]};
-SC['case_encounter_detail']={c:'case_encounter',cn:'离北来使',t:'昭罪寺守卫录',s:'当值：王虎 | 异常记录：有',tx:'<p>守卫记录：当日午后一名"离北军官"以"巡查防务"为名进入昭罪寺。</p><p>离北军并无此权限。萧驰野是<span class="hi">擅自闯入</span>。</p><p>守卫王虎记录：<span class="hi">"那人体格魁梧，腰佩长刀。在沈泽川院内停留约一炷香，有打斗声传出。离开时嘴角带笑。"</span></p><p><span class="cf">📌 昭罪寺初遇</span></p>',cl:['c_first_meeting'],ch:[{t:'查看萧驰野的军中档案',nx:'case_encounter_xiao',n:''},{t:'探访萧驰野常去的酒楼打听消息',nx:'case_encounter_tavern',n:'追查行踪'}]};
-SC['case_encounter_tavern']={c:'case_encounter',cn:'离北来使',t:'东来酒楼 · 银子之困',s:'萧驰野与陆广白、晨阳等人的私下议论',tx:'<p>暗阁探子混入东来酒楼，听到了离北将领的私下谈话。</p><p><span class="gld">陆广白</span>拍着桌子叹气："<span class="hi">离北今年的俸禄还没发齐，弟兄们已经三个月没见饷银了。</span>边关那边，连草料都快买不起！"</p><p><span class="gld">晨阳</span>接着说："阒都户部扣着银子不给，说是中博兵败后税收不足。可我看太后的花党，哪个不是锦衣玉食？"</p><p>萧驰野靠在椅子上，放下酒杯："离北被逼到墙角了。打赢了没赏钱，打输了要问罪。<span class="hi">我爹战死的那天，户部的催粮文书比丧报还先到。</span>"</p><p>沉默许久，陆广白低声说："这阒都，是个吃人不吐骨头的地方。二公子，咱们不能在这里耗着。得找个在朝堂上能说话的人。"</p><p>萧驰野摩挲着刀柄，眼中闪过一丝暗芒。</p><p><span class="cf">📌 离北困境</span></p>',cl:['c_libei_pressure'],ch:[{t:'【案牍完结】前往宫宴风云',nx:'case_banquet_intro',n:'离北来使案完结',cc:'case_encounter'}]};
-SC['case_encounter_xiao']={c:'case_encounter',cn:'离北来使',t:'军中档案 · 萧驰野',s:'离北王次子 | 正四品骁骑将军',tx:'<p><span class="gld">萧驰野</span>。离北王萧方旬次子。</p><p>战功：率三千精骑一夜奔袭茶石关。封骁骑将军。</p><p>萧既明评语：<span class="hi">"野性难驯，但心思缜密。善饮酒，更善看人。"</span></p><p>密档附注：萧驰野在阒都频繁出入寺观酒楼，疑似<span class="hi">结交各方势力</span>。昭罪寺之行并非偶然。</p><p><span class="cf">📌 离北困境</span></p>',cl:['c_libei_pressure'],ch:[{t:'调阅昭罪寺当日的守卫记录',nx:'case_encounter_detail',n:''}]};
-SC['case_banquet_intro']={c:'case_banquet',cn:'宫宴风云',t:'案牍四：宫宴',s:'建兴六年二月初二 · 太和殿',tx:'<p>咸德帝设宴太和殿，实为各方势力角力。</p><p>沈泽川被押出昭罪寺，立于殿前接受满朝审视。</p><p><span class="gld">太后</span>欲杀他，<span class="gld">花思谦</span>附和。但<span class="gld">陆广白</span>——离北边关大将——站出来为他说了话。</p><p><span class="gld">萧驰野</span>的一句话彻底扭转局势。</p><p><span class="cf">📌 咸德帝宫宴</span></p>',cl:['c_banquet'],ch:[{t:'查看陆广白的发言记录',nx:'case_banquet_lu',n:''},{t:'查看萧驰野的发言记录',nx:'case_banquet_xiao',n:''}]};
-SC['case_banquet_lu']={c:'case_banquet',cn:'宫宴风云',t:'宫宴实录 · 陆广白',s:'太和殿起居注',tx:'<p><span class="gld">陆广白</span>奏道：</p><p>"沈泽川没有通敌，杀他名不正言不顺。若只因疑心便杀降臣之子，天下人如何看朝廷？"</p><p>此言代表<span class="hi">整个离北边军</span>的态度。</p><p><span class="cf">📌 陆广白求情</span></p>',cl:['c_lu_guangbai'],ch:[{t:'查看萧驰野的发言记录',nx:'case_banquet_xiao',n:''}]};
-SC['case_banquet_xiao']={c:'case_banquet',cn:'宫宴风云',t:'宫宴实录 · 萧驰野',s:'太和殿起居注',tx:'<p>太后与花党步步紧逼时，<span class="gld">萧驰野</span>开口：</p><p>"关起来，不如放出来。关在笼子里的老虎，咬人更疼。"</p><p>表面说"放人"，实则是<span class="hi">对太后的含蓄警告</span>。</p><p>起居注官记录：<span class="hi">"萧二公子言毕，太后面色微变。殿中落针可闻。"</span></p><p>沈泽川保住性命，被严令不得踏出昭罪寺。</p>',ch:[{t:'查看萧驰野被分配巡防营的调令',nx:'case_banquet_assign',n:''},{t:'【案牍完结】前往雪夜密会',nx:'case_snow_intro',n:'宫宴案完',cc:'case_banquet'}]};
-SC['case_banquet_assign']={c:'case_banquet',cn:'宫宴风云',t:'密议 · 巡防营调令',s:'宫宴后 · 咸德帝偏殿',tx:'<p>宫宴散后，咸德帝单独召见了萧驰野。</p><p>咸德帝坐在龙椅上，神色疲惫："<span class="hi">离北的困境朕知道。但朝中诸事，朕一人说了不算。</span>太后那边……"他没有说下去。</p><p>萧驰野单膝跪地："陛下，离北不要封赏，只求一条活路。"</p><p>咸德帝沉默许久，提笔写了一道调令：<span class="gld">命萧驰野暂领阒都巡防营，巡查都城治安，协管各寺观衙署。</span></p><p>"这巡防营的差事，"咸德帝低声说，"可以让你在阒都各处走动。包括——昭罪寺。"</p><p>萧驰野接过调令，嘴角微微上扬。皇帝在借他的手，试探太后的底线。</p><p>而他也需要这个机会——<span class="hi">可以名正言顺地再去见那个人。</span></p>',ch:[{t:'【案牍完结】前往雪夜密会',nx:'case_snow_intro',n:'宫宴案完结',cc:'case_banquet'}]};
-SC['case_snow_intro']={c:'case_snow',cn:'雪夜密会',t:'案牍五：雪夜',s:'建兴六年二月十五 · 昭罪寺',tx:'<p>宫宴后十余日，阒都大雪。</p><p>深夜，昭罪寺院墙上翻进来一个人——<span class="gld">萧驰野</span>。他喝了酒，浑身酒气，眼神亮得惊人。</p><p>不走正门，不通报姓名，直接翻墙而入。<span class="hi">一场私人的拜访。</span></p><p>沈泽川正在院中练拳。两人雪中对峙，月光拉长了影子。</p><p><span class="cf">📌 雪夜私访</span></p>',cl:['c_snow_night'],ch:[{t:'以沈泽川的视角体验这个夜晚',nx:'case_snow_shen',n:'',ad:0},{t:'以萧驰野的视角体验这个夜晚',nx:'case_snow_xiao',n:'',ad:0}]};
-SC['case_snow_shen']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 沈泽川视角',s:'昭罪寺 · 子时',tx:'<p>"萧二公子深夜来访，有何贵干？"你的声音比雪还冷。</p><p>他靠在墙上看了你很久。然后他动了——快得像离弦的箭。你拼尽全力招架，他一脚踢在你胸口。</p><p>月光下他眼里是<span class="hi">认真而危险的审视</span>。</p>',ch:[{t:'挣扎爬起来再次摆出拳架',nx:'case_snow_fight',n:'不屈不挠',ad:10},{t:'冷冷说："杀了我就能在太后面前邀功？"',nx:'case_snow_words',n:'言语反击',ad:5}]};
-SC['case_snow_xiao']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 萧驰野视角',s:'昭罪寺 · 子时',tx:'<p>你翻过那道墙时想：<span class="gld">沈泽川，你到底是个什么样的人？</span></p><p>宫宴上他低头那一瞬，你看清了他眼里的东西——不是恐惧，是克制的、等待时机的冷静。</p><p>这不像阶下囚。这像一柄还没出鞘的刀。</p><p>他倒下后看你的眼神——<span class="hi">让你心里某个地方被触动了。</span></p>',ch:[{t:'故意激怒他看能做到什么程度',nx:'case_snow_fight',n:'试探',ad:10},{t:'收手认真地问他："你恨谁？"',nx:'case_snow_question',n:'真诚',ad:12}]};
-SC['case_snow_fight']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 交锋',s:'昭罪寺 · 子时',tx:'<p>你再次扑上去。萧驰野一把扣住你的手，五指像铁钳。</p><p>"够狠。"他低声说，"我喜欢。"</p><p>你猛地低头一口咬在他虎口上。他没有抽手。</p><p>血顺着唇角流下。然后他笑了。</p><p>"老子记住你了，沈泽川。"</p><p><span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'【全部案牍完结】查看终章',nx:'case_ending',n:'全案完结',cc:'case_snow'}]};
-SC['case_snow_question']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 一问',s:'昭罪寺 · 子时',tx:'<p>"你恨谁？"萧驰野收手认真看着你。</p><p>你沉默很久："我恨的人很多。你想听哪个？"</p><p>他笑了，伸手把你拽起来。"一个一个说。我有的是时间。"</p><p>他虎口上有血。但他似乎不在意。</p><p><span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'【全部案牍完结】查看终章',nx:'case_ending',n:'全案完结',cc:'case_snow'}]};
-SC['case_snow_words']={c:'case_snow',cn:'雪夜密会',t:'雪夜 · 言辞',s:'昭罪寺 · 子时',tx:'<p>"杀了我就能在太后面前邀功了？"</p><p>萧驰野掐你喉咙的手顿了顿。他低声笑了。</p><p>"邀功？我要是想拿你邀功，宫宴上就不会开那个口。"</p><p>你咬了上去。他没有躲。</p><p>"够狠。老子记住你了，沈泽川。"</p><p><span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'【全部案牍完结】查看终章',nx:'case_ending',n:'全案完结',cc:'case_snow'}]};
-SC['case_ending']={c:'case_ending',cn:'终章',t:'暗阁 · 结案呈词',s:'甲字第七号 · 沈萧秘卷',tx:'<p>五卷案牍，至此封存。</p><p>从茶石关的血雪到昭罪寺的寒夜，从太和殿暗流到雪地咬痕——<span class="gld">沈泽川</span>与<span class="gld">萧驰野</span>的命运已被暗阁记录在案。</p><p>这不是结束。这甚至不是结束的开始。这只是——<span class="hi">序章的终结</span>。</p><p style="text-align:center;font-size:14px;letter-spacing:4px;color:var(--red);margin:12px 0;">—— 甲字第七号 · 封 ——</p><p style="text-align:center;color:var(--gold);">暗阁谨识 · 建兴六年二月</p>',ch:[{t:'重览秘卷（重新开始）',nx:'case_chashi_intro',n:'',rst:true}]};
+SC['case_chashi_intro']={c:'case_chashi',cn:'卷一·落魄入京',t:'茶石天坑',s:'咸德年间 · 中博六州',tx:'<p>咸德年间，中博六州。</p><p>建兴王<span class="gld">沈卫</span>兵败于东北茶石河，敦州一线随即沦陷，三万军士被活埋于<span class="hi">茶石天坑</span>——那是一道能吞人的天险，也成了一座三万人的坟。</p><p>兵败之后，沈卫<span class="hi">自焚</span>于府中。通敌的血债、失土的罪名，尽数落在了唯一的活口身上——他的第八子<span class="gld">沈泽川</span>，字兰舟，年方十五。</p><p>"沈卫兵败茶石河……你也在其中，为何只有你活着？"审问人拨着茶沫，慢条斯理。沈泽川眼神涣散，只反复咬着一句：<span class="hi">"沈卫没有通敌。"</span></p><p><span class="cf">📌 茶石天坑</span> <span class="cf">📌 沈卫自焚</span> <span class="cf">📌 通敌冤案</span></p>',cl:['c_chashi_fall','c_shenwei_treason'],ch:[{t:'查阅茶石关战报与布防',nx:'case_chashi_detail',n:'深查',at:{quan:1}},{t:'直击诏狱那一夜的初遇',nx:'case_chashi_meet',n:'',at:{ren:1}}]};
+SC['case_chashi_detail']={c:'case_chashi',cn:'卷一·落魄入京',t:'诏狱 · 杖毙之刑',s:'土袋压胸，几死还生',tx:'<p>诏狱灯火灰暗，麻绳捆得死紧。掌印<span class="gld">潘如贵</span>大步流星地走来，宣读完咸德帝口谕——锦衣卫立即动手，将沈泽川面朝地按倒。</p><p><span class="hi">土袋一层层压上前胸</span>，他仿佛被投进深潭，耳边嗡鸣、鼻息错乱，像溺水般无法呼吸。这是"杖毙"，不见血，却要人在窒息里慢慢死去。</p><p>大夫急得满头汗："药喂不进去，人是肯定熬不住的！"</p><p>可这少年，偏偏没死。</p><p><span class="cf">📌 潘如贵行刑</span> <span class="cf">📌 杖毙未死</span></p>',cl:['c_jail_beat'],ch:[{t:'看雪地里那场初遇',nx:'case_chashi_meet',n:'',at:{ren:1}}]};
+SC['case_chashi_meet']={c:'case_chashi',cn:'卷一·落魄入京',t:'雪地 · 初遇咬痕',s:'"沈卫是你老子？"',tx:'<p>战靴踩过积雪，绕到沈泽川身侧。来人用脚尖拨正他的脸，靴面蹭到血迹，头盔下的声音闷沉："<span class="gld">沈卫是你老子？</span>"</p><p>沈泽川齿间咬不住血，没有作答。那人不耐，一脚将他踹翻在雪里。</p><p>就在这时——沈泽川猛地抬头，<span class="hi">一口咬了下去</span>，死死咬住那人虎口，血流不止，却怎么也不肯松口。</p><p>这人，是离北王次子<span class="gld">萧驰野</span>。他非但没有抽手，反倒在剧痛里低低笑了一声。</p><p>💗 <span class="gld">恶狗对疯犬——初见即结仇，这道咬痕，是一切的开始。</span></p><p><span class="cf">📌 萧驰野</span> <span class="cf">📌 咬痕</span></p>',cl:['c_bite_scar'],ch:[{t:'看沈泽川的最终处置',nx:'case_chashi_testimony',n:'',at:{ren:1}}]};
+SC['case_chashi_testimony']={c:'case_chashi',cn:'卷一·落魄入京',t:'结仇 · 押入昭罪寺',s:'两个人的大梁子',tx:'<p>那一口，咬得萧驰野鲜血淋漓。自此两人结下大梁子，往后见面必撕咬。</p><p>朝中，太后与花党要斩草除根；却也有力量在暗处保他。大病垂死的沈泽川最终被免了死罪，<span class="gld">押入昭罪寺</span>幽禁。</p><p>而他心里，还压着另一笔账：师兄<span class="gld">纪暮</span>为把他从茶石背出，失血过多，死在了风雪之中。</p><p><span class="cf">📌 昭罪寺</span> <span class="cf">📌 纪暮之死</span></p>',cl:['c_zhaozui_temple','c_jimu_death'],ch:[{t:'【卷一完结】入昭罪寺蛰伏',nx:'case_temple_intro',n:'落魄入京·完',cc:'case_chashi',at:{ren:2}}]};
+SC['case_temple_intro']={c:'case_temple',cn:'卷二·昭罪寺蛰伏',t:'昭罪寺 · 齐太傅',s:'幽禁二十年的疯癫太傅',tx:'<p>沈泽川入昭罪寺那日，阒都难得晴天。白雪覆瓦，朱墙映梅，日光在他脚前斜出一条阴阳线。他大病初愈，瘦得见骨，十五岁的前尘旧梦被朔风吹得干干净净。</p><p>在这最阴冷之处，他遇见了被囚二十年、疯癫怨世的前太子太傅<span class="gld">齐惠连</span>。</p><p>"如今……如今我又能杀谁！"齐太傅恨遍了外边所有人，今夜却要说服自己，不去恨仇人之子。他把毕生所学的<span class="hi">帝王之术</span>——《帝策》《权经》——一点点，倒进这少年心里。</p><p><span class="cf">📌 齐太傅</span> <span class="cf">📌 帝王之术</span></p>',cl:['c_qi_taifu'],ch:[{t:'查阅看守纪纲的来历',nx:'case_temple_jigang',n:'',at:{wu:1}},{t:'看沈泽川如何领差入局',nx:'case_temple_jinyiwei',n:'',at:{quan:1}}]};
+SC['case_temple_jigang']={c:'case_temple',cn:'卷二·昭罪寺蛰伏',t:'师父 · 纪纲',s:'看守身份下的授业恩师',tx:'<p>昭罪寺的看守里，有一个推独轮车卸酒水、头裹粗布的人——<span class="gld">纪纲</span>。他是沈卫旧部，颈上有当年边沙入侵端州留下的<span class="hi">烧痕</span>，独子纪暮，正是为救沈泽川死在茶石。</p><p>沈泽川的镣铐被悄悄解开。纪纲以杂役之身，暗中教他拳脚、替他煎药、为他守夜。他从不提丧子之痛，只是把这少年往能活下去的方向，一寸寸地打磨。</p><p>白日读人心，夜里熬权谋——奄奄一息的阶下囚，正蜕成一柄未出鞘的刀。</p><p><span class="cf">📌 师父纪纲</span> <span class="cf">📌 端州烧痕</span></p>',cl:['c_jigang_master','c_ji_burn'],ch:[{t:'看沈泽川如何领差入局',nx:'case_temple_jinyiwei',n:'',at:{wu:1}}]};
+SC['case_temple_jinyiwei']={c:'case_temple',cn:'卷二·昭罪寺蛰伏',t:'差职 · 锦衣卫',s:'一步踏进阒都棋局',tx:'<p>正旦将至，阒都街市挂满乌金"闹蛾"。外官入都，少不了向掌印<span class="gld">潘如贵</span>供奉"冰敬"，照单交钱才能太平。萧驰野翻着册子冷笑："潘如贵好威风。"</p><p>就在这盘根错节的权钱里，沈泽川竟脱镣<span class="hi">领了锦衣卫的差职</span>——一个待罪之身，一步踏进了阒都的棋局中央。</p><p>他要的不是苟活，是把整座阒都，重新洗一遍牌。</p><p><span class="cf">📌 领锦衣卫差</span></p>',cl:['c_jinyiwei'],ch:[{t:'看他结识的这批人',nx:'case_temple_qitaifu',n:'',at:{xin:1}}]};
+SC['case_temple_qitaifu']={c:'case_temple',cn:'卷二·昭罪寺蛰伏',t:'群僚 · 撕咬同门',s:'才子新秀·风波暗涌',tx:'<p>朝东楼雅集上，肥胖的<span class="gld">奚鸿轩</span>做东，请来阒都才子新秀——冷面谋士<span class="gld">姚温玉</span>（字元琢）也在其列；国子监里，学生领袖<span class="gld">高仲雄</span>仰面大呼"不杀国贼，众怒难平"。</p><p>小福子溺死案、国子监学潮……一桩桩风波，都若隐若现地系在沈泽川身上。</p><p>而萧驰野酒后翻墙来寻他，撕咬照旧，却在试探里认了声"<span class="hi">同门师兄弟</span>"——"我比你年长，叫声师兄不亏。"</p><p>💗 <span class="gld">敌意里，掺进了看不懂的东西。</span></p><p><span class="cf">📌 结识群僚</span></p>',cl:['c_allies'],ch:[{t:'【卷二完结】前往秋猎政变',nx:'case_encounter_intro',n:'昭罪寺·完',cc:'case_temple',at:{quan:2}}]};
+SC['case_encounter_intro']={c:'case_encounter',cn:'卷三·秋猎政变',t:'秋猎 · 南林猎场',s:'咸德帝抱病设猎',tx:'<p>十月阒都下了几场雨，枫山叶红，已见薄霜。咸德帝的病随秋意略有起色，便提早筹备<span class="gld">南林猎场</span>秋猎。</p><p>圣驾坐镇主场，御前男儿们纵马博彩。皇子<span class="gld">李建恒</span>爬不上马，蹬了好几脚才翻身而上。</p><p>表面是君臣同乐，可懂棋的人都嗅到了不寻常——这一场秋猎，各方的刀，都已在鞘中出汗。</p><p><span class="cf">📌 南林秋猎</span></p>',cl:['c_qiuli'],ch:[{t:'盯住猎场当夜的异动',nx:'case_encounter_detail',n:'',at:{jue:1}},{t:'先看政变落定后的清算',nx:'case_encounter_xiao',n:'',at:{mou:1}}]};
+SC['case_encounter_detail']={c:'case_encounter',cn:'卷三·秋猎政变',t:'雨夜 · 行刺政变',s:'刀锋撞响的那一刻',tx:'<p>电闪雷鸣，雨泼成帘。疾风掠过草丛，火光扑朔的一瞬，<span class="hi">刀锋碰击的声音遽然撞响</span>——行刺与政变，同时发难。</p><p>席间乱作一团。内阁重臣<span class="gld">海良宜</span>不知哪来的力气，一头撞在潘如贵身上，喝道："<span class="hi">阉贼！勿伤吾主！</span>"</p><p><span class="gld">萧驰野中箭</span>，乔天涯、费盛俱卷入混战。泥水与血里，沈泽川与萧驰野被逼到同一处绝境——两条互相撕咬的命，第一次拴在了一起。</p><p>💗 <span class="gld">生死一线，默契初生。</span></p><p><span class="cf">📌 行刺政变</span> <span class="cf">📌 萧驰野中箭</span></p>',cl:['c_assassin','c_xiao_arrow'],ch:[{t:'看政变如何落定',nx:'case_encounter_xiao',n:'',at:{jue:1}},{t:'看两人劫后的暗流',nx:'case_encounter_tavern',n:'',at:{yi:1}}]};
+SC['case_encounter_xiao']={c:'case_encounter',cn:'卷三·秋猎政变',t:'新帝 · 天琛登基',s:'朝局第一次大洗牌',tx:'<p>秋猎的血雨落定，<span class="hi">咸德帝随后驾崩</span>。新帝<span class="gld">李建恒</span>登基，改元天琛。</p><p>锦衣卫因秋猎一事全部撤了腰牌，<span class="gld">纪雷、乔天涯</span>等从五品以上尽数下狱，与<span class="gld">花思谦、潘如贵</span>一并交三法司会审。</p><p>翻云覆雨之间，旧的秩序被掀了个底朝天——而这场洗牌里，沈泽川第一次真正落下了自己的棋子。</p><p><span class="cf">📌 天琛帝登基</span> <span class="cf">📌 花党会审</span></p>',cl:['c_emperor_die','c_tianchen'],ch:[{t:'看两人劫后的暗流',nx:'case_encounter_detail',n:'',at:{mou:1}}]};
+SC['case_encounter_tavern']={c:'case_encounter',cn:'卷三·秋猎政变',t:'政变后 · 默契',s:'各取所需的两个人',tx:'<p>新帝登基后，阒都的秋雨下个不停。旧瓦乌黑，白灯高悬。</p><p>沈泽川与萧驰野，一个要为父翻案、为自己而战，一个要为离北挣一条活路。没有共同的敌人时，他们就是彼此的敌人；可眼下，敌人多得数不清。</p><p>"你怎么不反驳？"萧驰野回头看他。沈泽川只道一声"哦"——那份心照不宣，比任何盟约都稳。</p><p>💗 <span class="gld">从撕咬到并肩，只隔着一场生死。</span></p><p><span class="cf">📌 乱世默契</span></p>',cl:['c_tacit'],ch:[{t:'【卷三完结】前往情动结盟',nx:'case_banquet_intro',n:'秋猎政变·完',cc:'case_encounter',at:{yi:2}}]};
+SC['case_banquet_intro']={c:'case_banquet',cn:'卷四·情动结盟',t:'校场 · 山宿情动',s:'比武、同宿、味道',tx:'<p>雪一下三四天。校场比武，山中同宿，温泉氤氲。</p><p>萧驰野把干巾帕罩在沈泽川头上一顿胡乱搓揉，甩他一脸水珠；沈泽川恨极了，用光着的脚去蹬他的椅子。水雾里，两人靠得极近——"果真是我身上的味道，太刺鼻了。"</p><p>掌心的胡茬、袖袋里那方帕子……有些东西，在撕咬的缝隙里，悄悄发了芽。</p><p>💗 <span class="gld">情愫，在打闹里第一次露头。</span></p><p><span class="cf">📌 校场山宿</span></p>',cl:['c_spar'],ch:[{t:'（主动）反手把水珠甩回去，招惹他',nx:'case_banquet_teaseA',n:'招惹',at:{xin:1},ad:4},{t:'（冷淡）板着脸，任他胡闹',nx:'case_banquet_teaseB',n:'冷处理',at:{ren:1},ad:2}]};
+SC['case_banquet_lu']={c:'case_banquet',cn:'卷四·情动结盟',t:'火铳 · 兰舟红潮',s:'情潮暗涌',tx:'<p>萧驰野给禁军新添<span class="gld">火铳</span>，又结交龙游商人，置办永泉港的珍珠、河州的碧玉。新帝李建恒如今很勤奋，日日请<span class="gld">海良宜</span>讲学，倒像真改了性子。</p><p>纪纲的身世（端州烧痕、与老将左千秋旧识）也在酒里露出一角。</p><p>而"<span class="hi">兰舟</span>"二字、那一抹红潮，让心止如泓的沈泽川，也终于动摇——他袖袋里躺着萧驰野的帕子，如同塞了把火，烧到了耳根。</p><p><span class="cf">📌 火铳</span> <span class="cf">📌 兰舟情动</span></p>',cl:['c_firegun','c_lanzhou'],ch:[{t:'看行刺案与救驾',nx:'case_banquet_xiao',n:'',at:{yi:1}}]};
+SC['case_banquet_xiao']={c:'case_banquet',cn:'卷四·情动结盟',t:'救驾 · 封镇抚',s:'獬豸铜牌',tx:'<p>一场针对新帝的<span class="gld">行刺案</span>骤起。李建恒惶恐地把人头踢开，缩进龙椅；沈泽川单膝跪地，正色道："皇上休怕，刺客已伏诛。微臣救驾来迟，罪该万死！"</p><p>他因此在明理堂受封<span class="hi">五品锦衣卫镇抚</span>，腰牌换成印着獬豸盘云的漆金铜牌——一面写"守卫"，一面写"随驾"。世家<span class="gld">韩丞</span>被他当作垫脚石踩过，心里不痛快，却也知他正得圣恩，万万不能结怨。</p><p><span class="cf">📌 救驾</span> <span class="cf">📌 锦衣卫镇抚</span></p>',cl:['c_rescue','c_zhenfu'],ch:[{t:'看萧沈如何摊牌结盟',nx:'case_banquet_assign',n:'',at:{mou:1}},{t:'【卷四完结】前往生死定情',nx:'case_snow_intro',n:'情动结盟·完',cc:'case_banquet',at:{jue:2}}]};
+SC['case_banquet_assign']={c:'case_banquet',cn:'卷四·情动结盟',t:'同舟 · 结盟',s:'一朝一野的盟约',tx:'<p>"试探只是问路石，坦诚就像宽衣解带的过程，我们循序渐进，才能有今日的促膝长谈。"萧驰野眼神冷峻。</p><p>沈泽川接道："没有共同的敌人时，他们就是自己的敌人。要让水碗不因偏重而砸翻，这比对付谁更难。"</p><p>从相看两厌，谈成了<span class="hi">同舟共济</span>——一个在朝、一个在野，两条殊途同归的路，第一次并作一条。</p><p>💗 <span class="gld">结为同盟——从此进退，两个人一起算。</span></p><p><span class="cf">📌 同舟结盟</span></p>',cl:['c_alliance'],ch:[{t:'【卷四完结】前往生死定情',nx:'case_snow_intro',n:'情动结盟·完',cc:'case_banquet',at:{jue:2}}]};
+SC['case_snow_intro']={c:'case_snow',cn:'卷五·生死定情',t:'查院 · 禁军查账',s:'把旧账翻个底朝天',tx:'<p>朝堂肃穆，落针可闻。萧驰野缓缓摘下自己的腰牌——他与沈泽川，正借<span class="gld">查院</span>之权，把阒都的旧账翻个底朝天。</p><p>随行御史<span class="gld">余小再</span>品阶不高却权重，急得满头大汗，在两人的唇枪舌剑间来回打圆场。禁军办差大院的灯火亮到天明，户部的人算得头晕眼花，把有问题的账目整理成册，连同行刺案一起呈到李建恒案头。</p><p>行刺案就此草草收尾，波涛汹涌，倏忽被风雪掩埋。</p><p><span class="cf">📌 查院查账</span></p>',cl:['c_chayuan'],ch:[{t:'以沈泽川视角走进这段日子',nx:'case_snow_shen',n:'',pov:'shen'},{t:'以萧驰野视角走进这段日子',nx:'case_snow_xiao',n:'',pov:'xiao'}]};
+SC['case_snow_shen']={c:'case_snow',cn:'卷五·生死定情',t:'疫病 · 昭罪寺',s:'煎药遮口的日子',tx:'<p>雨珠乱跳，泥点迸溅。阒都<span class="hi">疫病</span>大作，昭罪寺急匆匆地进出着人，遮雨棚下草药苦味四处弥漫，守炉的锦衣卫都以巾帕遮口。</p><p>皇宫严禁出入，人心惶惶。慕嫔慕如亲手守着病榻，凡事亲力亲为。</p><p>生死无常的时节，那个总与你撕咬的人，忽然成了你最怕失去的人。</p><p>💗 <span class="gld">越是命悬一线，越舍不得。</span></p><p><span class="cf">📌 疫病</span></p>',cl:['c_plague'],ch:[{t:'守在他病榻边',nx:'case_snow_fight',n:'厮守',ad:12,at:{xin:2}},{t:'冷静处置疫情与朝局',nx:'case_snow_words',n:'并进',ad:6,at:{quan:1}}]};
+SC['case_snow_xiao']={c:'case_snow',cn:'卷五·生死定情',t:'病榻 · 君臣言和',s:'冒雪探望',tx:'<p>雪连下了几日。萧驰野染了风寒又强撑面壁，最终被击倒在榻，病得起不了身。</p><p>李建恒冒雪出行，摆驾离北王府，携领诸臣，与萧驰野又做回了"好兄弟"。</p><p>可萧驰野心里挂着的，从来不是圣眷——是昭罪寺里那个瘦而倔强、会回头咬他一口的人。氅衣太大，顺着肩头滑下，把人整个裹进他的味道里。</p><p>💗 <span class="gld">"我好爱你啊。"——这话，迟早要说出口。</span></p><p><span class="cf">📌 病榻言和</span></p>',cl:['c_reconcile'],ch:[{t:'收手，认真问他此心',nx:'case_snow_question',n:'真心',ad:12,at:{yi:2}},{t:'守在他身边不再走',nx:'case_snow_fight',n:'厮守',ad:12,at:{yi:1}}]};
+SC['case_snow_fight']={c:'case_snow',cn:'卷五·生死定情',t:'生死 · 共枕定情',s:'情潮坦诚相见',tx:'<p>宿雨初歇，被褥间潮湿的暧昧犹存。</p><p>生死之间，情潮再压不住——撕扯化作抚触，较量化作亲吻。年富力强的坦诚坦荡相见，<span class="hi">共枕、云雨</span>，把餍足感越推越远，变成食髓知味后的意犹未尽。</p><p>从见面撕咬，到肌肤相亲；从大梁子，到再难分开。</p><p>💗 <span class="gld">定情——恶狗与疯犬，认了彼此。</span></p><p><span class="cf">📌 共枕定情</span></p>',cl:['c_dingqing'],ch:[{t:'【卷五完结】疫后开寺，走出昭罪寺',nx:'case_snow_words',n:'',at:{ren:1}}]};
+SC['case_snow_question']={c:'case_snow',cn:'卷五·生死定情',t:'一问 · 此心',s:'"你恨谁？我帮你记着。"',tx:'<p>"你恨谁？"萧驰野收手，认真地看着他。</p><p>沈泽川沉默很久："我恨的人很多。你想听哪个？"</p><p>"一个一个说。我有的是时间。"他笑着，伸手把人拽起来——从此这条路，两个人一起走，一个仇一个仇地报。</p><p>💗 <span class="gld">此心已定。</span></p><p><span class="cf">📌 共枕定情</span></p>',cl:['c_dingqing'],ch:[{t:'【卷五完结】疫后开寺，走出昭罪寺',nx:'case_snow_words',n:'',at:{ren:1}}]};
+SC['case_snow_words']={c:'case_snow',cn:'卷五·生死定情',t:'开寺 · 出樊笼',s:'萧任总督，沈出昭罪寺',tx:'<p>疫后论功，圣旨仓促而至。昭罪寺院里跪倒一片，传旨太监哈着腰："总督快快请起！"</p><p><span class="gld">萧驰野任总督</span>，而<span class="hi">沈泽川，终于走出了昭罪寺</span>。</p><p>困了这么久的两只囚鸟，一起飞出了这座笼子的第一道墙。前路仍是刀山，可这一次，他们并肩。</p><p>💗 <span class="gld">出笼同行。</span></p><p><span class="cf">📌 开寺出樊笼</span></p>',cl:['c_kaisi'],ch:[{t:'【卷五完结】前往封赏倒魏',nx:'case_censor_intro',n:'生死定情·完',cc:'case_snow'}]};
+SC['case_censor_intro']={c:'case_censor',cn:'卷六·封赏倒魏',t:'进爵 · 封赏',s:'定都侯与越级提拔',tx:'<p>春时植种，各部忙得焦头烂额。李建恒大行封赏：<span class="gld">萧驰野进定都侯</span>，<span class="gld">沈泽川越级提拔</span>为从五品——起初内阁不同意，是<span class="gld">岑愈</span>上奏力荐，<span class="gld">海良宜</span>也因疫病一事对沈泽川大为改观，才定了下来。</p><p>推杯换盏间，韩丞被酒水溅了满袍，狼狈不堪。昔日的落水狗，如今一开口便能要人性命。</p><p>💗 <span class="gld">两个人的手，第一次同时按在了朝堂的棋盘上。</span></p><p><span class="cf">📌 进爵封赏</span></p>',cl:['c_fengshang'],ch:[{t:'先与他说会儿话',nx:'case_censor_ye',n:'',at:{xin:1}},{t:'借势清查：抄薛府、拿奚鸿轩',nx:'case_censor_ye',n:'',at:{quan:1}}]};
+SC['case_censor_probe']={c:'case_censor',cn:'卷六·封赏倒魏',t:'抄府 · 查旧案',s:'诏狱与刑部的旧卷',tx:'<p>锦衣卫涌进<span class="gld">薛府</span>，各院被惊醒，女眷惶恐地挤作一团——沈泽川在他们眼里，就是吃人的狼虎。薛修易扑过去拽住兄长<span class="gld">薛修卓</span>，恨道："你做了什么，竟惹来锦衣卫！"</p><p><span class="gld">奚鸿轩</span>下狱，牵出诏狱与刑部积压的旧案。沈泽川光是诏狱的案子就查了半月，连刑部封了条子的旧卷也一并翻出。</p><p>他把军粮里的每一笔烂账，一页页往真相上钉。</p><p><span class="cf">📌 抄薛府</span> <span class="cf">📌 奚鸿轩下狱</span></p>',cl:['c_chaofu','c_xi_jail'],ch:[{t:'钉死中博兵败的真凶',nx:'case_censor_clash',n:'',at:{quan:1}}]};
+SC['case_censor_clash']={c:'case_censor',cn:'卷六·封赏倒魏',t:'军粮案 · 真凶浮出',s:'"沈卫没有通敌"',tx:'<p>真相水落石出：户部尚书<span class="gld">魏怀古</span>自咸德四年起，勾结厥西布政司<span class="gld">杨诚</span>，在督办军粮时低价收购、<span class="hi">高价倒卖给奚鸿轩</span>，再经水旱两路发往中博六州与虚海赚取暴利——正是<span class="hi">断沈卫粮草、致茶石关兵败的黑手</span>。</p><p>年逾五十的魏怀古被剥了官袍，戴着镣铐，隔着铁栏对萧驰野道："我的供词已经呈上去了。"</p><p>"沈卫没有通敌。"这句压了沈泽川半生的话，第一次有了昭告天下的铁证。</p><p><span class="cf">📌 魏怀古军粮案</span> <span class="cf">📌 中博真凶</span></p>',cl:['c_weihuaigu','c_grain_deal'],ch:[{t:'看倒魏之后的权柄之巅',nx:'case_censor_victory',n:'',at:{quan:1}}]};
+SC['case_zhongbo_intro']={c:'case_zhongbo',cn:'卷七·决裂出走',t:'决裂 · 与阒都翻脸',s:'一麻袋人头的宣告',tx:'<p>禁军贸然进军，仅存的锦衣卫带回<span class="hi">一麻袋人头</span>——这昭示着沈泽川、萧驰野与阒都<span class="hi">彻底决裂</span>，消息传回，满城轰动。</p><p>圣旨救不了兵，朝廷喂不饱马。既然这座笼子给不了活路，那就自己去挣。</p><p>💗 <span class="gld">最凶险的一步，两个人一起迈出去。</span></p><p><span class="cf">📌 与阒都决裂</span></p>',cl:['c_break'],ch:[{t:'亡命南奔',nx:'case_zhongbo_flee',n:'',at:{jue:1}}]};
+SC['case_zhongbo_clue']={c:'case_zhongbo',cn:'卷七·决裂出走',t:'南下 · 茨州立基',s:'又为乱世雄',tx:'<p>二人叛出阒都，南下<span class="gld">中博</span>。周桂按萧驰野的原话，在庭院里设了一桌家常菜接风。</p><p>他们以<span class="gld">茨州</span>为根基，招兵买马、整肃地方——"又为乱世雄"的经营，就此起步。</p><p>阒都的囚鸟，终于落到了自己的地上，脚下是实打实的土。</p><p><span class="cf">📌 茨州立基</span></p>',cl:['c_south'],ch:[{t:'风雨同舟的一夜',nx:'case_zhongbo_night',n:'',at:{yi:1}}]};
+SC['case_zhongbo_reveal']={c:'case_zhongbo',cn:'卷七·决裂出走',t:'认定 · 乱世同行',s:'殊途同归',tx:'<p>禁军的巡防队巡在大街小巷，萧驰野背着沈泽川走在阴影下的街沿。夏夜有些热，脊背相贴，谁也没说话。</p><p>没有家可回的沈泽川，和尚有离北可惦记的萧驰野，走上了同一条路——他们所求的目标，本就是一致的。</p><p>💗 <span class="gld">生死与共，此生认定。爱情，就是两个人相互适应、相互改变的过程。</span></p><p><span class="cf">📌 认定彼此</span></p>',cl:['c_recognize'],ch:[{t:'【卷七完结】前往经营中博',nx:'case_plague_intro',n:'决裂出走·完',cc:'case_zhongbo',at:{yi:2}}]};
+SC['case_plague_intro']={c:'case_plague',cn:'卷八·经营中博',t:'招抚 · 茨州守备军',s:'收服诸将',tx:'<p>软硬兼施，沈泽川收服茨州守将<span class="gld">周桂</span>，又带着几箱白银去招抚土匪出身的悍将<span class="gld">雷常鸣、雷惊蛰</span>与<span class="gld">历熊</span>——码得整整齐齐的银子，比刀子更能收心。</p><p>茨州守备军就此成军。沈泽川运筹于内，萧驰野奔袭于外，说三日必回便三日必回，深夜赶回城下，火把把城墙照得通明。</p><p>💗 <span class="gld">分头做事，聚少离多，牵挂日深。</span></p><p><span class="cf">📌 茨州守备军</span></p>',cl:['c_recruit'],ch:[{t:'城郊施粥，收拢民心',nx:'case_plague_relief',n:'',at:{xin:1}}]};
+SC['case_plague_relief']={c:'case_plague',cn:'卷八·经营中博',t:'施粥 · 白衣公子',s:'民心所向',tx:'<p>城外难民汇聚成海，不过一夜，"有人设棚施粥"的消息就传遍方圆十几里。</p><p>土匪来抢，怎料城外百姓群起而攻，跺脚声犹如惊雷，骂声哭声掺作洪水，把土匪淹没。</p><p>城内外争相打听：那施粥的<span class="hi">白衣公子</span>到底是谁？有说是周桂的幕僚，有说是孔岭的远侄……没人知道，那正是沈泽川。得民心者，方能得中博。</p><p><span class="cf">📌 施粥收民心</span></p>',cl:['c_congee'],ch:[{t:'等他奔袭归来',nx:'case_plague_miss',n:'',at:{xin:1}}]};
+SC['case_plague_purge']={c:'case_plague',cn:'卷八·经营中博',t:'中毒 · 九年线头',s:'边博营的火',tx:'<p>暗处的刀先落下——<span class="gld">姚温玉</span>在潘府<span class="hi">中毒</span>，大夫说不出所以然，命悬一线（照月郡主与潘远脱不了干系）。</p><p>与此同时，离北的<span class="gld">边博营</span>遭边沙突袭。萧既明在东南先后设沙一、沙二、沙三营做补给，禁军亢奋大于恐惧，狼虎般冲杀进去——这是他们迄今打得最痛快的一仗。</p><p>而一桩<span class="hi">九年前的旧案</span>线头，也在此时浮出。沈泽川意识到：中博兵败，不过是九年前那盘大棋落下的一子。</p><p><span class="cf">📌 姚温玉中毒</span> <span class="cf">📌 九年旧案</span> <span class="cf">📌 边博营敌袭</span></p>',cl:['c_yao_poison','c_ninecase'],ch:[{t:'【卷八完结】前往敦州旧案',nx:'case_oldcase_intro',n:'经营中博·完',cc:'case_plague',at:{mou:1}}]};
+SC['case_oldcase_intro']={c:'case_oldcase',cn:'卷九·敦州旧案',t:'敦州 · 格达勒',s:'战线推进',tx:'<p>战线推进到<span class="gld">敦州</span>。守将<span class="gld">澹台虎</span>舍不得离北的兄弟、更舍不得总督；叛将<span class="gld">颜何如</span>把宅院修得再牢，也挡不住攻城器械。</p><p>"<span class="hi">格达勒</span>"这个名字，反复出现在边沙人的口中——这已是沈泽川第二次听到。他隐隐觉得，这三个字，连着父亲那桩讳莫如深的旧案。</p><p><span class="cf">📌 敦州</span> <span class="cf">📌 格达勒</span></p>',cl:['c_dunzhou','c_gedale'],ch:[{t:'深挖沈卫的旧案',nx:'case_oldcase_dig',n:'',at:{mou:1}}]};
+SC['case_oldcase_dig']={c:'case_oldcase',cn:'卷九·敦州旧案',t:'旧案 · 白茶之秘',s:'追溯光诚帝朝',tx:'<p>旧案的底，一路追溯到<span class="hi">光诚帝时期</span>。</p><p>永宜年间，中博敦、端两州最为富庶，沈卫统号各州守备。而那几年里，沈卫竟与边沙女子<span class="gld">白茶</span>做了数年"<span class="hi">同床异梦</span>"的夫妻——两个人各怀心思，都在猜测对方到底是谁。</p><p>白茶、格达勒、光诚帝朝……父亲背负的，从不只是通敌的冤，而是一个被朝廷、被世家、被边沙层层缠绕的死局。</p><p><span class="cf">📌 白茶之秘</span> <span class="cf">📌 光诚帝朝</span></p>',cl:['c_baicha','c_guangcheng'],ch:[{t:'旧伤发作·他来守护',nx:'case_oldcase_care',n:'',at:{ren:1}}]};
+SC['case_oldcase_truth']={c:'case_oldcase',cn:'卷九·敦州旧案',t:'昭雪 · 鸿雁雪战',s:'沈卫非通敌',tx:'<p>铁证在握，<span class="hi">沈卫昭雪</span>指日可待。</p><p>而边关，<span class="gld">鸿雁山脉</span>暴风雪临袭战场，盐粒般的雪刮得"沙沙"作响，马道塌得厉害，粮车根本进不了交战地。哈森压境，离北还沉浸在悲痛里，边沙就再度来袭。</p><p>危急关头，启东大帅<span class="gld">戚竹音</span>只带着几十个亲兵冒雪赶到——为父翻案与为天下而战，终于合成了同一件事。</p><p>💗 <span class="gld">并肩翻案，情比金坚。</span></p><p><span class="cf">📌 沈卫昭雪</span> <span class="cf">📌 鸿雁雪战</span></p>',cl:['c_vindicate','c_snowbattle'],ch:[{t:'【卷九完结】前往醉倒狂歌',nx:'case_final_intro',n:'敦州旧案·完',cc:'case_oldcase',at:{quan:2}}]};
+SC['case_final_intro']={c:'case_final',cn:'卷十·醉倒狂歌',t:'端州 · 女帝遇毒',s:'终局将启',tx:'<p>年关一过，中博暴雪。战事转入<span class="gld">端州—洛山—茶石天坑</span>一线，与边沙十二部鏖战经年。二月萧驰野出兵端州，敦州澹台虎策应，北面萧既明遣邬子余率五千离北军南下。</p><p>阒都同时风云突变：储君<span class="gld">李剑霆</span>——一个"既非女子，也非男儿"、身世为世家所攻讦的储君——<span class="hi">中毒转危为安</span>，是贴身的<span class="gld">风泉</span>把要入口的药都亲尝了。丹城案里<span class="gld">潘蔺</span>之死牵动朝局，理财能臣<span class="gld">梁漼山</span>（崇深大人）登场。</p><p><span class="cf">📌 女帝遇毒</span> <span class="cf">📌 梁漼山</span></p>',cl:['c_lijt_poison','c_liangcuishan'],ch:[{t:'与边沙十二部决一死战',nx:'case_final_war',n:'',at:{jue:1}}]};
+SC['case_final_war']={c:'case_final',cn:'卷十·醉倒狂歌',t:'决战 · 薛修卓迎储',s:'狼鹰折翼',tx:'<p>端州守战、洛山鏖兵，离北群鹰横穿苍茫，浪淘雪襟一往无前。自端州打到<span class="gld">漠三川</span>、格达勒，<span class="gld">边沙十二部</span>覆灭，狼鹰折翼，<span class="hi">虹鹰旗霎时燃烧</span>。</p><p>阒都终盘：<span class="gld">薛修卓</span>（延清）迎储君回宫，向内阁出示<span class="hi">先帝朱批与秦王私章</span>，世家阵营裂解反转——他一把摘掉了韩丞的腰牌。戚竹音一度被指"叛"，启东百年威望悬于一线。</p><p><span class="cf">📌 决战边沙</span> <span class="cf">📌 薛修卓迎储君</span></p>',cl:['c_final_war','c_xue_welcome'],ch:[{t:'战前·与他定下生死之约',nx:'case_final_vow',n:'',at:{yi:1}}]};
+SC['case_final_throne']={c:'case_final',cn:'卷十·醉倒狂歌',t:'终盘 · 沈泽川登基HE',s:'醉倒狂歌中',tx:'<p>阒都决战，王宫烧了大半。雾锁殿丛，储君<span class="gld">李剑霆（女帝）</span>的身形很快被凄雨遮掩——<span class="hi">女帝薨逝</span>，如一朵散得太快的遗云。</p><p>乱局落定，众望所归，<span class="gld">沈泽川登基称帝</span>，帝号<span class="hi">淳圣帝</span>，改国号<span class="hi">大靖</span>。大靖三位异姓王：戚竹音虎踞启东、萧既明镇守离北，而<span class="gld">萧驰野</span>——离北狼旗下的"狼王"，执掌北疆军权。</p><p>"圣旨救不了我的兵，朝廷喂不饱我的马……<span class="hi">我要翻过那座山，我要为自己一战。此身虽是大靖身，可此心仍是大周心。</span>"</p><p>而大婚，办在<span class="gld">离北</span>的草野上——仪仗列于苍穹之下，皇帝沈泽川与萧驰野，在天地间拜了堂。</p><p>💗 <span class="gld">白首偕老。恶狗与疯犬，翻过所有的山，终成眷属。</span></p><p><span class="cf">📌 女帝薨逝</span> <span class="cf">📌 沈泽川登基·淳圣帝</span> <span class="cf">📌 离北大婚HE</span></p>',cl:['c_female_emperor','c_regent','c_he_wedding'],ch:[{t:'离北草野·拜天地',nx:'case_final_wedding',n:'',at:{yi:1}}]};
+SC['case_ending']={c:'case_ending',cn:'终章',t:'暗阁 · 结案呈词',s:'甲字第七号 · 沈萧秘卷',tx:'<p>十卷案牍，至此封存。</p><p>从茶石天坑的血雪、昭罪寺的寒夜，到秋猎的雷雨、都门的决裂，从中博的施粥到敦州的旧案，直至醉倒狂歌的登基与大婚——<span class="gld">沈泽川</span>与<span class="gld">萧驰野</span>的命运，已被暗阁一一记录在案。</p><p>💗 <span class="gld">恶狗对疯犬，殊途同归。将进酒，杯莫停。</span></p><p style="text-align:center;font-size:14px;letter-spacing:4px;color:var(--red);margin:12px 0;">—— 甲字第七号 · 封 ——</p>',ch:[{t:'重览秘卷（重新开始）',nx:'case_chashi_intro',n:'',rst:true}]};
+
+SC['case_censor_ye']={c:'case_censor',cn:'卷六·封赏倒魏',t:'夜话 · 帝京双璧',s:'封赏之后的第一个夜',tx:'<p>封赏落定，定都侯与新贵御史，一朝一野，从此再不必躲在暗处相见。</p><p>这夜萧驰野翻窗进来，脱了官靴往榻上一歪："出了昭罪寺，倒把人养金贵了。"沈泽川正在灯下看奚鸿轩递来的账册，头也不抬："看你的账。多事。"</p><p>可萧驰野凑过去，下巴抵在他肩上，胡茬蹭得人发痒。窗外月色正好——那些在昭罪寺里不敢说出口的话，如今终于有了安放的地方。</p><p>💗 <span class="gld">身份翻转之后，久别的亲昵。他们终于能光明正大地，属于彼此。</span></p><p><span class="cf">📌 帝京双璧</span></p>',cl:['c_dijing'],ch:[{t:'借势清查：抄薛府、拿奚鸿轩',nx:'case_censor_probe',n:'',at:{quan:1}}]};
+SC['case_censor_victory']={c:'case_censor',cn:'卷六·封赏倒魏',t:'权柄 · 昭雪之诺',s:'立于顶端的相视',tx:'<p>魏怀古下狱，军粮案铁证如山。沈泽川站在明理堂外，看满朝文武因他一句话而变色——这是他第一次，真切地握住了能替父翻案的权柄。</p><p>萧驰野走到他身侧，压低声音："算完这一笔，还有下一笔。这天下欠你沈家的账，我陪你一笔一笔地算。"</p><p>沈泽川侧过脸看他，眼里第一次有了不加掩饰的暖意。</p><p>💗 <span class="gld">并肩权斗，如臂使指——你的仇，就是我的仇。</span></p><p><span class="cf">📌 昭雪之诺</span></p>',cl:['c_victory'],ch:[{t:'【卷六完结】前往决裂出走',nx:'case_zhongbo_intro',n:'封赏倒魏·完',cc:'case_censor',at:{quan:2}}]};
+SC['case_zhongbo_flee']={c:'case_zhongbo',cn:'卷七·决裂出走',t:'亡命 · 雨夜出逃',s:'生死同路',tx:'<p>与阒都彻底翻脸的那一夜，风雨大作。禁军追兵在后，两人一路南奔，泥水溅满衣袍。</p><p>沈泽川旧伤未愈，几次险些从马上栽下，都被萧驰野一把捞住、按回怀里："抓紧我。掉下去，我可不回头捡。"话虽狠，手却稳得很。</p><p>亡命天涯的路上，他们把命交到了彼此手里。</p><p>💗 <span class="gld">生死同路——从此以后，要死，也是死在一处。</span></p><p><span class="cf">📌 雨夜出逃</span></p>',cl:['c_flee'],ch:[{t:'南下中博，另起炉灶',nx:'case_zhongbo_clue',n:'',at:{jue:1}}]};
+SC['case_zhongbo_night']={c:'case_zhongbo',cn:'卷七·决裂出走',t:'风雨 · 认定一夜',s:'背影相贴的安稳',tx:'<p>茨州初定的那夜，破庙里只点得起一盏灯。萧驰野背着沈泽川走过巡防的街沿，夏夜闷热，脊背相贴，谁也没说话。</p><p>"沈泽川，"萧驰野忽然开口，"你没有家了。"沈泽川沉默片刻："嗯。""那往后，"他把人往上颠了颠，"我就是你的家。"</p><p>灯火昏黄，照着两个再没有退路、却也再不孤单的人。</p><p>💗 <span class="gld">认定彼此——你没有的家，我给你。</span></p><p><span class="cf">📌 风雨同舟</span></p>',cl:['c_night7'],ch:[{t:'看两人如何认定彼此',nx:'case_zhongbo_reveal',n:'',at:{yi:1}}]};
+SC['case_plague_miss']={c:'case_plague',cn:'卷八·经营中博',t:'重逢 · 奔袭归来',s:'三日必回',tx:'<p>萧驰野说三日必回，就是三日必回。他深夜赶回茨州城下，城门早已为他开着，火把把城墙上下照得通明。</p><p>他一身风尘、满面征尘地翻身下马，先不去卸甲，径直来寻那个在灯下等他的人。"想我没有？"沈泽川递上热汤："汤要凉了。"——这便是想了。</p><p>聚少离多的日子里，每一次归来，都像重新拥有一次。</p><p>💗 <span class="gld">聚少离多的牵挂——他在外征战，她在内运筹，心却never离开过对方。</span></p><p><span class="cf">📌 奔袭归来</span></p>',cl:['c_miss'],ch:[{t:'边关急报：边博营遇袭',nx:'case_plague_siege',n:'',at:{jue:1}}]};
+SC['case_plague_siege']={c:'case_plague',cn:'卷八·经营中博',t:'边博营 · 敌袭',s:'狼虎之师',tx:'<p>边博营是离北边线上重要的补给地。萧既明为让前线保持体力，在东南先后设了沙一、沙二、沙三营做接应。</p><p>边沙骑兵趁夜突袭，禁军亢奋大于恐惧——他们迄今没打过一场痛快的仗，这一次，狼虎般地冲杀进去。刀子一轮轮逼过去，脚下泥土都被血溅得潮湿。</p><p>萧驰野立在阵前，眼里是沙场独有的锋芒。而千里之外，沈泽川正为他把每一分粮草算到毫厘。</p><p><span class="cf">📌 边博营敌袭</span></p>',cl:['c_biansha_siege'],ch:[{t:'暗处的刀也已出鞘',nx:'case_plague_purge',n:'',at:{mou:1}}]};
+SC['case_oldcase_care']={c:'case_oldcase',cn:'卷九·敦州旧案',t:'旧伤 · 生死守护',s:'你的命是我的',tx:'<p>敦州奔波，风雪苦寒。沈泽川右手的旧伤突然发作，火燎般的痛感让他清醒——张开手掌，两指竟不能自控地颤抖。</p><p>丁桃吓坏了。萧驰野赶来时，二话不说把人整个圈进怀里，声音压得极低却发着抖："查案的是我，卖命的凭什么是你？"</p><p>他握着那只不听使唤的手，一寸寸焐热。"沈泽川，你记着——<span class="hi">你的命是我的</span>。你死，得先问过我。"</p><p>💗 <span class="gld">情比金坚——他怕的从来不是天下，是失去这个人。</span></p><p><span class="cf">📌 生死守护</span></p>',cl:['c_care'],ch:[{t:'（示弱）难得地，靠进他怀里',nx:'case_oldcase_careA',n:'示弱',at:{ren:1},ad:8},{t:'（逞强）抽回手，冷声说"我没事"',nx:'case_oldcase_careB',n:'逞强',at:{wu:1},ad:3}]};
+SC['case_final_vow']={c:'case_final',cn:'卷十·醉倒狂歌',t:'战前 · 生死之约',s:'翻过这座山之后',tx:'<p>决战前夕，端州城头风雪未歇。两人并肩看着漫天苍茫，谁都清楚——这一仗之后，不是生，就是死。</p><p>"打完这仗，"萧驰野忽然道，"我带你回离北。草野上跑马，冰河上踏冰，没有阒都，没有那些烂账。"</p><p>沈泽川轻轻笑了："一言为定。"他伸出那只旧伤初愈的手，与萧驰野十指相扣——这是他们之间，最郑重的一次约定。</p><p>💗 <span class="gld">生死之约——翻过这座山，我要带你，去过我们自己的日子。</span></p><p><span class="cf">📌 生死之约</span></p>',cl:['c_vow'],ch:[{t:'看终盘落定',nx:'case_final_throne',n:'',at:{jue:1}}]};
+SC['case_final_wedding']={c:'case_final',cn:'卷十·醉倒狂歌',t:'大婚 · 离北拜天地',s:'醉倒狂歌中',tx:'<p>"皇帝大婚更难哪。"丁桃摇头晃脑。钦天监算了良辰，礼部为着"阒都给离北送、婚却要在离北成"发愁——可萧驰野一句"离北阔着呢"，便定了下来。</p><p>于是这场旷古未有的大婚，办在了<span class="gld">离北</span>的草野上。仪仗队列于苍穹之下，天高地阔，比任何金銮殿都气派。淳圣帝<span class="gld">沈泽川</span>一身喜色，与<span class="gld">萧驰野</span>在天地之间，实实在在地拜了堂——这才叫真正的"拜天地"。</p><p>从茶石天坑的血雪，到离北草野的红妆；从那一口结仇的咬痕，到今日十指相扣的白首。恶狗与疯犬，翻过了所有的山。</p><p>💗 <span class="gld">白首偕老。将进酒，杯莫停——这一杯，敬我们自己挣来的一生。</span></p><p><span class="cf">📌 离北大婚</span> <span class="cf">📌 HE</span></p>',cl:['c_wedding'],ch:[{t:'【全书完结】查看终章封存',nx:'case_ending',n:'全书完结',cc:'case_final'}]};
+
+SC['case_banquet_teaseA']={c:'case_banquet',cn:'卷四·情动结盟',t:'山宿 · 招惹',s:'（你选择主动）',tx:'<p>你反手一撩，把满掌的水珠尽数甩回萧驰野脸上。他被激得眼睛都睁不开，愣了一瞬，随即低低笑出声。</p><p>"沈兰舟，"他抹了把脸，声音沉下来，一步逼近，"你这是……在勾我？"</p><p>你没退，仰着下巴看他："怕了？"</p><p>他伸手扣住你的后颈，拇指摩挲着你的唇角，笑意里有藏不住的灼热："怕？我巴不得。"——水雾氤氲，两个人的呼吸缠到了一处。</p><p>💗 <span class="gld">你主动递出的这一寸，他贪心地要了一尺。</span></p>',cl:[],ch:[{t:'继续看火铳与兰舟一线',nx:'case_banquet_lu',n:'',at:{yi:1}}]};
+SC['case_banquet_teaseB']={c:'case_banquet',cn:'卷四·情动结盟',t:'山宿 · 冷处理',s:'（你选择冷淡）',tx:'<p>你板着脸，由着他胡闹，一言不发地系好衣带，转身要走。</p><p>萧驰野偏不让，一把拽住你的手腕，把人半圈进怀里："别装了。你袖袋里那方帕子，都揣了多少天了？"</p><p>你动作一僵。他凑到你耳边，气息滚烫："越冷，我越想把你捂化。沈泽川，你躲得过今天，躲不过我。"</p><p>你没回头，可耳根，到底还是红了。</p><p>💗 <span class="gld">你的冷，只是把火压进了心里——他偏要，一寸寸替你烧起来。</span></p>',cl:[],ch:[{t:'继续看火铳与兰舟一线',nx:'case_banquet_lu',n:'',at:{yi:1}}]};
+SC['case_oldcase_careA']={c:'case_oldcase',cn:'卷九·敦州旧案',t:'守护 · 示弱',s:'（你选择靠近他）',tx:'<p>难得地，你没有逞强。你顺着他的力道，把额头抵在他的肩窝里，闭上眼。</p><p>萧驰野整个人都僵了一下，随即收紧手臂，把你圈得更紧。他的下巴抵着你的发顶，声音闷闷的，带着劫后余生的后怕："……这才对。你在我这儿，不用撑着。"</p><p>你听见他心跳得很快。这个在沙场上从不皱眉的人，此刻却像捧着一件易碎的东西。</p><p>"萧驰野，"你极轻地说，"我不会死在你前头。"</p><p>💗 <span class="gld">你把最软的一面，只给他一个人看。</span></p>',cl:[],ch:[{t:'把铁证钉死，为父昭雪',nx:'case_oldcase_truth',n:'',at:{quan:1}}]};
+SC['case_oldcase_careB']={c:'case_oldcase',cn:'卷九·敦州旧案',t:'守护 · 逞强',s:'（你选择推开他）',tx:'<p>你抽回那只发颤的手，别过脸："我没事。案子要紧，别耽误工夫。"</p><p>萧驰野盯着你看了很久，忽然一把重新攥住你的手，力道大得发疼："沈泽川，你嘴硬给谁看？"</p><p>他把你那只手按在自己胸口，那里心跳擂鼓："你要是有个三长两短，这天下我替谁打？你先给我好好活着，其余的，都往后稍稍。"</p><p>你没再挣。逞强了这么多年，头一回，有人比你自己还怕你死。</p><p>💗 <span class="gld">你越是逞强，他越是把你护得死紧。</span></p>',cl:[],ch:[{t:'把铁证钉死，为父昭雪',nx:'case_oldcase_truth',n:'',at:{quan:1}}]};
 
 // Clues
-const CL={c_chashi_fall:{n:'茶石关陷落',d:'茶石天险一夜被边沙骑兵攻破'},c_jimu_death:{n:'纪暮战死',d:'纪纲之子为救沈泽川而死'},c_shenwei_treason:{n:'沈卫通敌指控',d:'建兴王被控私通边沙十二部'},c_shen_survivor:{n:'唯一活口',d:'沈泽川是唯一存活的人'},c_libei_arrive:{n:'离北军接防',d:'离北铁骑接管茶石关'},c_court_beat:{n:'廷杖三十',d:'沈泽川被处廷杖之刑'},c_empress_dowager:{n:'太后干政',d:'太后花氏欲杀沈泽川'},c_hua_faction:{n:'花党权势',d:'花思谦为太后心腹'},c_zhaozui_temple:{n:'昭罪寺',d:'沈泽川被关入昭罪寺'},c_jigang_master:{n:'师父纪纲',d:'纪纲是沈泽川授业恩师'},c_qi_taifu:{n:'齐太傅',d:'前太子太傅传授帝王之术'},c_ji_quan:{n:'纪家拳法',d:'纪纲传授源自沈卫的武功'},c_xiao_arrives:{n:'萧驰野入都',d:'离北王次子率军入都'},c_first_meeting:{n:'昭罪寺初遇',d:'萧驰野翻墙见沈泽川'},c_banquet:{n:'咸德帝宫宴',d:'沈泽川被押赴殿前'},c_lu_guangbai:{n:'陆广白求情',d:'离北大将为沈泽川求情'},c_snow_night:{n:'雪夜私访',d:'萧驰野酒后翻墙入寺'},c_bite_scar:{n:'咬痕',d:'沈泽川咬下虎口齿痕'},c_libei_pressure:{n:'离北困境',d:'离北王战死萧氏支撑'}};
+const CL={c_chashi_fall:{n:'茶石天坑',d:'茶石关兵败，三万军士活埋茶石天坑'},c_shenwei_treason:{n:'沈卫通敌冤',d:'沈卫自焚，背负通敌之名'},c_jail_beat:{n:'杖毙未死',d:'诏狱土袋压身，沈泽川几死还生'},c_bite_scar:{n:'咬痕',d:'萧驰野踹翻沈泽川，被反咬鲜血淋漓'},c_zhaozui_temple:{n:'昭罪寺',d:'沈泽川免死，押入昭罪寺幽禁'},c_jimu_death:{n:'纪暮之死',d:'师兄纪暮为救沈泽川死于茶石'},c_qi_taifu:{n:'齐太傅',d:'幽禁二十年的太傅授帝王之术'},c_jigang_master:{n:'师父纪纲',d:'看守身份的沈卫旧部，暗授武功'},c_ji_burn:{n:'端州烧痕',d:'纪纲颈上有边沙入侵端州的烧痕'},c_jinyiwei:{n:'领锦衣卫差',d:'沈泽川脱镣，入锦衣卫踏入棋局'},c_allies:{n:'结识群僚',d:'结识奚鸿轩、姚温玉、高仲雄'},c_qiuli:{n:'南林秋猎',d:'咸德帝抱病设秋猎，各方角力'},c_assassin:{n:'行刺政变',d:'南林雨夜行刺与政变并起'},c_xiao_arrow:{n:'萧驰野中箭',d:'政变中萧驰野中箭，与沈共渡'},c_emperor_die:{n:'咸德帝崩',d:'政变后咸德帝驾崩'},c_tianchen:{n:'天琛帝登基',d:'李建恒登基改元天琛'},c_tacit:{n:'乱世默契',d:'各取所需，从撕咬到并肩'},c_spar:{n:'校场山宿',d:'比武同宿，情愫初露'},c_firegun:{n:'火铳',d:'萧驰野给禁军新添火铳'},c_lanzhou:{n:'兰舟情动',d:'红潮暗涌，沈泽川为之动摇'},c_rescue:{n:'救驾',d:'沈泽川行刺案中挺身救驾'},c_zhenfu:{n:'锦衣卫镇抚',d:'受封五品锦衣卫镇抚·獬豸铜牌'},c_alliance:{n:'同舟结盟',d:'一朝一野，结为同盟'},c_chayuan:{n:'查院查账',d:'借查院与禁军彻查户部旧账'},c_plague:{n:'疫病',d:'阒都疫病大作，昭罪寺煎药'},c_reconcile:{n:'病榻言和',d:'天琛帝冒雪探萧驰野，君臣言和'},c_dingqing:{n:'共枕定情',d:'生死之间，两人定情'},c_kaisi:{n:'开寺出樊笼',d:'萧任总督，沈泽川走出昭罪寺'},c_fengshang:{n:'进爵封赏',d:'萧驰野进定都侯，沈越级提拔'},c_chaofu:{n:'抄薛府',d:'锦衣卫抄薛府，查旧案'},c_xi_jail:{n:'奚鸿轩下狱',d:'奚鸿轩下狱，牵出旧案'},c_weihuaigu:{n:'魏怀古军粮案',d:'户部尚书倒卖军粮，勾结杨诚'},c_grain_deal:{n:'中博真凶',d:'倒卖军粮断沈卫粮草，致茶石兵败'},c_break:{n:'与阒都决裂',d:'沈萧与阒都彻底翻脸'},c_south:{n:'茨州立基',d:'南下中博，以茨州为根基'},c_recognize:{n:'认定彼此',d:'殊途同归，此生认定'},c_recruit:{n:'茨州守备军',d:'招抚周桂、雷氏诸将，组建守备军'},c_congee:{n:'施粥收民心',d:'城郊施粥，白衣公子名传中博'},c_yao_poison:{n:'姚温玉中毒',d:'姚温玉在潘府中毒，命悬一线'},c_ninecase:{n:'九年旧案',d:'中博案牵出九年前的旧案'},c_dunzhou:{n:'敦州',d:'战线推进敦州，澹台虎守、颜何如叛'},c_gedale:{n:'格达勒',d:'边沙口中反复出现的格达勒'},c_baicha:{n:'白茶之秘',d:'沈卫曾与边沙女子白茶为夫妻'},c_guangcheng:{n:'光诚帝朝',d:'沈卫旧案追溯至光诚帝时期'},c_vindicate:{n:'沈卫昭雪',d:'铁证在握，沈卫非通敌'},c_snowbattle:{n:'鸿雁雪战',d:'鸿雁山暴雪血战，启东戚竹音援'},c_lijt_poison:{n:'女帝遇毒',d:'储君李剑霆中毒，风泉尝药转危'},c_liangcuishan:{n:'梁漼山',d:'理财能臣崇深大人登场'},c_final_war:{n:'决战边沙',d:'漠三川决胜，边沙十二部覆灭'},c_xue_welcome:{n:'薛修卓迎储君',d:'出示先帝朱批与秦王私章，世家反转'},c_female_emperor:{n:'女帝薨逝',d:'储君李剑霆薨，棋局落幕'},c_regent:{n:'沈泽川登基',d:'沈泽川登基称帝·淳圣帝·改国号大靖'},c_he_wedding:{n:'离北大婚HE',d:'皇帝大婚办在离北草野，与萧驰野拜天地'},c_empress_dowager:{n:'太后干政',d:'太后与花党把控朝政'},c_hua_faction:{n:'花党权势',d:'花思谦等世家同盟'},c_first_meeting:{n:'昭罪寺初遇',d:'萧驰野与沈泽川的初遇'},c_xiao_arrives:{n:'萧驰野入都',d:'离北王次子入阒都'},c_snow_night:{n:'雪夜',d:'昭罪寺的寒夜'},c_lu_guangbai:{n:'陆广白',d:'离北大将陆广白'},c_banquet:{n:'朝堂角力',d:'太和殿上的各方博弈'},c_libei_pressure:{n:'离北困境',d:'离北被逼到墙角'},c_libei_arrive:{n:'离北接防',d:'离北铁骑接防中博'},c_dijing:{n:'帝京双璧',d:'封赏后，一朝一野再不必躲藏'},c_victory:{n:'昭雪之诺',d:'倒魏成功，立于权柄之巅'},c_flee:{n:'雨夜出逃',d:'决裂后仓皇南奔，生死同路'},c_night7:{n:'风雨同舟',d:'出走路上认定彼此的一夜'},c_miss:{n:'奔袭归来',d:'萧驰野三日必回，风尘仆仆'},c_biansha_siege:{n:'边博营敌袭',d:'边沙突袭边博营，禁军狼虎冲杀'},c_care:{n:'生死守护',d:'沈泽川旧伤，萧驰野心疼守护'},c_vow:{n:'生死之约',d:'大战前夕两人的约定'},c_wedding:{n:'离北拜天地',d:'皇帝大婚办在离北草野'}};
 
 const DE=[{a:'c_chashi_fall',b:'c_shenwei_treason',t:'推敲：茶石之败',r:'<b>结论：</b>天险一夜被破疑点重重。是谁泄露了布防？'},{a:'c_jimu_death',b:'c_jigang_master',t:'推敲：纪家牺牲',r:'<b>结论：</b>纪家父子为沈家付出生命。纪纲的教导是纪暮遗志的延续。'},{a:'c_empress_dowager',b:'c_hua_faction',t:'推敲：朝堂格局',r:'<b>结论：</b>太后与花思谦同盟把控朝政。沈泽川是角力棋子。'},{a:'c_first_meeting',b:'c_xiao_arrives',t:'推敲：宿命相遇',r:'<b>结论：</b>离北需要盟友，沈泽川需要靠山。初遇已埋下纠缠的种子。'},{a:'c_snow_night',b:'c_bite_scar',t:'推敲：咬痕深意',r:'<b>结论：</b>一口咬下是标记，萧驰野不抽手是接纳。从此再难分开。'},{a:'c_lu_guangbai',b:'c_banquet',t:'推敲：宫宴博弈',r:'<b>结论：</b>陆广白发言是离北向太后示威。'},{a:'c_jigang_master',b:'c_qi_taifu',t:'推敲：昭罪双师',r:'<b>结论：</b>一文一武为沈泽川量身打造了炼狱中崛起之路。'},{a:'c_libei_pressure',b:'c_libei_arrive',t:'推敲：离北困局',r:'<b>结论：</b>萧氏兄弟临危受命。沈泽川也许是离北破局的关键。'}];
 
-const CHARS=[{id:'shen',n:'沈泽川',ro:'建兴王第八子·待罪之人',info:'茶石关唯一活口。被押入昭罪寺后外表看似文弱，实则心性坚韧异常。白天随纪纲练拳习武，夜晚听齐太傅传授帝王之术与权谋之道。短短数月，从一个奄奄一息的阶下囚变为暗中积蓄力量的复仇者。他的心中藏着对父亲沈卫的复杂情感、对师兄纪暮的愧疚，以及一个尚未明确的野心。',fa:'待罪之人'},{id:'xiao',n:'萧驰野',ro:'离北王次子·骁骑将军',info:'离北铁骑的少年将军。不拘小节，善饮好斗，在沙场上所向披靡。但父王萧方旬的突然离世让他一夜之间扛起了离北的半壁江山。他南下阒都表面是为朝廷效力，实则在暗中寻找能够帮助离北突围的盟友。昭罪寺里那个瘦弱却倔强的少年，让他看到了某种可能性——也看到了某个让他无法移开视线的人。',fa:'离北军'},{id:'jigang',n:'纪纲',ro:'沈泽川之师·纪家拳传人',info:'原建兴王府武师，相貌被火烧毁，面目狰狞，但为人沉默寡言，忠义无双。独子纪暮在茶石关为救沈泽川而死。他将丧子之痛深埋心底，把全部的精力投入到培养沈泽川之中——这不仅是对沈卫旧恩的报答，更是对儿子遗志的延续。',fa:'昭罪寺'},{id:'qi',n:'齐惠连',ro:'前太子太傅·帝王之术传人',info:'曾是大周太子的老师，因太子被废受牵连，囚禁昭罪寺近二十年。漫长岁月中他将毕生所学锤炼为一套完整的帝王之术——包括《帝策》和《权经》。在沈泽川身上他看到了复仇的希望。他教沈泽川朝堂上每一个人的弱点，以及如何在这场权力游戏中生存并取胜。',fa:'昭罪寺'},{id:'huasiqian',n:'花思谦',ro:'太后心腹·内阁辅臣',info:'太后花氏最信任的朝臣，朝中党羽众多。表面儒雅恭谨，实则城府极深。多次在朝堂上欲置沈泽川于死地，但并非单纯为了讨好太后——他深知沈家案背后牵涉的秘密可能动摇花党根基。',fa:'花党'},{id:'empress',n:'太后花氏',ro:'咸德帝生母·后宫之主',info:'实际掌控大周朝政的女人。对沈家充满不可调和的敌意，表面是为国除害，实则是为了掩盖一桩陈年旧事——沈卫手中曾握有她不可告人的秘密。沈泽川的存在是她最大的威胁。',fa:'花党'},{id:'lugb',n:'陆广白',ro:'离北边关大将',info:'离北军中重臣，性格沉稳刚毅。宫宴上挺身而出为沈泽川求情，代表的不是个人立场而是整个离北军方的态度。他的发言让花思谦一时语塞，也让朝堂看到了离北铁骑的分量。',fa:'离北军'},{id:'emperor',n:'咸德帝',ro:'大周天子',info:'名义上的天下之主，实则处处受太后掣肘。在沈泽川一案上态度暧昧——既不欲杀一个少年背负骂名，又不敢公然违逆太后。他真正的心思藏得很深。',fa:'皇室'},{id:'xiaoji',n:'萧既明',ro:'离北王长子',info:'萧驰野的兄长，离北实际的主事者。相比弟弟的张扬不羁，他更加稳重内敛，是离北真正的大脑。父王逝后一手支撑离北军政大局，默默为萧驰野的每一次行动创造条件。',fa:'离北军'}];
+const CHARS=[{id:'shen',n:'沈泽川',ro:'建兴王第八子·待罪之人',info:'茶石关唯一活口。被押入昭罪寺后外表看似文弱，实则心性坚韧异常。白天随纪纲练拳习武，夜晚听齐太傅传授帝王之术与权谋之道。短短数月，从一个奄奄一息的阶下囚变为暗中积蓄力量的复仇者。他的心中藏着对父亲沈卫的复杂情感、对师兄纪暮的愧疚，以及一个尚未明确的野心。',fa:'待罪之人'},{id:'xiao',n:'萧驰野',ro:'离北王次子·骁骑将军',info:'离北铁骑的少年将军。不拘小节，善饮好斗，在沙场上所向披靡。但父王萧方旬的突然离世让他一夜之间扛起了离北的半壁江山。他南下阒都表面是为朝廷效力，实则在暗中寻找能够帮助离北突围的盟友。昭罪寺里那个瘦弱却倔强的少年，让他看到了某种可能性——也看到了某个让他无法移开视线的人。',fa:'离北军'},{id:'jigang',n:'纪纲',ro:'沈泽川之师·纪家拳传人',info:'原建兴王府武师，相貌被火烧毁，面目狰狞，但为人沉默寡言，忠义无双。独子纪暮在茶石关为救沈泽川而死。他将丧子之痛深埋心底，把全部的精力投入到培养沈泽川之中——这不仅是对沈卫旧恩的报答，更是对儿子遗志的延续。',fa:'昭罪寺'},{id:'qi',n:'齐惠连',ro:'前太子太傅·帝王之术传人',info:'曾是大周太子的老师，因太子被废受牵连，囚禁昭罪寺近二十年。漫长岁月中他将毕生所学锤炼为一套完整的帝王之术——包括《帝策》和《权经》。在沈泽川身上他看到了复仇的希望。他教沈泽川朝堂上每一个人的弱点，以及如何在这场权力游戏中生存并取胜。',fa:'昭罪寺'},{id:'huasiqian',n:'花思谦',ro:'太后心腹·内阁辅臣',info:'太后花氏最信任的朝臣，朝中党羽众多。表面儒雅恭谨，实则城府极深。多次在朝堂上欲置沈泽川于死地，但并非单纯为了讨好太后——他深知沈家案背后牵涉的秘密可能动摇花党根基。',fa:'花党'},{id:'empress',n:'太后花香漪',ro:'咸德帝生母·后宫之主',info:'实际掌控大周朝政的女人。对沈家充满不可调和的敌意，表面是为国除害，实则是为了掩盖一桩陈年旧事——沈卫手中曾握有她不可告人的秘密。沈泽川的存在是她最大的威胁。',fa:'花党'},{id:'lugb',n:'陆广白',ro:'离北边关大将',info:'离北军中重臣，性格沉稳刚毅。宫宴上挺身而出为沈泽川求情，代表的不是个人立场而是整个离北军方的态度。他的发言让花思谦一时语塞，也让朝堂看到了离北铁骑的分量。',fa:'离北军'},{id:'emperor',n:'咸德帝',ro:'大周天子',info:'名义上的天下之主，实则处处受太后掣肘。在沈泽川一案上态度暧昧——既不欲杀一个少年背负骂名，又不敢公然违逆太后。他真正的心思藏得很深。',fa:'皇室'},{id:'xiaoji',n:'萧既明',ro:'离北王长子',info:'萧驰野的兄长，离北实际的主事者。相比弟弟的张扬不羁，他更加稳重内敛，是离北真正的大脑。父王逝后一手支撑离北军政大局，默默为萧驰野的每一次行动创造条件。',fa:'离北军'},{id:'yaowy',n:'姚温玉',ro:'沈泽川智囊·冷面谋士',info:'心思缜密、算无遗策，沈泽川在阒都最倚重的智囊之一，助其查案破局、洗牌朝堂。',fa:'沈党'},{id:'xihx',n:'奚鸿轩',ro:'沈泽川臂助',info:'为沈泽川查中博案、缉私证的重要助力，忠直敢言。',fa:'沈党'},{id:'xuexz',n:'薛修卓',ro:'世家干才·劲敌',info:'工部出身的世家能臣，才干不逊沈泽川，是其在朝堂上的镜像与劲敌，立场几经转折。',fa:'世家'},{id:'hancheng',n:'韩丞',ro:'世家重臣',info:'阒都世家的中坚，屡与沈泽川在朝堂交锋。',fa:'世家'},{id:'kongqiu',n:'孔湫',ro:'世家清流',info:'讲究清谈门第的世家人物，态度暧昧多变。',fa:'世家'},{id:'panrg',n:'潘如贵',ro:'司礼监掌印·权阉',info:'昭罪寺与内廷的掌印太监，翻云覆雨的权阉，早年曾主审沈泽川。',fa:'内廷'},{id:'haily',n:'海良宜',ro:'端州赈务要员',info:'端州疫病赈务中的关键人物，与沈泽川并肩治世。',fa:'沈党'},{id:'lijt',n:'李剑霆',ro:'隐于皇嗣的女帝·淳圣帝',info:'大周皇嗣中的真身，终局登基为淳圣帝——大周数百年来第一位女帝。沈泽川辅其登基、摄理朝政。',fa:'皇室'},{id:'gaozx',n:'高仲雄',ro:'九年旧案关键人物',info:'牵涉九年前旧案，后成为沈泽川逼近真相、昭雪沈卫的助力。',fa:'沈党'}];
 
 const RPTS=[{id:'r1',ti:'离北秘报：萧方旬之死',fr:'离北暗桩',uc:'case_chashi',tx:'离北王萧方旬并非战死沙场，而是在与阒都特使密会后"意外身亡"。暗阁已另立案调查。'},{id:'r2',ti:'太后的真正目标',fr:'宫中线人',uc:'case_chashi',tx:'太后欲杀沈泽川实为掩盖陈年旧事。沈卫曾握有太后不可告人的秘密。'},{id:'r3',ti:'齐太傅的秘密',fr:'昭罪寺暗线',uc:'case_temple',tx:'齐惠连传授的"帝王之术"包含完整针对太后与花党的布局方略。'},{id:'r4',ti:'萧驰野的真实目的',fr:'离北密探',uc:'case_encounter',tx:'萧驰野在寻找能对抗花党的盟友。沈泽川是他看中的人选。'},{id:'r5',ti:'雪夜之后',fr:'昭罪寺暗线',uc:'case_snow',tx:'雪夜后萧驰野左手齿痕深可见骨，拒绝包扎："留着。这是标记。"'}];
 
 const MAPR=[{id:'qudu',n:'阒都',x:0.32,y:0.52,w:130,h:32,ca:['case_chashi','case_temple','case_banquet'],ch:['emperor','empress','huasiqian','lugb'],ev:'大周帝都·太和殿·昭罪寺',desc:'大周帝都，皇权中枢。咸德帝坐朝太和殿，太后花氏垂帘干政。'},{id:'zhongbo',n:'中博',x:0.56,y:0.44,w:110,h:32,ca:['case_chashi'],ch:['shen'],ev:'六州腹地·沈卫旧辖',desc:'建兴王沈卫故地，茶州茨州敦州端州灯州樊州六州所在。茶石关失守后尽陷。'},{id:'chashi',n:'茶石关',x:0.78,y:0.58,w:80,h:30,ca:['case_chashi'],ch:['shen','jigang'],ev:'天险陷落·全军覆没',desc:'大周东南天险，锁天关南侧。被边沙骑兵趁雪夜袭攻破，守军八千尽没。'},{id:'libei',n:'离北',x:0.42,y:0.18,w:100,h:32,ca:['case_encounter','case_snow'],ch:['xiao','xiaoji'],ev:'离北铁骑·萧氏双子',desc:'大周北疆骑兵重镇。柳阳三大营所在，萧方旬战死后萧氏兄弟支撑大局。'},{id:'biansha',n:'边沙十二部',x:0.88,y:0.32,w:100,h:30,ca:['case_chashi'],ch:[],ev:'东部沙漠·十二部落',desc:'格达勒沙漠中的十二游牧部落。悍蛇部胡鹿部蒙驼部等趁大雪突破茶石关。'},{id:'hongjiang',n:'鸿江',x:0.62,y:0.3,w:60,h:22,ca:['case_encounter'],ch:['xiao'],ev:'天堑·一夜渡江',desc:'大周东部大江。萧驰野率三千精骑一夜渡过，奔袭千里名震天下。'},{id:'suotian',n:'锁天关',x:0.75,y:0.48,w:70,h:28,ca:['case_chashi'],ch:[],ev:'锁天险隘',desc:'茶石关北侧的险峻关隘，与茶石关互为犄角之势。'},{id:'chashiriver',n:'茶石河',x:0.82,y:0.62,w:70,h:22,ca:['case_chashi'],ch:[],ev:'东南水系',desc:'流经茶石关东侧的河流。'},{id:'binghe',n:'冰河',x:0.35,y:0.08,w:60,h:22,ca:[],ch:[],ev:'北疆冰河',desc:'横贯北疆的冰封河流，离北铁骑冬季可踏冰渡河。'}];
+
+// ============ ATTRIBUTES ============
+const ATTR={
+  shen:{name:'沈泽川',av:'沈',role:'建兴王第八子·待罪之人',keys:[
+    {k:'quan',n:'权谋',d:'齐太傅所授帝王之术。权谋越高，越能看穿朝堂棋局。'},
+    {k:'ren',n:'隐忍',d:'昭罪寺磨出的城府。隐忍越深，越能在绝境中蛰伏待机。'},
+    {k:'wu',n:'武艺',d:'纪纲亲授的纪家拳法。武艺越精，越能在刀锋上活命。'},
+    {k:'xin',n:'人心',d:'看人、聚人、用人的本事。人心越通，越能收拢盟友。'}
+  ]},
+  xiao:{name:'萧驰野',av:'萧',role:'离北王次子·骁骑将军',keys:[
+    {k:'li',n:'武力',d:'离北铁骑的悍勇。武力越强，沙场之上越无人可挡。'},
+    {k:'jue',n:'决断',d:'临阵不疑的果决。决断越高，越能在乱局中抢占先机。'},
+    {k:'mou',n:'谋略',d:'不止会打，更会算。谋略越深，越能布下长远之局。'},
+    {k:'yi',n:'义气',d:'离北男儿的血性。义气越重，越能让人为你效死。'}
+  ]}
+};
+const ATTR_MAX=10;
+
+// ============ CONTACTS ============
+const CONTACTS={
+  shen:[
+    {id:'xiao',n:'萧驰野',ro:'离北·骁骑将军',av:'萧',last:'昭罪寺那道墙',need:['c_first_meeting']},
+    {id:'jigang',n:'纪纲',ro:'授业恩师',av:'纪',last:'今日的拳还没练完',need:['c_jigang_master']},
+    {id:'qi',n:'齐太傅',ro:'帝王之术',av:'齐',last:'夜课·权经第三篇',need:['c_qi_taifu']}
+  ],
+  xiao:[
+    {id:'shen',n:'沈泽川',ro:'昭罪寺·待罪之人',av:'沈',last:'一柄没出鞘的刀',need:['c_first_meeting']},
+    {id:'xiaoji',n:'萧既明',ro:'离北王长子·兄',av:'萧',last:'军报与叮嘱',need:['c_xiao_arrives']},
+    {id:'lugb',n:'陆广白',ro:'离北边关大将',av:'陆',last:'饷银与弟兄们',need:['c_libei_pressure']}
+  ]
+};
+
+// Dialogue trees. key = `${pov}:${contactId}`
+const DLG={
+'shen:xiao':{greet:'萧驰野：又练拳呢？我在墙头看你半天了。',topics:[
+  {t:'你到底为什么老往昭罪寺跑？',reply:'萧驰野：想见你，不行？……别用那种眼神看我，我说真的。',at:{quan:1},aff:4},
+  {t:'（冷淡）军务繁忙，将军还是少来为妙。',reply:'萧驰野：你越赶我，我越想来。你这人，嘴上一套心里一套。',at:{ren:1},aff:2},
+  {t:'带酒了吗？',reply:'萧驰野：瞧你这话问的——当然带了。接着。（一壶酒从墙头丢下来）',at:{xin:1},aff:6,once:true,info:'❤ 好感上升'},
+  {t:'你手上那道咬痕，还没好？',req:{ren:3},reply:'萧驰野：这个？留着呢，舍不得好。你咬的，算个念想。',aff:8,once:true,info:'🔓 那道咬痕成了他的执念'},
+  {t:'宫宴上你那句话，是替我说的吧？',need:['case_banquet'],reply:'萧驰野：算你听懂了。关在笼子里的老虎，我可舍不得。',at:{xin:1},aff:6,once:true},
+  {t:'雪夜那壶酒，我记着。',need:['c_bite_scar'],reply:'萧驰野：记着就好。下回，换你翻墙来找我。',aff:8,once:true,info:'❤ 羁绊加深'},
+  {t:'（沉默地继续练拳，不理他）',reply:'萧驰野：行，你练你的，我看着就成。（他还真就靠在墙头看了一夜）',aff:1}
+]},
+'shen:jigang':{greet:'纪纲：药在灶上。练完这趟再喝。',topics:[
+  {t:'师父，今天教我一招新的吧。',reply:'纪纲：贪多嚼不烂。把昨日那招打熟，再说别的。',at:{wu:2}},
+  {t:'师父……纪暮师兄，是为我死的。',reply:'纪纲：（长久的沉默）……不许再提这话。你好好活着，就是给他的交代。',at:{ren:1},once:true},
+  {t:'这拳，打起来像我父亲的路数。',req:{wu:3},reply:'纪纲：本就是他授我的，如今物归原主。……你比他沉得住气。',at:{wu:1},once:true,info:'🔓 纪家拳的渊源'},
+  {t:'师父，我想学您那手煎药。',need:['case_temple'],reply:'纪纲：药理即人理，火候即分寸。……难得你肯学。',at:{ren:1},once:true},
+  {t:'若有一日我要复仇，师父可拦我？',need:['case_banquet'],reply:'纪纲：拦？我只教你别把命先赔进去。路，你自己走。',at:{wu:1},once:true},
+  {t:'（默默盛了碗药，端给纪纲）',reply:'纪纲：（他愣了一下，接过）……喝你的。多事。',at:{xin:1}}
+]},
+'shen:qi':{greet:'齐太傅：来了。今日想听《帝策》，还是陪老夫下盘棋？',topics:[
+  {t:'太傅，教我看人心。',reply:'齐太傅：看他怕什么，要什么。怕与要之间，便是破绽。',at:{quan:2}},
+  {t:'这盘棋，我该弃子还是守势？',reply:'齐太傅：（落一子）该弃时弃。舍不得小的，护不住大的。',at:{quan:1}},
+  {t:'太傅困此二十年，可曾后悔？',reply:'齐太傅：悔？老夫在等一个人。如今——等到了。',at:{ren:1},once:true,info:'🔓 齐太傅的期许'},
+  {t:'太后的破绽，究竟在哪？',req:{quan:4},reply:'齐太傅：在她拼命遮掩的那桩旧事里。你父亲当年握着的东西……慢慢来。',once:true,info:'🔓 帝王之术·点破关键'},
+  {t:'宫宴那局，学生可算赢了？',need:['case_banquet'],reply:'齐太傅：赢了一子，未赢全局。你还嫩。但……有长进。',at:{quan:1},once:true},
+  {t:'若要扳倒花党，第一步落在何处？',need:['case_banquet'],req:{quan:5},reply:'齐太傅：先断其党羽，再取其根。花思谦，便是那第一子。',once:true,info:'🔓 谋局·第一步'}
+]},
+'xiao:shen':{greet:'（你又翻上那道墙）你：还没睡？给你带了壶好的。',topics:[
+  {t:'"沈泽川，你就不好奇我图什么？"',reply:'沈泽川：不好奇。你图什么，写在脸上。你：啧，被看穿了。',at:{mou:1},aff:4},
+  {t:'"接着——"（把酒抛给他）',reply:'沈泽川：（他接住了）敌人的酒。你：敌人会半夜给你送酒？',at:{yi:1},aff:6,once:true,info:'❤ 好感上升'},
+  {t:'"你那身拳谁教的？真好看。"',reply:'沈泽川：与你无关。你：嘴硬。改天较量较量？',at:{li:1},aff:3},
+  {t:'"等你出了这道墙，跟我去离北。"',req:{yi:3},reply:'沈泽川：（沉默片刻）……等我出得去再说。你：一言为定。',aff:10,once:true,info:'🔓 同盟的约定'},
+  {t:'"你师父那手拳，改日教我两招？"',need:['case_temple'],reply:'沈泽川：想得美。你：啧，小气。',at:{li:1},aff:3},
+  {t:'"雪夜之后，我总梦见那道咬痕。"',need:['c_bite_scar'],reply:'沈泽川：（他别过脸）……无聊。你：可你没说不许我想。',aff:9,once:true,info:'❤ 羁绊加深'},
+  {t:'"你恨的人，我帮你记着。"',req:{mou:3},reply:'沈泽川：（他抬眼看你，很久）你这人真奇怪。你：奇怪的是你，让我移不开眼。',aff:9,once:true}
+]},
+'xiao:xiaoji':{greet:'萧既明：驰野，阒都可还安稳？家书收到没有。',topics:[
+  {t:'兄长放心，我有分寸。',reply:'萧既明：你要真有分寸，我就不必夜夜担心了。……罢了，我信你。',at:{yi:1}},
+  {t:'昭罪寺那人，或许能帮离北。',req:{mou:3},reply:'萧既明：你看中的人，想必错不了。后方我替你稳住，放手去做。',at:{mou:1},once:true,info:'🔓 兄长的支持'},
+  {t:'爹的死……我总觉得不简单。',reply:'萧既明：（良久）我也是。可没有证据，忍字当头。你我一起忍。',at:{jue:1},once:true},
+  {t:'兄长，沈泽川值得我押上离北吗？',need:['case_banquet'],reply:'萧既明：你眼里的光，比任何军报都笃定。押吧，我陪你。',at:{jue:1},once:true},
+  {t:'花党若对离北下手，可有退路？',need:['case_encounter'],reply:'萧既明：退路是留给认输的人。我们，只往前。',at:{mou:1},once:true},
+  {t:'离北的弟兄，冬衣够不够？',reply:'萧既明：你还惦记这个。放心，我盯着呢。你别只顾打打杀杀。',at:{yi:1}}
+]},
+'xiao:lugb':{greet:'陆广白：二公子！可算逮着您了，来喝一碗！',topics:[
+  {t:'弟兄们的饷银，我在想办法。',reply:'陆广白：有您这句话，末将就放心。这阒都冷得很，唯有二公子是暖的。',at:{yi:1}},
+  {t:'宫宴那日，多谢你替沈泽川说话。',reply:'陆广白：末将是替离北说话。不过……那小子确实有几分骨气。',at:{mou:1},aff:2},
+  {t:'（跟陆广白拼了三大碗）',reply:'陆广白：痛快！跟着二公子，值了！',at:{li:1}},
+  {t:'宫宴之后，弟兄们士气如何？',need:['case_banquet'],reply:'陆广白：听说二公子当殿一句话震住太后，弟兄们能多喝三碗！',at:{yi:1},aff:2},
+  {t:'若有朝一日北伐，你敢为先锋否？',need:['case_encounter'],req:{yi:4},reply:'陆广白：二公子指哪，末将这条命就冲到哪！',at:{li:1},once:true,info:'🔓 陆广白誓死追随'},
+  {t:'花党挤兑离北，这局怎么破？',req:{mou:2},reply:'陆广白：末将只会打仗，破局看您。您指哪，弟兄们打哪！',at:{mou:1},once:true,info:'🔓 离北军心所向'}
+]}
+};
 
 // ============ CORE FUNCTIONS ============
 function startGame(cont){
@@ -333,11 +647,43 @@ function startGame(cont){
 }
 function backToCover(){saveState();g('cover').style.display='flex';g('cover').classList.remove('out');g('exitb').style.display='none';g('rptg').style.display='none';closeRP();g('cont-btn').style.display=localStorage.getItem(KEY)?'block':'none';}
 function resetConfirm(){if(confirm('确定要清除所有存档重新开始吗？')){resetState();startGame(false);}}
-function resetState(){Object.assign(S,{ac:'case_chashi',cs:'case_chashi_intro',aff:20,scr:0,cf:[],dm:[],dm2:{},ru:[],vs:[],cc:[]});saveState();}
+function resetState(){Object.assign(S,{ac:'case_chashi',cs:'case_chashi_intro',aff:20,scr:0,cf:[],dm:[],dm2:{},ru:[],vs:[],cc:[],pov:'shen',attr:{shen:{quan:2,ren:3,wu:2,xin:2},xiao:{li:4,jue:3,mou:2,yi:3}},pts:0,hp:5,hpMax:5,items:[],found:[],investLog:[],day:1,energy:4,energyMax:4,dailyLog:[],dlg:{}});saveState();}
 function g(id){return document.getElementById(id);}
+function caseName(id){if(id==='case_ending')return '终章';var c=CASES.find(function(x){return x.id===id;});return c?c.n:'—';}
+function caseRel(id){var c=CASES.find(function(x){return x.id===id;});return (c&&c.rel)?c.rel:'';}
+
+// ============ POV ============
+function switchPOV(p){
+  if(S.pov===p)return;S.pov=p;saveState();
+  document.querySelectorAll('#rp-povsw button').forEach(b=>b.classList.toggle('on',b.dataset.pov===p));
+  document.body.className=p==='xiao'?'pov-xiao':'';
+  updatePovNote();
+  const active=document.querySelector('.tab.on');const t=active?active.dataset.tab:'dossier';
+  if(t==='cultivation')renderCult();
+  const rt=document.querySelector('#rpanel .rtab.on');
+  if(g('rpanel').classList.contains('open')&&rt&&rt.dataset.rp==='contacts')renderRPContacts();
+  toast(p==='shen'?'👁 切换至 沈泽川 视角':'👁 切换至 萧驰野 视角');
+}
+function updatePovNote(){
+  const el=g('pov-note');if(!el)return;el.className=S.pov;
+  el.innerHTML=S.pov==='shen'
+    ?'👁 <b>沈泽川视角</b> · 昭罪寺的青灯古佛下，你于绝境中蛰伏，磨砺权谋、隐忍、武艺与人心，静待翻案之机。'
+    :'👁 <b>萧驰野视角</b> · 离北铁骑的马蹄声中，你扛起半壁江山，凭武力、决断、谋略与义气，在阒都为离北寻一条活路。';
+}
+
+// ============ ATTRIBUTES ============
+function addAttr(pov,obj){if(!obj)return;const a=S.attr[pov];for(const k in obj){a[k]=Math.min(ATTR_MAX,(a[k]||0)+obj[k]);}}
+function attrTotal(pov){const a=S.attr[pov];return Object.values(a).reduce((x,y)=>x+y,0);}
+function attrLevel(pov){const t=attrTotal(pov);const names=pov==='shen'?['待罪囚徒','蛰伏之蛇','暗蓄锋芒','权谋初成','翻云覆雨','暗阁之主']:['离北莽将','锋芒初露','谋勇并重','独当一面','离北砥柱','搅动风云'];const idx=Math.min(names.length-1,Math.floor((t-9)/6));return names[Math.max(0,idx)];}
+function fmtAt(obj){if(!obj)return '';const nm=Object.assign({},...ATTR.shen.keys.map(k=>({[k.k]:k.n})),...ATTR.xiao.keys.map(k=>({[k.k]:k.n})));return Object.entries(obj).map(([k,v])=>`${nm[k]||k}+${v}`).join(' ');}
+function meetReq(pov,req){if(!req)return true;const a=S.attr[pov];for(const k in req){if((a[k]||0)<req[k])return false;}return true;}
+function meetNeed(need){if(!need)return true;return need.every(x=>S.cf.includes(x)||S.cc.includes(x));}
+function fmtReq(req){const nm=Object.assign({},...ATTR.shen.keys.map(k=>({[k.k]:k.n})),...ATTR.xiao.keys.map(k=>({[k.k]:k.n})));return Object.entries(req).map(([k,v])=>`需${nm[k]||k}${v}`).join(' ');}
 
 // ============ RENDER ALL ============
-function renderAll(){renderCaseBar();renderSceneFilter();renderDossier();updateTopBar();updateBottomBar();}
+function renderAll(){renderCaseBar();renderSceneFilter();renderDossier();updateTopBar();updateBottomBar();updatePovNote();
+  document.querySelectorAll('#rp-povsw button').forEach(b=>b.classList.toggle('on',b.dataset.pov===S.pov));
+  document.body.className=S.pov==='xiao'?'pov-xiao':'';}
 function renderCaseBar(){
   g('casebar').innerHTML=CASES.map(c=>{
     const a=S.ac===c.id,d=S.cc.includes(c.id);
@@ -351,7 +697,7 @@ function renderSceneFilter(){
     return `<option value="${s}"${S.cs===s?' selected':''}${v?'':' disabled'}>${v?'📖':'🔒'} ${SLAB[s]||s}</option>`;
   }).join('');
 }
-function selCase(cid){if(cid===S.ac){renderAll();switchTab('dossier');return;}S.ac=cid;const sc=SSEQ[cid]||[];if(sc.length>0){const fu=sc.find(s=>!S.vs.includes(s));S.cs=fu||sc[0];S.vs=[...new Set([...S.vs,S.cs])];}saveState();renderAll();switchTab('dossier');}
+function selCase(cid){S.ac=cid;const sc=SSEQ[cid]||[];if(sc.length>0){S.cs=sc[0];S.vs=[...new Set([...S.vs,S.cs])];}saveState();renderAll();switchTab('dossier');}
 function jumpScene(sid){if(!sid)return;S.cs=sid;S.ac=SC[sid]?.c||S.ac;S.vs=[...new Set([...S.vs,sid])];saveState();renderAll();switchTab('dossier');}
 
 function switchTab(name){
@@ -361,6 +707,9 @@ function switchTab(name){
   const pnl=g('pnl-'+name);if(pnl)pnl.classList.add('on');
   if(name==='map')setTimeout(()=>renderMap(),80);
   if(name==='deduction')renderDeduction();
+  if(name==='cultivation')renderCult();
+  if(name==='invest')renderInvest();
+  if(name==='daily')renderDaily();
   if(name==='characters')renderChars();
   if(name==='decisions')renderDecs();
   if(name==='reports')renderRpts();
@@ -369,29 +718,145 @@ function switchTab(name){
 // ============ DOSSIER ============
 function renderDossier(){
   const sc=SC[S.cs];if(!sc)return;const el=g('dossier-ctn');
-  let h=`<div class="dcard">`;
+  let h='';var _rel=caseRel(sc.c);if(_rel)h+=`<div class="rel-banner">💗 沈泽川 × 萧驰野 · <b>${_rel}</b></div>`;h+=`<div class="dcard">`;
   if(sc.cn)h+=`<div class="stamp">${sc.c==='case_ending'?'已封':'在查'}</div><div class="cid">暗阁 · ${sc.cn}</div>`;
   h+=`<h2>${sc.t}</h2>${sc.s?`<div class="cs">${sc.s}</div>`:''}<div class="nt">${sc.tx}</div>`;
-  if(sc.ch&&sc.ch.length>0){h+=`<div class="cblock"><div class="clbl">▸ 办案操作</div>`;sc.ch.forEach((ch,i)=>{h+=`<button class="dbtn" onclick="doChoice(${i})">${ch.t}</button>`;});h+=`</div>`;}h+=`</div>`;
-  // Show next case hint
+  if(sc.cl&&sc.cl.length>0){
+    h+=`<div class="cblock"><div class="clbl">🔍 现场勘查 · 点击逐一勘验线索</div><div class="inspect-grid">`;
+    sc.cl.forEach(cid=>{const fnd=S.cf.includes(cid),c=CL[cid];h+=`<button class="insp${fnd?' got':''}" onclick="inspectClue('${cid}')">${fnd?'🔎 '+c.n:'❓ 待勘查'}</button>`;});
+    h+=`</div><div id="insp-detail"></div></div>`;
+  }
+  if(sc.ch&&sc.ch.length>0){h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;sc.ch.forEach((ch,i)=>{
+    const rw=ch.at?`<span class="rw">${fmtAt(ch.at)}</span>`:(ch.ad?`<span class="rw">好感+${ch.ad}</span>`:'');
+    h+=`<button class="dbtn" onclick="doChoice(${i})">${ch.t}${rw}</button>`;
+  });h+=`</div>`;}h+=`</div>`;
   const nextCase=getNextCase(sc.c);
   if(nextCase&&!S.cc.includes(nextCase.id)){
     h+=`<div style="text-align:center;padding:12px;margin-top:8px;border:1px dashed rgba(184,147,85,0.2);border-radius:2px;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;cursor:pointer" onclick="selCase('${nextCase.id}');switchTab('dossier')">📂 发现新案卷：<span style="color:var(--gold)">${nextCase.n}</span> — 点击查阅</div>`;
   }
-  el.innerHTML=h;
-  if(sc.cl)sc.cl.forEach(cid=>unlockC(cid));renderSceneFilter();
+  el.innerHTML=h;renderSceneFilter();
+}
+function inspectClue(cid){
+  const c=CL[cid];if(!c)return;
+  if(!S.cf.includes(cid)){unlockC(cid);toast('🔎 勘得线索：'+c.n);}
+  renderDossier();updateTopBar();
+  const d=g('insp-detail');if(d)d.innerHTML=`<div class="insp-card"><b>🔎 ${c.n}</b><br>${c.d}</div>`;
 }
 function getNextCase(cur){const idx=CASES.findIndex(c=>c.id===cur);if(idx>=0&&idx<CASES.length-1)return CASES[idx+1];return null;}
 function doChoice(i){
   const sc=SC[S.cs];if(!sc||!sc.ch[i])return;const ch=sc.ch[i];
-  if(ch.ad)S.aff=Math.max(0,Math.min(100,S.aff+ch.ad));S.scr+=10;
-  if(ch.cc&&!S.cc.includes(ch.cc)){S.cc.push(ch.cc);const _scs=SSEQ[ch.cc]||[];_scs.forEach(sid=>{const sd=SC[sid];if(sd&&sd.cl)sd.cl.forEach(unlockC);});S.vs=[...new Set([...S.vs,..._scs])];RPTS.forEach(r=>{if(r.uc===ch.cc&&!S.ru.includes(r.id)){S.ru.push(r.id);toast('📨 新密函：'+r.ti);}});toast('✅ 案牍完结：'+sc.cn);}
+  if(ch.pov){switchPOV(ch.pov);}
+  if(ch.at){const povFor=(ch.pov)||S.pov;addAttr(povFor,ch.at);toast('📿 修为提升：'+fmtAt(ch.at));}
+  if(ch.ad)S.aff=Math.max(0,Math.min(100,S.aff+ch.ad));S.scr+=10;S.pts=(S.pts||0)+1;toast('🎖 获得属性点 +1');
+  if(ch.cc&&!S.cc.includes(ch.cc)){S.cc.push(ch.cc);RPTS.forEach(r=>{if(r.uc===ch.cc&&!S.ru.includes(r.id)){S.ru.push(r.id);toast('📨 新密函：'+r.ti);}});toast('✅ 案牍完结：'+sc.cn);}
   if(ch.rst){resetState();renderAll();switchTab('dossier');return;}
   if(ch.n)S.dm2[sc.c]=ch.n;
   S.vs=[...new Set([...S.vs,S.cs])];S.cs=ch.nx;
   if(SC[ch.nx])S.ac=SC[ch.nx].c;saveState();renderAll();switchTab('dossier');
 }
 function unlockC(cid){if(!S.cf.includes(cid)){S.cf.push(cid);S.scr+=5;saveState();}}
+
+// ============ CULTIVATION ============
+function renderCult(){
+  const pov=S.pov,meta=ATTR[pov],a=S.attr[pov],pts=S.pts||0;
+  let h=`<div class="cult-head"><div class="cult-avatar ${pov}">${meta.av}</div><div class="ci"><h3>${meta.name}</h3><div class="cr">${meta.role}</div><div class="cl">修为境界：<b>${attrLevel(pov)}</b> · 总修为 ${attrTotal(pov)}</div></div></div>`;
+  h+=`<div class="cult-points">🎖 可分配属性点：<b>${pts}</b> <span>${pts>0?'（点属性右侧 ＋ 分配到该视角）':'办案·推敲·对话皆可获得属性点'}</span></div>`;
+  meta.keys.forEach(k=>{
+    const v=a[k.k]||0,pct=Math.round(v/ATTR_MAX*100),can=pts>0&&v<ATTR_MAX;
+    h+=`<div class="attr-row"><div class="al"><span class="an">${k.n}</span><span class="av">${v} / ${ATTR_MAX}<button class="ptbtn" ${can?`onclick="spendPt('${pov}','${k.k}')"`:'disabled'}>＋</button></span></div><div class="attr-bar ${pov}"><div class="af" style="width:${pct}%"></div></div><div class="attr-desc">${k.d}</div></div>`;
+  });
+  h+=`<div class="cult-tip">📿 <b>如何提升修为？</b><br>· 在「案牍」推进剧情、做抉择，按当前视角积累对应属性，并获得 <span style="color:var(--gold)">属性点</span>。<br>· 在「通讯录」与人对话、切磋互动，磨砺不同能力。<br>· 属性达到门槛，会在对话与办案中解锁<span style="color:var(--gold)">专属选项</span>。<br>· 攒下的属性点可在此自由分配，走出你自己的养成路线。</div>`;
+  g('cult-ctn').innerHTML=h;
+}
+function spendPt(pov,key){
+  if((S.pts||0)<=0)return;const a=S.attr[pov];if((a[key]||0)>=ATTR_MAX)return;
+  a[key]=(a[key]||0)+1;S.pts--;saveState();renderCult();
+  const nm=Object.assign({},...ATTR.shen.keys.map(k=>({[k.k]:k.n})),...ATTR.xiao.keys.map(k=>({[k.k]:k.n})));
+  toast('📿 '+(nm[key]||key)+' +1');
+}
+
+// ============ CONTACTS (in right panel) ============
+function contactKey(cid){return S.pov+':'+cid;}
+const CT_TIME=['子时','酉时','昨日','前日'];
+const INTERACT={
+  shen:[{icon:'🥂',t:'饮酒',at:{xin:1},reply:'（对方与你举杯，一饮而尽，气氛稍缓）'},{icon:'🥋',t:'切磋',at:{wu:1},reply:'（一番拆招，你于攻守间又有所悟）'},{icon:'📜',t:'请教',at:{quan:1},reply:'（对方为你剖解了一局朝堂的暗棋）'}],
+  xiao:[{icon:'🍶',t:'豪饮',at:{yi:1},reply:'（酒到杯干，几分生死之交的情谊）'},{icon:'⚔️',t:'较量',at:{li:1},reply:'（拳脚相交，酣畅淋漓，你更进一步）'},{icon:'🗺️',t:'议事',at:{mou:1},reply:'（你与对方推演一番局势，思路愈发清明）'}]
+};
+function renderRPContacts(){
+  const el=g('rpc-contacts');if(!el)return;
+  const list=CONTACTS[S.pov]||[];
+  const avail=list.filter(c=>(c.need||[]).every(n=>S.cf.includes(n)));
+  let h='';
+  if(avail.length===0){
+    h=`<div class="ct-empty">📇 ${S.pov==='shen'?'沈泽川':'萧驰野'} 暂无可联络之人<br><span style="font-size:10px">推进「案牍」剧情，结识关键人物后<br>即可在此对话</span></div>`;
+  }else{
+    h='<div class="ct-list">'+avail.map((c,i)=>{
+      const key=contactKey(c.id),done=S.dlg[key]&&(S.dlg[key].log||[]).length>1;
+      return `<div class="ct-item" onclick="openChat('${c.id}')"><div class="ct-av">${c.av}</div><div class="cc"><div class="cn">${c.n}</div><div class="cr">${c.ro}</div><div class="cl">${c.last}</div></div><span class="ct-time">${CT_TIME[i]||''}</span>${done?'<span class="cbadge" style="position:absolute;bottom:9px;right:6px">已聊</span>':''}</div>`;
+    }).join('')+'</div>';
+    const locked=list.filter(c=>!(c.need||[]).every(n=>S.cf.includes(n)));
+    if(locked.length)h+=`<div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;padding:12px 0">还有 ${locked.length} 位联系人待剧情解锁…</div>`;
+  }
+  el.innerHTML=h;
+}
+function openChat(cid){
+  const key=contactKey(cid);if(!S.dlg[key])S.dlg[key]={log:[],used:[]};
+  const st=S.dlg[key];
+  if(st.log.length===0&&DLG[key]&&DLG[key].greet){st.log.push({who:'npc',t:DLG[key].greet});}
+  saveState();renderChat(cid);
+}
+function renderChat(cid){
+  const key=contactKey(cid),st=S.dlg[key],tree=DLG[key];
+  const list=CONTACTS[S.pov]||[],c=list.find(x=>x.id===cid)||{n:cid,av:'？',ro:''};
+  let h=`<div class="chat-head"><button class="cbk" onclick="renderRPContacts()">‹ 返回</button><div class="ct-av">${c.av}</div><div><div class="chn">${c.n}</div><div class="chr">${c.ro}</div></div></div>`;
+  h+=`<div class="chat-log" id="chat-log">`;
+  st.log.forEach(m=>{h+=(m.who==='npc')?`<div class="msg npc"><div class="bubble">${m.t}</div></div>`:`<div class="msg me"><div class="bubble">${m.t}</div></div>`;});
+  h+=`</div>`;
+  h+=`<div class="chat-inter">`+(INTERACT[S.pov]||[]).map((it,i)=>`<button class="iract" onclick="doInteract('${cid}',${i})">${it.icon} ${it.t}</button>`).join('')+`</div>`;
+  const topics=(tree&&tree.topics)||[];
+  h+=`<div class="chat-opts">`;
+  topics.forEach((o,i)=>{
+    if(o.need&&!meetNeed(o.need)){h+=`<button class="copt locked">🔒 （随剧情解锁新话题…）</button>`;return;}
+    const ok=meetReq(S.pov,o.req),asked=(st.used||[]).includes(i);
+    const rw=[o.req?fmtReq(o.req):'',(!asked&&o.at)?fmtAt(o.at):'',(!asked&&o.aff)?('好感+'+o.aff):''].filter(Boolean).join(' · ');
+    h+=`<button class="copt${ok?'':' locked'}" ${ok?`onclick="pickDlg('${cid}',${i})"`:''}>${ok?'':'🔒 '}${asked?'<span style="opacity:.45">✓ </span>':''}${o.t}${rw?`<span class="orw">${rw}</span>`:''}</button>`;
+  });
+  h+=`</div>`;
+  g('rpc-contacts').innerHTML=h;
+  const lg=g('chat-log');if(lg)lg.scrollTop=lg.scrollHeight;
+}
+function pickDlg(cid,i){
+  const key=contactKey(cid),st=S.dlg[key],tree=DLG[key],o=tree.topics[i];
+  if(!meetReq(S.pov,o.req))return;
+  st.log.push({who:'me',t:o.t});
+  const first=!(st.used||[]).includes(i);
+  if(first){st.used=st.used||[];st.used.push(i);if(o.at)addAttr(S.pov,o.at);if(o.aff)S.aff=Math.max(0,Math.min(100,S.aff+o.aff));S.scr+=8;S.pts=(S.pts||0)+1;}
+  saveState();renderChat(cid);
+  setTimeout(()=>{
+    if(o.reply)st.log.push({who:'npc',t:o.reply});
+    if(first){if(o.info)toast(o.info);if(o.at)toast('📿 修为提升：'+fmtAt(o.at));}
+    saveState();renderChat(cid);updateBottomBar();
+  },480);
+}
+
+function doInteract(cid,i){
+  const it=(INTERACT[S.pov]||[])[i];if(!it)return;
+  const key=contactKey(cid);if(!S.dlg[key])S.dlg[key]={node:'start',log:[],ended:false};
+  const st=S.dlg[key];
+  st.log.push({who:'me',t:'（'+it.t+'）'});addAttr(S.pov,it.at);S.aff=Math.min(100,S.aff+2);saveState();renderChat(cid);
+  setTimeout(()=>{st.log.push({who:'npc',t:it.reply});saveState();renderChat(cid);toast('📿 '+fmtAt(it.at)+' · 好感+2');updateBottomBar();},400);
+}
+// ============ RIGHT PANEL MENU ============
+function renderRPMenu(){
+  let h='';
+  CASES.forEach(c=>{
+    const done=S.cc.includes(c.id),active=S.ac===c.id;
+    h+=`<div class="menu-case${active?' on':''}" onclick="selCase('${c.id}');closeRP();">${c.e} ${c.n}${done?' ✓':''}</div>`;
+    const chs=SSEQ[c.id]||[];
+    h+='<div class="menu-chs">'+chs.map(s=>{const v=S.vs.includes(s)||s===S.cs;return `<div class="menu-ch${v?'':' lk'}" ${v?`onclick="jumpScene('${s}');closeRP();"`:''}>${v?'📖':'🔒'} ${SLAB[s]||s}</div>`;}).join('')+'</div>';
+  });
+  g('rpc-menu').innerHTML=h;
+}
 
 // ============ MAP ============
 function renderMap(){
@@ -428,7 +893,7 @@ function setupMapEvents(){
 }
 function getMapR(e){const cv=g('mapc'),r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;if(mx<0||my<0||mx>cv.width||my>cv.height)return null;for(const reg of MAPR){const rx=reg.x*cv.width,ry=reg.y*cv.height,rw=(reg.w||80)/2,rh=(reg.h||28)/2;if(mx>rx-rw-20&&mx<rx+rw+20&&my>ry-rh-30&&my<ry+rh+10)return reg;}return null;}
 function showMapInfo(r){
-  const cn={case_chashi:'茶石关疑案',case_temple:'昭罪寺秘闻',case_encounter:'离北来使',case_banquet:'宫宴风云',case_snow:'雪夜密会'},chn={emperor:'咸德帝',empress:'太后花氏',huasiqian:'花思谦',lugb:'陆广白',shen:'沈泽川',jigang:'纪纲',xiao:'萧驰野',xiaoji:'萧既明'};
+  const cn=new Proxy({},{get:function(t,k){return caseName(k);}}),chn={emperor:'咸德帝',empress:'太后花氏',huasiqian:'花思谦',lugb:'陆广白',shen:'沈泽川',jigang:'纪纲',xiao:'萧驰野',xiaoji:'萧既明'};
   let h=`<div class="mt">📍 ${r.n}</div><div class="ms">${r.ev||''}</div><div style="line-height:1.9;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px">${r.desc||''}</div>`;
   if(r.ca&&r.ca.length>0){h+=`<div class="ml">📜 关联案牍</div>`;r.ca.forEach(cc=>{h+=`<span class="mtag" onclick="selCase('${cc}');switchTab('dossier')">📜 ${cn[cc]||cc}</span>`;});}
   if(r.ch&&r.ch.length>0){h+=`<div class="ml">👤 关键人物</div>`;r.ch.forEach(ch=>{h+=`<span class="mtag ch" onclick="showCharModal('${ch}')">${chn[ch]||ch}</span>`;});}
@@ -442,18 +907,22 @@ function showMapInfo(r){
 let selC=[];
 function renderDeduction(){
   const gd=g('ded-grid'),h=g('ded-hint'),r=g('ded-res');selC=[];r.classList.remove('show');r.innerHTML='';h.style.display='block';
-  gd.innerHTML=Object.keys(CL).map(cid=>{const c=CL[cid],f=S.cf.includes(cid);return`<div class="clue-c ${f?'found':'lock'}"${f?` onclick="pickC('${cid}',this)"`:''} title="${f?c.d:'未获取'}"><span>${f?c.n:'???'}</span></div>`;}).join('');updateDedProgress();
+  gd.innerHTML=Object.keys(CL).map(cid=>{const c=CL[cid],f=S.cf.includes(cid);return`<div class="clue-c ${f?'found':'lock'}"${f?` onclick="pickC('${cid}',this)"`:''} title="${f?c.d:'未获取'}"><span>${f?c.n:'???'}</span></div>`;}).join('');
 }
 function pickC(cid,el){if(selC.includes(cid)){selC=selC.filter(c=>c!==cid);el.classList.remove('sel');}else if(selC.length<2){selC.push(cid);el.classList.add('sel');}if(selC.length===2)checkD();}
-function updateDedProgress(){const h=g('ded-hint');if(!h)return;const done=S.dm.length,tot=DE.length;h.innerHTML=done>=tot?`<span style="color:var(--gold)">✦ 已勘破全部 ${tot} 条关联 · 推敲圆满 ✦</span>`:`点击两条线索进行关联推敲　·　已关联 <span style="color:var(--gold)">${done}/${tot}</span>`;h.style.display='block';}
-function checkD(){const[a,b]=selC.sort(),m=DE.find(d=>(d.a===a&&d.b===b)||(d.a===b&&d.b===a)),r=g('ded-res'),h=g('ded-hint');if(m){const isNew=!S.dm.includes(`${a}+${b}`);if(isNew){S.dm.push(`${a}+${b}`);S.scr+=15;saveState();updateTopBar();}r.innerHTML=`<div style="color:var(--gold);font-weight:600;margin-bottom:4px">${m.t}</div>${m.r}`;r.classList.add('show');updateDedProgress();if(isNew&&S.dm.length>=DE.length)setTimeout(()=>toast('🏆 推敲圆满：已勘破全部关联'),400);}else{h.textContent='暂未发现关联，请尝试其他组合。';h.style.display='block';}setTimeout(()=>{selC=[];document.querySelectorAll('.clue-c.sel').forEach(c=>c.classList.remove('sel'));updateDedProgress();},1500);}
+function checkD(){const[a,b]=selC.sort(),m=DE.find(d=>(d.a===a&&d.b===b)||(d.a===b&&d.b===a)),r=g('ded-res'),h=g('ded-hint');if(m){if(!S.dm.includes(`${a}+${b}`)){S.dm.push(`${a}+${b}`);S.scr+=15;S.pts=(S.pts||0)+1;toast('🎖 推敲有得 · 属性点 +1');saveState();updateTopBar();}h.style.display='none';r.innerHTML=`<div style="color:var(--gold);font-weight:600;margin-bottom:4px">${m.t}</div>${m.r}`;r.classList.add('show');}else{h.textContent='暂未发现关联，请尝试其他组合。';h.style.display='block';}setTimeout(()=>{selC=[];document.querySelectorAll('.clue-c.sel').forEach(c=>c.classList.remove('sel'));},1500);}
 
 // ============ CHARACTERS ============
 function renderChars(){
   const gd=g('ch-grid'),rv=new Set(['shen','xiao']);
+  const _n=S.cc.length;
   if(S.cc.includes('case_temple')||S.cc.includes('case_chashi')){rv.add('jigang');rv.add('qi');}
-  if(S.cc.includes('case_chashi')){rv.add('huasiqian');rv.add('empress');rv.add('emperor');}
-  if(S.cc.includes('case_banquet'))rv.add('lugb');
+  if(S.cc.includes('case_chashi')||_n>=1){rv.add('huasiqian');rv.add('empress');rv.add('emperor');rv.add('panrg');}
+  if(S.cc.includes('case_banquet')||_n>=4)rv.add('lugb');
+  if(S.cc.includes('case_censor')||_n>=6){rv.add('yaowy');rv.add('xuexz');rv.add('hancheng');rv.add('kongqiu');}
+  if(S.cc.includes('case_zhongbo')||_n>=7)rv.add('xihx');
+  if(S.cc.includes('case_plague')||_n>=8){rv.add('haily');rv.add('gaozx');}
+  if(S.cc.includes('case_final')||_n>=10)rv.add('lijt');
   if(S.cf.includes('c_xiao_arrives'))rv.add('xiaoji');
   gd.innerHTML=CHARS.filter(c=>rv.has(c.id)).map(c=>{
     return `<div class="ch-card" onclick="showCharModal('${c.id}')"><h4>${c.n}</h4><div class="role">${c.ro}</div><div class="info">${c.info.substring(0,40)}…<br><span style="color:var(--gold);font-size:9px">点击查看完整档案 →</span></div></div>`;
@@ -469,15 +938,117 @@ g('modal').addEventListener('click',function(e){if(e.target===this)closeModal();
 
 // ============ DECISIONS & REPORTS ============
 function renderDecs(){
-  const cn={case_chashi:'茶石关疑案',case_temple:'昭罪寺秘闻',case_encounter:'离北来使',case_banquet:'宫宴风云',case_snow:'雪夜密会'};
+  const cn=new Proxy({},{get:function(t,k){return caseName(k);}});
   const d=Object.entries(S.dm2);
   g('dec-ctn').innerHTML=d.length===0?'<div style="text-align:center;color:rgba(255,255,255,0.2);padding:40px">尚未做出关键抉择。<br>在「案牍」中推进剧情时将面临重要决策。</div>':d.map(([cid,dec])=>`<div class="dec-card"><div class="dc">⚔️ ${cn[cid]||cid}</div><div class="dq">${dec}</div></div>`).join('');
 }
 function renderRpts(){
-  const el=g('rpt-ctn'),u=S.ru.length;
+  const el=g('rpt-ctn');
   el.innerHTML=RPTS.map(r=>{const is=S.ru.includes(r.id);return`<div class="rpt-card ${is?'':'lk'}"${is?` onclick="showRpt('${r.id}')"`:''}><div class="rf">${is?r.fr:'密级不足'}</div><div class="rt">${r.ti}</div><div class="rp">${is?r.tx.substring(0,35)+'...':'完成案牍后查阅'}</div></div>`;}).join('');
 }
 function showRpt(rid){const r=RPTS.find(rp=>rp.id===rid);if(!r)return;g('rpt-ctn').innerHTML=`<div class="rpt-card" style="cursor:default"><div class="rf">${r.fr}</div><div class="rt">${r.ti}</div><div style="line-height:2;font-size:12px;color:rgba(255,255,255,0.6);margin-top:8px">${r.tx}</div><button onclick="renderRpts()" style="margin-top:12px;padding:4px 12px;background:transparent;border:1px solid rgba(184,147,85,0.2);color:var(--gold);font-family:inherit;cursor:pointer;font-size:10px">← 返回</button></div>`;}
+
+// ============ DAILY / 修行 ============
+const ACTS={
+ shen:[
+  {id:'wu',ic:'🥋',n:'练武堂',at:{wu:1},lines:['你随纪纲练了一趟纪家拳，筋骨渐沉。','汗透衣背，拳意又精一分。','纪纲难得颔首："火候到了。"']},
+  {id:'quan',ic:'📖',n:'书斋研读',at:{quan:1},lines:['齐太傅一句点拨，你于权谋又有所悟。','《权经》读到深处，朝局在眼中渐清。','你在残卷里读出了太后当年的一步暗棋。']},
+  {id:'ren',ic:'🧘',n:'静心吐纳',at:{ren:1},lines:['你闭目调息，将满腔仇怨压回心底。','昭罪寺的夜很静，你的心更静。','忍字压心，你又沉了几分。']},
+  {id:'xin',ic:'🤝',n:'笼络人心',at:{xin:1},lines:['你替狱中老者递了碗热粥，他记下你的好。','一句体己话，人心便向你偏了几分。','连看守都开始悄悄为你通融。']}
+ ],
+ xiao:[
+  {id:'li',ic:'⚔️',n:'演武场',at:{li:1},lines:['你舞了一趟长刀，杀气凛然。','一身力气无处发，正好练刀。','校场之上，无人是你三合之敌。']},
+  {id:'mou',ic:'🗺️',n:'沙盘推演',at:{mou:1},lines:['你对着沙盘推演边关，思路渐明。','棋局如战局，你又算深了一层。','你在沙盘上找到了花党的破绽。']},
+  {id:'jue',ic:'⚡',n:'临阵决断',at:{jue:1},lines:['你当机立断，处置了一桩营中纠纷。','该出手时绝不犹豫，这是你的本事。','一个决断，稳住了浮动的军心。']},
+  {id:'yi',ic:'🍶',n:'军中结义',at:{yi:1},lines:['你与弟兄们喝了一场大酒，情义更浓。','离北的汉子，认的是义气二字。','又有几名悍卒歃血，愿随你效死。']}
+ ]
+};
+function dLog(t){S.dailyLog=S.dailyLog||[];S.dailyLog.unshift(t);if(S.dailyLog.length>7)S.dailyLog.pop();}
+function renderDaily(){
+  const pov=S.pov,meta=ATTR[pov],acts=ACTS[pov];
+  const em=S.energyMax||4,en=(S.energy==null?em:S.energy);
+  let dots='';for(let i=0;i<em;i++)dots+=`<span class="edot${i<en?' on':''}"></span>`;
+  let h=`<div class="daily-head"><div class="cult-avatar ${pov}">${meta.av}</div><div class="ci"><h3>${meta.name} · 修行</h3><div class="dmeta">第 <b>${S.day||1}</b> 日 · 体力 ${en}/${em} ${dots}</div></div><button class="nextday" onclick="nextDay()">🌙 推进一日</button></div>`;
+  h+=`<div class="daily-sub">花体力做日常修行积累属性；体力用尽后「推进一日」可恢复。属性突破还会额外获得属性点。</div>`;
+  h+=`<div class="act-grid">`+acts.map((a,i)=>{const nm=meta.keys.find(k=>k.k===Object.keys(a.at)[0]);return `<button class="act-card${en<=0?' dim':''}" ${en>0?`onclick="doActivity(${i})"`:''}><div class="ai">${a.ic}</div><div class="an">${a.n}</div><div class="aa">+${nm?nm.n:''}</div></button>`;}).join('')+`</div>`;
+  h+=`<div class="daily-log-t">📜 修行手记</div><div class="daily-log">`+((S.dailyLog&&S.dailyLog.length)?S.dailyLog.map(l=>`<div class="dl-line">· ${l}</div>`).join(''):'<div class="dl-empty">尚无记录，开始你的第一次修行吧。</div>')+`</div>`;
+  g('daily-ctn').innerHTML=h;
+}
+function doActivity(i){
+  const pov=S.pov,a=ACTS[pov][i],em=S.energyMax||4;if(S.energy==null)S.energy=em;
+  if(S.energy<=0){toast('🌙 体力已尽，请推进一日');return;}
+  S.energy--;addAttr(pov,a.at);S.scr+=5;
+  const k=Object.keys(a.at)[0],v=S.attr[pov][k],nm=ATTR[pov].keys.find(x=>x.k===k);
+  dLog(a.lines[Math.floor(Math.random()*a.lines.length)]);
+  toast('📿 '+(nm?nm.n:'')+' +1');
+  if((v===5||v===8)&&!S['ms_'+pov+k]){S['ms_'+pov+k]=1;S.pts=(S.pts||0)+1;dLog('【突破】'+(nm?nm.n:'')+'臻至 '+v+'，修为大进，获属性点 +1！');toast('🎖 突破！属性点 +1');}
+  if((k==='xin'||k==='yi')&&Math.random()<0.5){S.aff=Math.min(100,S.aff+1);}
+  saveState();renderDaily();updateBottomBar();
+}
+function nextDay(){
+  S.day=(S.day||1)+1;S.energy=S.energyMax||4;
+  if(S.hp!=null&&S.hpMax)S.hp=Math.min(S.hpMax,S.hp+1);
+  dLog('—— 第 '+S.day+' 日 · 天光乍破，体力已复，精神稍振（❤+1）——');
+  saveState();renderDaily();updateTopBar();toast('📅 第 '+S.day+' 日 · 休整完毕');
+}
+function showItems(){
+  const items=S.items||[];
+  g('modal-ctn').innerHTML=`<h3>🎒 随身道具</h3><div class="mrole">收集到的关键物件 · ${items.length} 件</div><div class="minfo">`+(items.length?items.map(x=>`<div style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><b style="color:var(--gold-light)">${x.n}</b><br><span style="font-size:12px;color:rgba(255,255,255,0.5)">${x.d}</span></div>`).join(''):'<div style="color:rgba(255,255,255,0.3);padding:12px">尚无道具。在「🔍查案」中收齐一卷全部线索，即可获得该卷的关键物件。</div>')+`</div>`;
+  g('modal').classList.add('show');
+}
+
+// ============ 查案 / 搜查系统 ============
+const SEARCH={
+case_chashi:[{t:'人证',n:'沈卫',info:'建兴王，兵败茶石河后自焚，背负通敌之名。',kw:['沈卫','建兴王']},{t:'物证',n:'茶石天坑',info:'三万军士被活埋之地，中博兵败的伤口。',kw:['茶石','天坑','兵败']},{t:'人证',n:'潘如贵',info:'司礼监掌印权阉，奉口谕在诏狱对沈泽川行刑。',kw:['潘如贵','掌印','太监']},{t:'物证',n:'咬痕',info:'沈泽川回头一口咬下萧驰野虎口，结仇的开始。',kw:['咬痕','齿痕','虎口']},{t:'人证',n:'纪暮',info:'沈泽川师兄，为救他死于茶石风雪。',kw:['纪暮']}],
+case_temple:[{t:'人证',n:'齐惠连',info:'幽禁二十年的前太子太傅，授沈泽川帝王之术。',kw:['齐惠连','齐太傅','太傅']},{t:'人证',n:'纪纲',info:'看守身份的沈卫旧部，颈有端州烧痕，暗授武功。',kw:['纪纲','师父']},{t:'物证',n:'帝王之术',info:'齐太傅所授《帝策》《权经》。',kw:['帝王之术','帝策','权经']},{t:'线索',n:'锦衣卫差职',info:'沈泽川脱镣领锦衣卫差，踏入阒都棋局。',kw:['锦衣卫','差职']},{t:'人证',n:'姚温玉',info:'字元琢，冷面谋士，沈泽川最倚重的智囊。',kw:['姚温玉','元琢']}],
+case_encounter:[{t:'线索',n:'南林猎场',info:'咸德帝抱病设秋猎，各方角力之地。',kw:['南林','秋猎','猎场']},{t:'动机',n:'行刺政变',info:'雨夜行刺与政变并起，朝局大洗牌。',kw:['行刺','政变','刺客']},{t:'人证',n:'海良宜',info:'内阁重臣，怒撞潘如贵"勿伤吾主"。',kw:['海良宜','良宜','阁老']},{t:'人证',n:'李建恒',info:'咸德帝崩后登基，改元天琛（天琛帝）。',kw:['李建恒','天琛','新帝']},{t:'物证',n:'会审名录',info:'花思谦、潘如贵、纪雷、乔天涯下狱会审。',kw:['会审','下狱','花思谦']}],
+case_banquet:[{t:'物证',n:'火铳',info:'萧驰野给禁军新添的火器。',kw:['火铳','军械']},{t:'线索',n:'兰舟',info:'沈泽川字兰舟；红潮暗涌，情愫初动。',kw:['兰舟','红潮']},{t:'动机',n:'救驾',info:'行刺案中沈泽川挺身救驾。',kw:['救驾','刺客']},{t:'物证',n:'獬豸铜牌',info:'五品锦衣卫镇抚腰牌，一面守卫一面随驾。',kw:['獬豸','镇抚','铜牌']},{t:'线索',n:'同舟结盟',info:'萧沈促膝，结成一朝一野的同盟。',kw:['同舟','结盟','促膝']}],
+case_snow:[{t:'线索',n:'查院',info:'借查院与禁军彻查户部旧账、行刺案。',kw:['查院','账簿','户部']},{t:'人证',n:'余小再',info:'正七品监察御史，随沈泽川办差。',kw:['余小再','御史']},{t:'线索',n:'疫病',info:'阒都疫病大作，昭罪寺一带煎药遮口。',kw:['疫病','瘟疫']},{t:'物证',n:'共枕定情',info:'生死之间，恶狗与疯犬认了彼此。',kw:['定情','共枕','云雨']},{t:'线索',n:'开寺',info:'萧任总督，沈泽川走出昭罪寺樊笼。',kw:['开寺','总督','出寺']}],
+case_censor:[{t:'线索',n:'进爵封赏',info:'萧驰野进定都侯，沈泽川越级提拔。',kw:['封赏','定都侯','进爵']},{t:'动机',n:'抄薛府',info:'锦衣卫抄薛府，牵出旧案。',kw:['薛府','薛修卓','抄家']},{t:'人证',n:'奚鸿轩',info:'下狱牵出军粮倒卖的链条。',kw:['奚鸿轩','鸿轩']},{t:'物证',n:'魏怀古军粮案',info:'户部尚书倒卖军粮、勾结杨诚，断沈卫粮草。',kw:['魏怀古','军粮','杨诚']},{t:'线索',n:'中博真凶',info:'"沈卫没有通敌"第一次有了铁证。',kw:['真凶','翻案','沈卫']}],
+case_zhongbo:[{t:'动机',n:'与阒都决裂',info:'一麻袋人头，宣告沈萧与阒都翻脸。',kw:['决裂','翻脸','人头']},{t:'线索',n:'茨州',info:'南下中博，以茨州为根基。',kw:['茨州','中博','立基']},{t:'人证',n:'萧驰野',info:'叛出阒都，与沈泽川乱世同行。',kw:['萧驰野','叛出','离北']},{t:'线索',n:'认定彼此',info:'殊途同归，此生认定。',kw:['认定','殊途同归']},{t:'线索',n:'又为乱世雄',info:'囚鸟落到自己的地上，各自成雄。',kw:['乱世','雄']}],
+case_plague:[{t:'人证',n:'周桂',info:'茨州守将，被萧沈收服。',kw:['周桂']},{t:'人证',n:'雷惊蛰',info:'土匪出身归附的悍将（雷常鸣一系）。',kw:['雷惊蛰','雷常鸣','历熊']},{t:'线索',n:'施粥',info:'城郊施粥收民心，"白衣公子"名传中博。',kw:['施粥','白衣公子','民心']},{t:'人证',n:'姚温玉中毒',info:'姚温玉在潘府中毒，命悬一线。',kw:['姚温玉','中毒','潘府']},{t:'线索',n:'九年旧案',info:'中博案牵出九年前的旧案线头。',kw:['九年','旧案']}],
+case_oldcase:[{t:'线索',n:'敦州',info:'战线推进敦州，澹台虎守、颜何如叛。',kw:['敦州','澹台虎','颜何如']},{t:'线索',n:'格达勒',info:'边沙口中反复出现的格达勒。',kw:['格达勒','边沙']},{t:'人证',n:'白茶',info:'沈卫曾与之为夫妻的边沙女子，旧案之钥。',kw:['白茶']},{t:'动机',n:'光诚帝朝',info:'沈卫旧案追溯至光诚帝时期。',kw:['光诚','旧案']},{t:'物证',n:'沈卫昭雪',info:'铁证在握，沈卫非通敌，可昭告天下。',kw:['昭雪','铁证','沈卫']}],
+case_final:[{t:'人证',n:'李剑霆',info:'女帝储君，中毒后终究薨逝，棋局落幕。',kw:['李剑霆','女帝','储君']},{t:'人证',n:'薛修卓',info:'字延清，迎储君回宫、出示先帝朱批与秦王私章。',kw:['薛修卓','延清','迎储']},{t:'线索',n:'决战边沙',info:'漠三川决胜，边沙十二部覆灭，狼鹰折翼。',kw:['决战','边沙','漠三川','狼鹰']},{t:'动机',n:'沈泽川登基',info:'众望所归，沈泽川登基称帝·淳圣帝·改国号大靖。',kw:['登基','称帝','淳圣','大靖','摄政']},{t:'物证',n:'离北大婚',info:'皇帝大婚办在离北草野，与萧驰野拜天地——将进酒杯莫停。',kw:['大婚','HE','将进酒','离北']}]
+};
+const EVI_CATS=['人证','物证','动机','线索'];
+const CASE_ITEM={case_chashi:{n:'半枚咬痕',d:'虎口齿痕的执念，结仇的开始。'},case_temple:{n:'《权经》抄本',d:'齐太傅亲授的帝王之术手抄。'},case_encounter:{n:'南林秋猎令',d:'政变落定后的一纸调令。'},case_banquet:{n:'獬豸铜牌',d:'五品锦衣卫镇抚腰牌，一面守卫一面随驾。'},case_snow:{n:'一方旧帕',d:'雪夜揣在袖袋、闻了又闻的那方帕子。'},case_censor:{n:'魏怀古军粮案卷',d:'倒卖军粮、断沈卫粮草的铁证。'},case_zhongbo:{n:'茨州守备军符',d:'南下立基、又为乱世雄的凭证。'},case_plague:{n:'白衣公子施粥碗',d:'城郊施粥、收拢中博民心的见证。'},case_oldcase:{n:'沈卫昭雪证卷',d:'白茶旧案、为父昭雪的铁证。'},case_final:{n:'醉倒狂歌·合卺酒',d:'离北草野拜天地那日，皇帝与狼王的合卺酒。'}};
+const EVI_ICON={'人证':'👤 人证','物证':'📦 物证','动机':'💡 动机','线索':'🔗 线索'};
+const CASENAME=new Proxy({},{get:function(t,k){return caseName(k);}});
+function foundKey(ci,i){return ci+'#'+i;}
+function renderInvest(){
+  const ci=S.ac,items=SEARCH[ci]||[];S.found=S.found||[];
+  if(!items.length){g('invest-ctn').innerHTML='<div class="dl-empty" style="padding:40px;text-align:center;color:rgba(255,255,255,0.3)">本卷无需搜查。<br>请在「案牍」中推进剧情。</div>';return;}
+  const total=items.length,got=items.filter((it,i)=>S.found.includes(foundKey(ci,i))).length;
+  const nextItem=items.find((it,i)=>!S.found.includes(foundKey(ci,i)));
+  let h=`<div class="inv-case">🗂 当前案卷：<b>${CASENAME[ci]||'—'}</b></div>`;
+  h+=`<div class="inv-prog">线索收集进度：<b>${got} / ${total}</b><div class="inv-pbar"><div style="width:${total?Math.round(got/total*100):0}%"></div></div></div>`;
+  h+=`<div class="inv-hint">📖 <b>剧情推进提示</b><br>${nextItem?('下一步：搜查与「<span class="hk">'+nextItem.kw[0]+'</span>」相关的人物或物证'):'✅ 本卷线索已全部收集，可前往「案牍」推进结案'}</div>`;
+  h+=`<div class="inv-searchbar"><input id="inv-input" placeholder="输入关键人物 / 物证，如「${items[0].kw[0]}」" onkeydown="if(event.key==='Enter')doSearch()"><button onclick="doSearch()">🔍 查询</button></div>`;
+  h+=`<div id="inv-result"></div>`;
+  h+=`<div class="evi-title">📋 证据板 <span>${got}/${total}</span></div><div class="evi-board">`;
+  EVI_CATS.forEach(cat=>{
+    const idxs=items.map((it,i)=>i).filter(i=>items[i].t===cat&&S.found.includes(foundKey(ci,i)));
+    h+=`<div class="evi-cat"><div class="evi-ct">${EVI_ICON[cat]}</div>`;
+    h+= idxs.length? idxs.map(i=>`<span class="evi-tag" onclick="showEvi('${ci}',${i})">${items[i].n}</span>`).join('') : '<span class="evi-none">暂无</span>';
+    h+=`</div>`;
+  });
+  h+=`</div>`;
+  h+=`<div class="evi-title">📝 办案日志</div><div class="inv-log">`+((S.investLog&&S.investLog.length)?S.investLog.map(l=>`<div>· ${l}</div>`).join(''):'<div class="dl-empty" style="color:rgba(255,255,255,0.25)">尚无记录</div>')+`</div>`;
+  g('invest-ctn').innerHTML=h;
+}
+function doSearch(){
+  const inp=g('inv-input');if(!inp)return;const q=(inp.value||'').trim();if(!q){toast('请输入关键人物或物证');return;}
+  const ci=S.ac,items=SEARCH[ci]||[];S.found=S.found||[];
+  let hit=-1;items.forEach((it,i)=>{if(hit<0&&it.kw.some(k=>q.includes(k)||k.includes(q)))hit=i;});
+  if(hit<0){toast('🔍 未找到相关线索，换个关键词试试');return;}
+  const key=foundKey(ci,hit),it=items[hit];
+  if(S.found.includes(key)){showEvi(ci,hit);toast('该线索已在证据板中');return;}
+  S.found.push(key);S.scr+=8;S.pts=(S.pts||0)+1;
+  S.investLog=S.investLog||[];S.investLog.unshift('搜索「'+q+'」→ 收录 '+it.t+'：'+it.n);if(S.investLog.length>8)S.investLog.pop();
+  const gt=items.filter((x,ii)=>S.found.includes(foundKey(ci,ii))).length;if(gt===items.length){const cit=CASE_ITEM[ci];if(cit&&!(S.items||[]).some(x=>x.n===cit.n)){S.items=S.items||[];S.items.push(cit);S.investLog.unshift('🎒 集齐本卷线索，获得道具：'+cit.n);toast('🎒 获得道具：'+cit.n);}}
+  saveState();renderInvest();showEvi(ci,hit);toast('✅ 新线索：'+it.n+' · 属性点+1');updateTopBar();
+}
+function showEvi(ci,i){const it=(SEARCH[ci]||[])[i];if(!it)return;const el=g('inv-result');if(el)el.innerHTML=`<div class="inv-card"><div class="ic-h"><span class="ic-t">${it.t}</span><span class="ic-n">${it.n}</span></div><div class="ic-i">${it.info}</div></div>`;}
 
 // ============ RIGHT PANEL ============
 function openRP(tab){g('rpanel').classList.add('open');switchRP(tab);}
@@ -487,15 +1058,19 @@ function switchRP(tab){
   const tb=document.querySelector(`#rpanel .rtab[data-rp="${tab}"]`);if(tb)tb.classList.add('on');
   document.querySelectorAll('#rpanel .rpcnt').forEach(p=>p.classList.remove('on'));
   const pn=g('rpc-'+tab);if(pn)pn.classList.add('on');
-  g('rp-title').textContent={chars:'人物档案',tl:'时间线',rel:'人物关系图'}[tab]||'';
+  g('rp-title').textContent={menu:'目录',contacts:'通讯录',chars:'人物档案',tl:'时间线',rel:'人物关系图'}[tab]||'';
+  const sw=g('rp-povsw');if(sw)sw.style.display=(tab==='contacts')?'flex':'none';
+  if(sw&&tab==='contacts')document.querySelectorAll('#rp-povsw button').forEach(b=>b.classList.toggle('on',b.dataset.pov===S.pov));
+  if(tab==='menu')renderRPMenu();
+  if(tab==='contacts')renderRPContacts();
   if(tab==='chars')renderRPChars();if(tab==='tl')renderRPTL();if(tab==='rel')renderRPRel();
 }
 function renderRPChars(){
-  const rv=new Set(['shen','xiao']);if(S.cc.length>0){rv.add('jigang');rv.add('qi');rv.add('huasiqian');rv.add('empress');rv.add('emperor');}if(S.cc.includes('case_banquet'))rv.add('lugb');if(S.cf.includes('c_xiao_arrives'))rv.add('xiaoji');
+  const rv=new Set(['shen','xiao']);if(S.cc.length>0){rv.add('jigang');rv.add('qi');rv.add('huasiqian');rv.add('empress');rv.add('emperor');rv.add('panrg');}if(S.cc.includes('case_banquet'))rv.add('lugb');if(S.cf.includes('c_xiao_arrives'))rv.add('xiaoji');if(S.cc.length>=6){rv.add('yaowy');rv.add('xuexz');rv.add('hancheng');rv.add('kongqiu');}if(S.cc.length>=7)rv.add('xihx');if(S.cc.length>=8){rv.add('haily');rv.add('gaozx');}if(S.cc.length>=10)rv.add('lijt');
   g('rpc-chars').innerHTML=CHARS.filter(c=>rv.has(c.id)).map(c=>`<div class="rp-chi" onclick="showCharModal('${c.id}')"><div><div class="nm">${c.n}</div><div class="rl">${c.ro}</div></div><span style="font-size:9px;color:rgba(255,255,255,0.3)">${c.info.substring(0,15)}…</span></div>`).join('');
 }
 function renderRPTL(){
-  const ev=[{l:'茶石关陷落',s:'建兴五年冬·全军覆没',d:S.cc.includes('case_chashi')},{l:'沈泽川受审',s:'阒都大理寺·廷杖三十',d:S.cc.includes('case_chashi')},{l:'入昭罪寺',s:'遇纪纲与齐太傅',d:S.cc.includes('case_temple')},{l:'萧驰野入都',s:'离北军南下·封骁骑将军',d:S.cf.includes('c_xiao_arrives')},{l:'宫宴风云',s:'太和殿·离北将领力保',d:S.cc.includes('case_banquet')},{l:'雪夜密会',s:'昭罪寺·咬痕为记',d:S.cc.includes('case_snow')}];
+  const ev=[{l:'茶石关陷落',s:'建兴五年冬·全军覆没',d:S.cc.includes('case_chashi')},{l:'入昭罪寺',s:'遇纪纲与齐太傅',d:S.cc.includes('case_temple')},{l:'初遇萧驰野',s:'翻墙撕咬·结仇',d:S.cc.includes('case_encounter')},{l:'宫宴风云',s:'太和殿·离北力保',d:S.cc.includes('case_banquet')},{l:'雪夜咬痕',s:'昭罪寺·咬痕为记',d:S.cc.includes('case_snow')},{l:'入都察院',s:'查军械·斗世家',d:S.cc.includes('case_censor')},{l:'中博疑云',s:'翻案之刃出鞘',d:S.cc.includes('case_zhongbo')},{l:'端州治疫',s:'赈灾论功·清吏治',d:S.cc.includes('case_plague')},{l:'九年旧案',s:'沈卫昭雪',d:S.cc.includes('case_oldcase')},{l:'醉倒狂歌',s:'女帝登基·大婚HE',d:S.cc.includes('case_final')}];
   g('rpc-tl').innerHTML='<div class="rp-tl">'+ev.map(e=>`<div class="rp-tli${e.d?' done':''}"><div class="tl">${e.d?'✓ ':''}${e.l}</div><div class="ts">${e.s}</div></div>`).join('')+'</div>';
 }
 function renderRPRel(){
@@ -504,26 +1079,28 @@ function renderRPRel(){
 
 // ============ UI ============
 function updateTopBar(){
-  const cn={case_chashi:'茶石关疑案',case_temple:'昭罪寺秘闻',case_encounter:'离北来使',case_banquet:'宫宴风云',case_snow:'雪夜密会',case_ending:'全案完结'};
-  g('tp-case').textContent=cn[S.ac]||'无';g('tp-score').textContent=S.scr;g('tp-clues').textContent=S.cf.length+'/'+Object.keys(CL).length;
+  const cn=new Proxy({},{get:function(t,k){return caseName(k);}});
+  g('tp-case').textContent=cn[S.ac]||'无';g('tp-score').textContent=S.scr;g('tp-clues').textContent=S.cf.length+'/'+Object.keys(CL).length;g('tp-hp').textContent=(S.hp==null?5:S.hp);var _it=g('tp-items');if(_it)_it.textContent=(S.items||[]).length;
 }
 function updateBottomBar(){
-  const c=S.cc.length;g('bb-sit').textContent=c===0?'风平浪静':c<=2?'暗流涌动':c<=4?'山雨欲来':'风云际会';
+  const c=S.cc.length;g('bb-sit').textContent=c===0?'风平浪静':c<=3?'暗流涌动':c<=6?'山雨欲来':c<=9?'风云际会':'天下将定';
   g('bb-aff').textContent=S.aff<=25?'敌意':S.aff<=45?'注意':S.aff<=65?'好奇':S.aff<=85?'羁绊':'纠缠';
-  g('bb-prog').textContent=Math.round(c/5*100)+'%';
+  g('bb-prog').textContent=Math.round(c/10*100)+'%';
 }
 function toast(msg){const ct=document.getElementById('toast-ctn'),t=document.createElement('div');t.className='toast';t.textContent=msg;ct.appendChild(t);setTimeout(()=>t.remove(),2500);}
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
-function loadState(){try{const r=localStorage.getItem(KEY);if(r){Object.assign(S,JSON.parse(r));return true;}}catch(e){}return false;}
+function loadState(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(!o.attr)o.attr={shen:{quan:2,ren:3,wu:2,xin:2},xiao:{li:4,jue:3,mou:2,yi:3}};if(!o.dlg)o.dlg={};if(!o.pov)o.pov='shen';if(o.pts==null)o.pts=0;if(o.hpMax==null)o.hpMax=5;if(o.hp==null)o.hp=o.hpMax;if(!o.items)o.items=[];if(!o.found)o.found=[];if(!o.investLog)o.investLog=[];if(o.day==null)o.day=1;if(o.energyMax==null)o.energyMax=4;if(o.energy==null)o.energy=o.energyMax;if(!o.dailyLog)o.dailyLog=[];if(o.dlg){for(const k in o.dlg){const e=o.dlg[k];if(e&&(('node' in e)||('ended' in e))){o.dlg={};break;}}}Object.assign(S,o);return true;}}catch(e){}return false;}
 
 // ============ BG PARTICLES ============
-(function(){const cv=g('bg-canvas'),cx=cv.getContext('2d');let W,H;function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}rs();addEventListener('resize',rs);const pts=[];for(let i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*30+10,s:Math.random()*0.06+0.03,o:Math.random()*0.012+0.003,ph:Math.random()*Math.PI*2});(function a(){cx.clearRect(0,0,W,H);const t=Date.now()*0.0003;pts.forEach(p=>{p.y+=p.s;if(p.y>H+40){p.y=-40;p.x=Math.random()*W;}const oo=p.o+Math.sin(t+p.ph)*0.005,g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,`rgba(180,147,85,${oo*1.5})`);g.addColorStop(1,'rgba(180,147,85,0)');cx.fillStyle=g;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill();});requestAnimationFrame(a);})();})();
+(function(){const cv=g('bg-canvas'),cx=cv.getContext('2d');let W,H;function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}rs();addEventListener('resize',rs);const pts=[];for(let i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*30+10,s:Math.random()*0.06+0.03,o:Math.random()*0.012+0.003,ph:Math.random()*Math.PI*2});(function a(){cx.clearRect(0,0,W,H);const t=Date.now()*0.0003;pts.forEach(p=>{p.y+=p.s;if(p.y>H+40){p.y=-40;p.x=Math.random()*W;}const oo=p.o+Math.sin(t+p.ph)*0.005,gr=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);gr.addColorStop(0,`rgba(180,147,85,${oo*1.5})`);gr.addColorStop(1,'rgba(180,147,85,0)');cx.fillStyle=gr;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fill();});requestAnimationFrame(a);})();})();
 
 // ============ INIT ============
 g('cont-btn').style.display=localStorage.getItem(KEY)?'block':'none';
 g('exitb').style.display='none';g('rptg').style.display='none';
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
-console.log('🏛️ 将进酒 · 暗阁 — 就绪');
+console.log('🏛️ 将进酒·暗阁 v12 分支抉择·封面精简 — 查案/生命值/道具/剧情解锁对话 就绪');
+(function(){try{const gc=new URLSearchParams(location.search).get('case');if(gc&&CASES.some(c=>c.id===gc)){startGame(true);setTimeout(()=>{selCase(gc);switchTab('dossier');toast('🗺 已从大地图进入：'+(CASES.find(c=>c.id===gc).n));},650);}}catch(e){}})();
+window.addEventListener('message',function(e){var d=e&&e.data;if(d&&d.type==='qjj-goto'&&d.case&&CASES.some(c=>c.id===d.case)){selCase(d.case);switchTab('dossier');toast('🗺 已从大地图进入：'+(CASES.find(c=>c.id===d.case).n));}});
 </script>
 </body>
 </html>
