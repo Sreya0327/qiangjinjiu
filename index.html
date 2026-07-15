@@ -733,7 +733,7 @@ function renderDossier(){
   if(sc.cn)h+=`<div class="stamp">${sc.c==='case_ending'?'已封':'在查'}</div><div class="cid">暗阁 · ${sc.cn}</div>`;
   h+=`<h2>${sc.t}</h2>${sc.s?`<div class="cs">${sc.s}</div>`:''}<div class="nt">${sc.tx}</div>`;
   
-  if(sc.ch&&sc.ch.length>0){var _inv=!(sc.cl&&sc.cl.length>0)||sc.cl.every(function(_c){return S.cf.includes(_c)});var _got=(sc.cl||[]).filter(function(_c){return S.cf.includes(_c)}).length,_tot=(sc.cl||[]).length;h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;if(!_inv)h+=`<div class="gate-hint">🔒 请先在「①勘验」中完成现场勘查（已勘 ${_got}/${_tot} 处），再作决断</div>`;sc.ch.forEach((ch,i)=>{
+  if(sc.ch&&sc.ch.length>0){var _si=SEARCH[sc.c]||[];var _tot=_si.length;var _got=_si.filter(function(_it,_k){return (S.found||[]).includes(foundKey(sc.c,_k));}).length;var _inv=(_tot===0)||(_got>=_tot);h+=`<div class="cblock"><div class="clbl">▸ 办案抉择</div>`;if(!_inv)h+=`<div class="gate-hint">🔒 请先在「①勘验」中完成线索搜集（已收集 ${_got}/${_tot}），再作决断</div>`;sc.ch.forEach((ch,i)=>{
     const rw=ch.at?`<span class="rw">${fmtAt(ch.at)}</span>`:(ch.ad?`<span class="rw">好感+${ch.ad}</span>`:'');
     h+=_inv?`<button class="dbtn" onclick="doChoice(${i})">${ch.t}${rw}</button>`:`<button class="dbtn locked" disabled>${ch.t}${rw}</button>`;
   });h+=`</div>`;}h+=`</div>`;
@@ -1006,7 +1006,7 @@ const CASE_ITEM={case_chashi:{n:'半枚咬痕',d:'虎口齿痕的执念，结仇
 const EVI_ICON={'人证':'👤 人证','物证':'📦 物证','动机':'💡 动机','线索':'🔗 线索'};
 const CASENAME=new Proxy({},{get:function(t,k){return caseName(k);}});
 function foundKey(ci,i){return ci+'#'+i;}
-function renderInvestTop(){var el=g('invest-top');if(!el)return;var sc=SC[S.cs];if(!sc){el.innerHTML='';return;}var h='<div class="dcard inv-story">'+(sc.cn?'<div class="cid">暗阁 · '+sc.cn+'</div>':'')+'<h2>'+sc.t+'</h2>'+(sc.s?'<div class="cs">'+sc.s+'</div>':'')+'<div class="nt">'+sc.tx+'</div></div>';if(sc.cl&&sc.cl.length){var got=sc.cl.filter(function(x){return S.cf.includes(x);}).length;h+='<div class="cblock"><div class="clbl">🔍 现场勘查 · 点击逐一勘验线索（'+got+'/'+sc.cl.length+'）</div><div class="inspect-grid">';sc.cl.forEach(function(cid){var fnd=S.cf.includes(cid),c=CL[cid];h+='<button class="insp'+(fnd?' got':'')+'" onclick="inspectClue(&#39;'+cid+'&#39;)">'+(fnd?'🔎 '+c.n:'❓ 待勘查')+'</button>';});h+='</div><div id="insp-detail"></div></div>';}el.innerHTML=h;}
+function renderInvestTop(){var el=g('invest-top');if(!el)return;var sc=SC[S.cs];if(!sc){el.innerHTML='';return;}el.innerHTML='<div class="dcard inv-story">'+(sc.cn?'<div class="cid">暗阁 · '+sc.cn+'</div>':'')+'<h2>'+sc.t+'</h2>'+(sc.s?'<div class="cs">'+sc.s+'</div>':'')+'<div class="nt">'+sc.tx+'</div></div>';}
 function renderInvest(){
   const ci=S.ac,items=SEARCH[ci]||[];S.found=S.found||[];
   if(!items.length){g('invest-ctn').innerHTML='<div class="dl-empty" style="padding:40px;text-align:center;color:rgba(255,255,255,0.3)">本卷无需搜查。<br>请在「案牍」中推进剧情。</div>';return;}
