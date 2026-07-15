@@ -716,7 +716,7 @@ function switchTab(name){
   const tb=document.querySelector(`[data-tab="${name}"]`);if(tb)tb.classList.add('on');
   document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
   const pnl=g('pnl-'+name);if(pnl)pnl.classList.add('on');
-  if(name==='map')setTimeout(()=>renderMap(),80);
+  if(name==='dossier')renderDossier();if(name==='map')setTimeout(()=>renderMap(),80);
   if(name==='deduction')renderDeduction();
   if(name==='cultivation')renderCult();
   if(name==='invest'){renderInvestTop();renderInvest();}
